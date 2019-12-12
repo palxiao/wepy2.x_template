@@ -1,0 +1,38 @@
+{
+	// ${1:label}, ${2:another}
+	"Print to console": {
+		"prefix": "wepy-component",
+		"body": [
+			"<style lang='less'>",
+
+			"</style>",
+			"<template>",
+			"<div class=''>",
+				
+			"</div>",
+			"</template>",
+			"<script>",
+			"import wepy from '@wepy/core';",
+
+			"wepy.component({",
+				"options: {",
+					"multipleSlots: true // 在组件定义时的选项中启用多slot支持",
+				  "},",
+				"props: {",
+					
+				"},",
+				"data: {",
+
+				"},",
+				"computed: {},",
+				"created () {},",
+				"methods: {",
+					
+				"}",
+				"mixins: [],",
+			"});",
+			"</script>",
+		],
+		"description": "this is wepy component template"
+	}
+}

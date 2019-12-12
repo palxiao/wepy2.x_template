@@ -61,8 +61,10 @@ module.exports.getTime = getTime;
       <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
       <div class="userinfo-nickname">{{ userInfo.nickName }}</div>
     </div>
-
-    <div>231</div>
+    <div @tap="modalTest=true">展开自定义modal{{modalTest}}</div>
+    <modal :showModalStatus="modalTest" @changeModal="changeModal" title="">
+      <div slot="test">插槽测试</div>
+    </modal>
 
     <panel>
       <div class="title" slot="title">测试数据绑定</div>
@@ -147,6 +149,7 @@ module.exports.getTime = getTime;
   import { mapState } from '@wepy/x';
   import store from '../store';
   import testMixin from '../mixins/test'
+  // import api from '../api'
 
   wepy.page({
     store,
@@ -171,6 +174,7 @@ module.exports.getTime = getTime;
     mixins: [testMixin],
 
     data: {
+      modalTest: false,
       inputmodel: 'v-model',
       mynum: 20,
       userInfo: {
@@ -281,11 +285,32 @@ module.exports.getTime = getTime;
       },
       counterEmit (num) {
         console.log(`${this.$is} receive event, the number is: ${num}`);
+      },
+      changeModal(e) {
+        this.modalTest = e
       }
     },
+    events: {
+      
+    },
 
-    created () {
+    async created () {
       console.log(1111,getApp());
+      console.log(getApp().$wepy);
+      console.log(this);
+      console.log(this.$store);
+      console.log('---------------');
+      // api.test().then(res => {
+      //   console.log(res);
+        
+      // })
+      const res = await wx.request({
+        url: 'https://www.madcoder.cn/tests/sleep.php?time=1&t=css&c=',
+        method: 'GET',
+      });
+      console.log(res);
+      
+
       
       let self = this
       self.currentTime = +new Date(); 
@@ -312,6 +337,7 @@ module.exports.getTime = getTime;
       list: '../components/list',
       group: '../components/group',
       "slide-view": "module:miniprogram-slide-view",
+      modal: "../components/modal"
     }
 }
 </config>
