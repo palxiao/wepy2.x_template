@@ -15,9 +15,42 @@
     > npm run build
 
 ---------
+### wepy2新特性
+
+#### 支持状态管理器
+
+    import store from '/store';
+
+#### 事件广播无需自己实现
+
+    import eventHub from '/utils/common/eventHub';
+    eventHub.$on('eventName', (...args) => { // 注册事件
+      console.log(args);
+    });
+    eventHub.$emit('eventName', { a: 1 }, { b: 2 }); // 触发事件
 
 ### 目录结构
 
+├── app.wpy                         入口文件
+├── config.js                       常量配置文件
+├── api                             请求接口目录
+│   └── index.js
+├── assets                          静态资源目录
+│   └── styles
+├── components                      组件目录
+│   ├── modal.wpy
+│   └── modal.wpy
+├── mixins
+│   └── test.js
+├── pages                           页面文件目录
+│   └── index.wpy
+├── store                           状态管理目录
+│   └── index.js
+└── utils                           工具目录
+    ├── common
+    │   └── eventHub.js
+    ├── index.js
+    └── wxRequest.js                httpRequest封装
 
 ### 其他
 
