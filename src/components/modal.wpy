@@ -103,7 +103,7 @@
 </template>
 <script>
 import wepy from '@wepy/core';
-wepy.component({ 
+wepy.component({
   options: {
     multipleSlots: true // 在组件定义时的选项中启用多slot支持
   },
@@ -138,7 +138,7 @@ wepy.component({
       let that = this;
       // that.showModalStatus = false;
       that.currentStatu = status;
-      this.$emit('changeModal', false)
+      this.$emit('changeModal', false);
       // that.$apply();
       // that.animate();
     },
@@ -183,7 +183,6 @@ wepy.component({
       let that = this;
       // that.animate();
       console.log(val);
-      
     }
   }
 });
