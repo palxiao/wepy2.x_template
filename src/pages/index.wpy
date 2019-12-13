@@ -44,17 +44,7 @@ input {
   }
 }
 </style>
-<wxs module="m1" lang="babel">
-const getTime = (time) => {
-  let date = getDate(time);
-  let hour = date.getHours();
-  let mins = date.getMinutes();
-  let sec = date.getSeconds();
-  let milli = date.getMilliseconds();
-  return `${hour}:${mins}:${sec}.${milli}`;
-}
-module.exports.getTime = getTime;
-</wxs>
+<wxs module="m1" lang="babel" src="../utils/widget/test.wxs"></wxs>
 <template>
   <div class="container">
     <div class="userinfo" @tap="handleViewTap">

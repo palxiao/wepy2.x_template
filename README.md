@@ -47,6 +47,7 @@
 │   └── index.js
 ├── assets                          静态资源目录
 │   └── styles
+│       └── base.less               基础共用样式
 ├── components                      组件目录
 │   ├── modal.wpy
 │   └── modal.wpy

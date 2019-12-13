@@ -1,4 +1,5 @@
 <style lang="less">
+  @import "./assets/styles/base";
 .container {
   height: 100%;
   display: flex;
