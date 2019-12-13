@@ -17,17 +17,27 @@
 ---------
 ### wepy2新特性
 
+#### wsx修饰符 模板函数响应事件
+
 #### 支持状态管理器
 
     import store from '/store';
+    wepy.page({
+        store,
+        created() {
+            console.log(this.$store);
+        }
+        ....
+    })
+    用法与Vuex一致
 
-#### 事件广播无需自己实现
+#### 自带事件广播
 
     import eventHub from '/utils/common/eventHub';
     eventHub.$on('eventName', (...args) => { // 注册事件
       console.log(args);
     });
-    eventHub.$emit('eventName', { a: 1 }, { b: 2 }); // 触发事件
+    eventHub.$emit('eventName', { a: 1 }, { b: 2 }); // 事件触发
 
 ### 目录结构
 
@@ -40,7 +50,7 @@
 ├── components                      组件目录
 │   ├── modal.wpy
 │   └── modal.wpy
-├── mixins
+├── mixins                          mixins
 │   └── test.js
 ├── pages                           页面文件目录
 │   └── index.wpy
