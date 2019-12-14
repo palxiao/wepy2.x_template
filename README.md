@@ -19,6 +19,9 @@
 
 #### wsx修饰符 模板函数响应事件
 
+    页面引入：
+    <wxs module="m1" lang="babel" src="../utils/widget/test.wxs"></wxs>
+
 #### 支持状态管理器
 
     import store from '/store';
