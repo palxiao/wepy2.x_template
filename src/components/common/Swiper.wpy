@@ -1,11 +1,11 @@
 <template>
 <div>
 
- <swiper indicator-dots="true" :autoplay="false" :indicatorDots="false" indicator-color="#8a8a8a" indicator-active-color="#333"
-  class="swiper-block" bindchange="swiperChange" previous-margin="100rpx" next-margin="100rpx" current="0">
+ <swiper indicator-dots="true" :autoplay="false" :indicatorDots="false" circular indicator-color="#8a8a8a" indicator-active-color="#333"
+  class="swiper-block" bindchange="swiperChange" previous-margin="120rpx" next-margin="120rpx" current="0">
     <block v-for="(item, index) in imgUrls" :key="'imgs'+index">
       <swiper-item class="swiper-item ">
-        <image mode="aspectFill" :src="item" class="slide-image {{currentIndex == index ? 'active' : 'common'}}" />
+        <image mode="aspectFit" :src="item" class="slide-image {{currentIndex == index ? 'active' : 'common'}}" />
       </swiper-item>
     </block>
   </swiper>
@@ -44,7 +44,7 @@ page{
 }
 .swiper-block {
   background: #fff;
-  height: 1000rpx;
+  height: 1020rpx;
   width: 100%;
 }
 
@@ -54,23 +54,22 @@ page{
   justify-content: start;
   align-items: flex-start;
   overflow: unset;
-  width: 550rpx;
-  height: 450rpx;
-  padding-top: 70rpx;
-  padding-bottom: 20rpx;
+  padding-top: 120rpx;
   box-sizing: border-box;
+  width: 550rpx;
+  // height: 750rpx;
 }
 
 .slide-image{
-  height: 300rpx;
-  width: 450rpx;
+  width: 410rpx;
+  height: 720rpx;
   border-radius: 10rpx;
   margin: 0rpx 50rpx ;
   z-index: 1;
   box-shadow: 10rpx 5px 40rpx rgba(0, 0, 0,0.5);
 }
 .active{
-  transform: scale(1.3);
+  transform: scale(1.2);
   transition: all .5s ease-in 0s;
   z-index: 20;
   opacity: 1;

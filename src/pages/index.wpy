@@ -170,9 +170,9 @@ wepy.page({
       }
     ],
     imgUrls: [
-      "../../assets/images/q00.png",
       "../../assets/images/q01.png",
-      "../../assets/images/q02.png"
+      "../../assets/images/q02.png",
+      "../../assets/images/q00.png"
     ],
   },
 
