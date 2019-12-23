@@ -20,7 +20,9 @@
 #### wsx修饰符 模板函数响应事件
 
     页面引入：
-    <wxs module="m1" lang="babel" src="../utils/widget/test.wxs"></wxs>
+    <wxs module="module" lang="babel" src="../utils/widget/test.wxs"></wxs>
+    页面使用：
+    <view> {{module.functionName(value)}} </view>
 
 #### 支持状态管理器
 
@@ -49,6 +51,7 @@
 ├── api                             请求接口目录
 │   └── index.js
 ├── assets                          静态资源目录
+│   ├── images                      该目录会打包到编译目录
 │   └── styles
 │       └── base.less               基础共用样式
 ├── components                      组件目录

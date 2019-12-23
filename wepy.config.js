@@ -7,6 +7,7 @@ module.exports = {
   cliLogs: !prod,
   build: {
   },
+  static: 'src/assets/images',
   resolve: {
     alias: {
       counter: path.join(__dirname, 'src/components/counter'),
