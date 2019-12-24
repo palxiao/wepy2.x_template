@@ -1,0 +1,39 @@
+<template>
+    <div class="container">123</div>
+</template>
+ 
+<script>
+import wepy from '@wepy/core';
+// import eventHub from '@/utils/common/eventHub';
+import store from '@/store';
+// import testMixin from '@/mixins/test';
+import api from '@/api';
+
+wepy.page({
+  store,
+
+  hooks: {
+    // Page 级别 hook, 只对当前 Page 的 setData 生效。
+  },
+  //   mixins: [testMixin],
+  data: {},
+
+  created() {},
+
+  computed: {},
+
+  methods: {},
+  events: {}
+});
+</script>
+ 
+<style lang='less' scope>
+</style>
+<config>
+{
+navigationBarTitleText: '',
+usingComponents: {
+ 
+}
+}
+</config>

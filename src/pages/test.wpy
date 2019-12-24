@@ -11,7 +11,7 @@
       <div slot="test">插槽测试</div>
     </modal>
 
-    <Panel >
+    <Panel @tap="testEdit">
       <my-swiper :imgUrls="imgUrls"/>  
     </Panel>
 
@@ -205,6 +205,11 @@ wepy.page({
   },
 
   methods: {
+    testEdit() {
+      wx.navigateTo({
+        url: 'edit'  //跳转地址
+      })
+    },
     tap() {
       throw 'can not go here';
     },
@@ -274,7 +279,9 @@ wepy.page({
       this.modalTest = true;
     },
     changeModal(e) {
-      this.modalTest = e;
+      setTimeout(() => {
+        this.modalTest = e;
+      }, 300);
     }
   },
   events: {},
@@ -380,7 +387,7 @@ page{
 </style>
 <config>
 {
-    navigationBarTitleText: 'WePY 2.0 Feature Demo',
+    navigationBarTitleText: '精图打卡',
     usingComponents: {
       panel: '~@/components/panel',
       counter: '~counter',
