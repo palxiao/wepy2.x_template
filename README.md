@@ -26,29 +26,29 @@
 
 #### 支持状态管理器
 
-    ```javaScript
-    import store from '/store';
-    wepy.page({
-        store,
-        created() {
-            console.log(this.$store);
-        }
-        ....
-    })
-    // 用法与Vuex一致
-    ```
+```javaScript
+import store from '/store';
+wepy.page({
+    store,
+    created() {
+        console.log(this.$store);
+    }
+    ....
+})
+// 用法与Vuex一致
+```
 
 #### 自带事件广播
 
-    ```javaScript
-    import eventHub from '/utils/common/eventHub';
-    // 注册事件
-    eventHub.$on('eventName', (...args) => {
-      console.log(args);
-    });
-    // 事件触发
-    eventHub.$emit('eventName', { a: 1 }, { b: 2 });
-    ```
+```javaScript
+import eventHub from '/utils/common/eventHub';
+// 注册事件
+eventHub.$on('eventName', (...args) => {
+    console.log(args);
+});
+// 事件触发
+eventHub.$emit('eventName', { a: 1 }, { b: 2 });
+```
 
 ### 目录结构
 
