@@ -1,5 +1,8 @@
 <template>
-    <div class="container">123</div>
+  <view style="overflow:auto;">
+    <canvas canvas-id="canvas" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px"></canvas>
+    <button @tap="test2">test</button>
+  </view>
 </template>
  
 <script>
@@ -8,6 +11,7 @@ import wepy from '@wepy/core';
 import store from '@/store';
 // import testMixin from '@/mixins/test';
 import api from '@/api';
+import SimpleCanvas from 'simple-canvas-posters';
 
 wepy.page({
   store,
@@ -16,13 +20,232 @@ wepy.page({
     // Page 级别 hook, 只对当前 Page 的 setData 生效。
   },
   //   mixins: [testMixin],
-  data: {},
+  data: {
+    scale: 1,
+    width: 375,
+    height: 600,
+    num: 66,
+    ratio: 0,
+    temp: '../assets/images/T-00-00.png',
+    temp2: ''
+  },
 
-  created() {},
+  created() {
+    this.draw();
+  },
 
   computed: {},
 
-  methods: {},
+  methods: {
+    test2() {
+      const _this = this;
+      wx.chooseImage({
+        count: 1,
+        sizeType: ['original', 'compressed'],
+        sourceType: ['album', 'camera'],
+        success(res) {
+          // tempFilePath可以作为img标签的src属性显示图片
+          const tempFilePaths = res.tempFilePaths;
+          console.log(tempFilePaths);
+          _this.temp2 = tempFilePaths[0];
+          _this.draw();
+        }
+      });
+    },
+    draw() {
+      const _this = this;
+      try {
+        const res = wx.getSystemInfoSync();
+        this.ratio = res.windowWidth / 375;
+      } catch (e) {
+        // Do something when catch error
+      }
+
+      wx.downloadFile({
+        url:
+          'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=281531042,273318123&fm=27&gp=0.jpg', //仅为示例，并非真实的资源
+        success(res) {
+          // 只要服务器有响应数据，就会把响应内容写入文件并进入 success 回调，业务需要自行判断是否下载到了想要的内容
+          if (res.statusCode === 200) {
+            console.log(res.tempFilePath);
+            if(_this.temp2=='') {_this.temp2 = res.tempFilePath;}
+          }
+        }
+      });
+
+      setTimeout(() => {
+        const canvas = new SimpleCanvas({
+          scale: this.scale,
+          canvasId: 'canvas'
+        });
+
+        canvas
+          .createArtboard({
+            id: 'share',
+            backgroundColor: '#ffffff',
+            width: 375 * this.ratio,
+            height: 600
+          })
+
+          .drawWrapText({
+            id: 'avatar',
+            text: '',
+            fontSize: 0,
+            top: 0
+          })
+
+          // .drawWrapText({
+          //   id: 'nickname',
+          //   fontSize: 16,
+          //   text: `超级大魔王~`,
+          //   referLayer: {
+          //     id: 'avatar',
+          //     left: 12,
+          //     top: -(canvas.avatar.height / 2 + 8)
+          //   }
+          // })
+
+          // .drawWrapText({
+          //   id: 'time',
+          //   fontSize: 12,
+          //   color: '#666666',
+          //   text: '2019-04-08',
+          //   left: 10,
+          //   referLayer: {
+          //     id: 'avatar',
+          //     top: 10
+          //   }
+          // })
+
+          // .drawWrapText({
+          //   id: 'title',
+          //   fontSize: 14,
+          //   color: '#333333',
+          //   text: '泰国🇹🇭icoco香水奶椰🌴',
+          //   left: 10,
+          //   width: 220 * this.ratio,
+          //   referLayer: {
+          //     id: 'time',
+          //     top: 10
+          //   }
+          // })
+
+          // .drawWrapText({
+          //   id: 'describe',
+          //   fontSize: 14,
+          //   color: '#333333',
+          //   text:
+          //     '强势春天必备的降燥祛火佳品，净化血液神器，爆款来袭，甜度高超级好喝😋',
+          //   left: 10,
+          //   width: 355 * this.ratio,
+          //   lineHeight: 5,
+          //   referLayer: {
+          //     id: 'title',
+          //     top: 10
+          //   }
+          // })
+
+          .drawImage({
+            id: 'bg',
+            width: 375 * this.ratio,
+            height: 600,
+            path: this.temp2,
+            referLayer: {
+              id: 'avatar',
+              top: 10
+            }
+          })
+          .drawImage({
+            id: 'preBox',
+            left: 20,
+            width: 335 * this.ratio,
+            height: 560,
+            path: this.temp,
+            referLayer: {
+              id: 'bg',
+              top: -580
+            }
+          })
+          .drawWrapText({
+            id: 'testText',
+            fontSize: 32,
+            left: 40,
+            text: `旅途`,
+            referLayer: {
+              id: 'bg',
+              top: -180
+            }
+          })
+          .drawWrapText({
+            id: 'testText',
+            fontSize: 16,
+            left: 40,
+            text: `开始旅程吧，不管前路在何方`,
+            referLayer: {
+              id: 'bg',
+              top: -120
+            }
+          })
+
+          // .drawWrapText({
+          //   id: 'originalPrice',
+          //   fontSize: 16,
+          //   color: '#666',
+          //   text: '原价： ￥ ' + this.num,
+          //   left: 10,
+          //   width: 200 * this.ratio,
+          //   referLayer: {
+          //     id: 'image',
+          //     top: 10
+          //   }
+          // })
+
+          // .createRectangle({
+          //   id: 'line',
+          //   width: 110 * this.ratio,
+          //   height: 0.5,
+          //   backgroundColor: '#000',
+          //   left: 5,
+          //   referLayer: {
+          //     id: 'originalPrice',
+          //     top: -7
+          //   }
+          // })
+
+          // .drawWrapText({
+          //   id: 'price',
+          //   fontSize: 20,
+          //   color: 'red',
+          //   text: '现价：￥ 18',
+          //   left: 10,
+          //   width: 200 * this.ratio,
+          //   lineHeight: 5,
+          //   referLayer: {
+          //     id: 'originalPrice',
+          //     top: 10
+          //   }
+          // })
+
+          // .drawImage({
+          //   id: 'qrcode',
+          //   width: 90 * this.ratio,
+          //   height: 90,
+          //   path:
+          //     'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=231620273,2622968107&fm=27&gp=0.jpg',
+          //   referLayer: {
+          //     id: 'image',
+          //     top: -90,
+          //     left: -90
+          //   }
+          // });
+
+        // 动态计算canvas高度
+        this.height = canvas.getAutoCanvasHeight() + 10;
+
+        canvas.draw();
+      }, 1000);
+    }
+  },
   events: {}
 });
 </script>

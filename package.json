@@ -16,9 +16,10 @@
   "author": "ShawnPhang",
   "license": "MIT",
   "dependencies": {
-    "@wepy/x": "^2.0.2",
     "@wepy/core": "^2.0.0-alpha.9",
-    "miniprogram-slide-view": "0.0.3"
+    "@wepy/x": "^2.0.2",
+    "miniprogram-slide-view": "0.0.3",
+    "simple-canvas-posters": "^0.2.5"
   },
   "devDependencies": {
     "@wepy/cli": "^2.0.0-alpha.20",
