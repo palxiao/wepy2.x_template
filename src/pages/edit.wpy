@@ -1,5 +1,6 @@
 <template>
   <view style="overflow:auto;">
+    <play-music />
     <canvas canvas-id="canvas" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px"></canvas>
     <button @tap="test2">test</button>
   </view>
@@ -256,7 +257,7 @@ wepy.page({
 {
 navigationBarTitleText: '',
 usingComponents: {
- 
+ 'play-music': '../components/music'
 }
 }
 </config>
