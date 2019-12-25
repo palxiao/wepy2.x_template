@@ -1,8 +1,22 @@
 <template>
-  <view style="overflow:auto;">
-    <canvas canvas-id="canvas" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px"></canvas>
-    <button @tap="test2">test</button>
-  </view>
+  <div style="overflow:auto;">
+    <button @tap="openEdit">{{showEdit?'end of':'fu*k it'}}</button>
+    <canvas canvas-id="canvas" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
+      <cover-view v-show="showEdit" style="{{'width:100%;height:'+height+'px;'}}" class="maskPanel">
+        <cover-view @tap="edit" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.728+'px;left: '+34*ratio+'px;'}}" class="edit-title"></cover-view>
+      </cover-view>
+    </canvas>
+    
+    <button @tap="test2">change photo test</button>
+    <button @tap="preview">preview shuqian ohyeah</button>
+
+    <my-modal :showModalStatus="modelShow" @changeModal="changeModal" title="编辑模式">
+      <cover-view slot="test">
+
+        <input v-model="title" class="weui-input" :focus="focus" />
+      </cover-view>
+    </my-modal>
+  </div>
 </template>
  
 <script>
@@ -23,11 +37,21 @@ wepy.page({
   data: {
     scale: 1,
     width: 375,
-    height: 600,
-    num: 66,
+    height: 0,
+    // num: 66,
     ratio: 0,
     temp: '../assets/images/T-00-00.png',
-    temp2: ''
+    temp2: '../assets/images/T-00-01.png',
+    pic: '',
+    wWidth: 0,
+    bg_width_original: 0,
+    bg_height_original: 0,
+    pre_width: 0,
+    pre_height: 0,
+    showEdit: false,
+    title: `扑街`,
+    modelShow: false,
+    focus: false
   },
 
   created() {
@@ -52,26 +76,68 @@ wepy.page({
         }
       });
     },
-    draw() {
+    async draw() {
+      wx.showLoading()
       const _this = this;
       try {
         const res = wx.getSystemInfoSync();
+        this.wWidth = res.windowWidth
+        console.log('机宽：'+this.wWidth);
+        
         this.ratio = res.windowWidth / 375;
+        console.log('系数：'+this.ratio);
+        
       } catch (e) {
         // Do something when catch error
       }
 
-      wx.downloadFile({
-        url:
-          'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=281531042,273318123&fm=27&gp=0.jpg', //仅为示例，并非真实的资源
-        success(res) {
-          // 只要服务器有响应数据，就会把响应内容写入文件并进入 success 回调，业务需要自行判断是否下载到了想要的内容
-          if (res.statusCode === 200) {
-            console.log(res.tempFilePath);
-            if(_this.temp2=='') {_this.temp2 = res.tempFilePath;}
-          }
-        }
-      });
+      // wx.downloadFile({
+      //   url:
+      //     'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=281531042,273318123&fm=27&gp=0.jpg', //仅为示例，并非真实的资源
+      //   success(res) {
+      //     // 只要服务器有响应数据，就会把响应内容写入文件并进入 success 回调，业务需要自行判断是否下载到了想要的内容
+      //     if (res.statusCode === 200) {
+      //       console.log(res.tempFilePath);
+      //       if(_this.temp2=='') {_this.temp2 = res.tempFilePath;}
+      //     }
+      //   }
+      // });
+      // if (this.bg_width_original === 0) {
+        let bgImg = await this.downloadSome('../assets/images/T-00-01.png')
+        _this.bg_width_original = bgImg.width
+        _this.bg_height_original = bgImg.height
+        _this.height = parseInt(bgImg.height*_this.wWidth/bgImg.width)
+        console.log(this.height);
+        
+      // }
+      
+      // wx.getImageInfo({
+      //   src: '../assets/images/T-00-01.png',
+      //   success (res) {
+      //     console.log(res.width)
+      //     _this.bg_width_original = res.width
+      //     console.log(res.height)
+      //     _this.bg_height_original = res.height
+      //     _this.height = parseInt(res.height*_this.wWidth/res.width)
+      //     console.log(375*_this.ratio);
+      //     console.log(_this.height);
+      //   }
+      // })
+      // if (this.pre_width === 0) {
+        let preImg = await this.downloadSome('../assets/images/T-00-00.png')
+        _this.pre_width = preImg.width * _this.wWidth / _this.bg_width_original
+        _this.pre_height = parseInt(preImg.height*_this.pre_width/preImg.width)
+      // }
+      
+      // wx.getImageInfo({
+      //   src: '../assets/images/T-00-00.png',
+      //   success (res) {
+      //     console.log(2,res.width)
+      //     _this.pre_width = res.width * _this.wWidth / _this.bg_width_original
+      //     console.log(2,res.height)
+      //     _this.pre_height = parseInt(res.height*_this.pre_width/res.width)
+      //   }
+      // })
 
       setTimeout(() => {
         const canvas = new SimpleCanvas({
@@ -83,8 +149,8 @@ wepy.page({
           .createArtboard({
             id: 'share',
             backgroundColor: '#ffffff',
-            width: 375 * this.ratio,
-            height: 600
+            width: this.width * this.ratio,
+            height: this.height
           })
 
           .drawWrapText({
@@ -148,42 +214,55 @@ wepy.page({
           .drawImage({
             id: 'bg',
             width: 375 * this.ratio,
-            height: 600,
+            height: this.height,
             path: this.temp2,
             referLayer: {
               id: 'avatar',
-              top: 10
+              top: 0
             }
           })
           .drawImage({
             id: 'preBox',
-            left: 20,
-            width: 335 * this.ratio,
-            height: 560,
+            left: (13*this.ratio),
+            width: this.pre_width,
+            height: this.pre_height,
             path: this.temp,
             referLayer: {
               id: 'bg',
-              top: -580
+              top: -(this.pre_height+(25*this.ratio))
             }
           })
           .drawWrapText({
-            id: 'testText',
+            id: '#title',
             fontSize: 32,
             left: 40,
-            text: `旅途`,
+            text: this.title,
             referLayer: {
               id: 'bg',
               top: -180
             }
           })
           .drawWrapText({
-            id: 'testText',
+            id: '#contect',
             fontSize: 16,
             left: 40,
-            text: `开始旅程吧，不管前路在何方`,
+            width: 300,
+            text: `开始旅程吧，不要管前路在何方`,
             referLayer: {
               id: 'bg',
               top: -120
+            }
+          })
+          .drawWrapText({
+            id: '#demo',
+            fontSize: 12,
+            left: 230,
+            width: 200,
+            text: `(*/ω＼*) 每日打卡demo`,
+            color: '#999',
+            referLayer: {
+              id: 'bg',
+              top: -250
             }
           })
 
@@ -240,10 +319,62 @@ wepy.page({
           // });
 
         // 动态计算canvas高度
-        this.height = canvas.getAutoCanvasHeight() + 10;
+        // this.height = canvas.getAutoCanvasHeight() + 10;
+        this.height = canvas.getAutoCanvasHeight();
 
-        canvas.draw();
-      }, 1000);
+        canvas.draw(() => {
+          wx.showLoading()
+          const _this = this
+          setTimeout(() => {
+            wx.canvasToTempFilePath({
+                canvasId: 'canvas',
+                success: (res) => {
+                    _this.pic = res.tempFilePath
+                },
+                fail: (err) => {
+                  console.log('fail creat img');
+                },
+                complete: () => {
+                  wx.hideLoading();
+                }
+            }, this);
+          }, 2000);
+        });
+      }, 20);
+    },
+    preview() {
+      const urls = []
+      urls.push(this.pic)
+      wx.previewImage({
+        current: '', // 当前显示图片的http链接
+        urls // 需要预览的图片http链接列表
+      })
+    },
+    openEdit() {
+      this.showEdit = !this.showEdit
+    },
+    edit() {
+      this.modelShow = true
+      setTimeout(() => {
+        this.focus = true
+      }, 100);
+    },
+    changeModal(e) {
+      this.draw()
+      setTimeout(() => {
+        this.modelShow = e;
+        this.focus = false
+      }, 100);
+    },
+    downloadSome(src) {
+      return new Promise(resolve => {
+        wx.getImageInfo({
+          src,
+          success (res) {
+            resolve(res)
+          }
+        })
+      })
     }
   },
   events: {}
@@ -251,12 +382,25 @@ wepy.page({
 </script>
  
 <style lang='less' scope>
+.maskPanel {
+  background: rgba(0, 0, 0, .24);
+  position: absolute;
+  width: 100%;
+  top: 0;
+  z-index: 999;
+  .edit-title {
+    background: rgba(255,255,255,.3);
+    position: absolute;
+    border: 2rpx dashed rgba(255,255,255,1);
+  }
+}
+
 </style>
 <config>
 {
 navigationBarTitleText: '',
 usingComponents: {
- 
+ "my-modal": "../components/modal",
 }
 }
 </config>

@@ -79,27 +79,27 @@
 </style>
 <template>
   <!--使用animation属性指定需要执行的动画-->
-  <view wx:if="{{showModalStatus}}" class="drawer_screen">
-    <view animation="{{animationData}}" class="drawer_box">
+  <cover-view wx:if="{{showModalStatus}}" class="drawer_screen">
+    <cover-view animation="{{animationData}}" class="drawer_box">
       <!-- <view class="drawer_screen"> -->
       <!--drawer content-->
-      <view class="drawer_title">{{modalData.title || '系统提示'}}</view>
-      <view class="drawer_content">
-        <view wx:for="{{modalData.content}}" wx:key="index" class="item">{{item}}</view>
+      <cover-view class="drawer_title">{{title || '系统提示'}}</cover-view>
+      <cover-view class="drawer_content">
+        <cover-view wx:for="{{modalData.content}}" wx:key="index" class="item">{{item}}</cover-view>
         <slot name="test"></slot>
-      </view>
-      <view class="button-div">
-        <view
+      </cover-view>
+      <cover-view class="button-div">
+        <cover-view
           wx:for="{{modalData.button}}"
           wx:key="index"
           bind
           wx:if="{{index <= 1}}"
           class="{{index == 0 ? 'btn_no' : 'btn_yes'}}"
           @tap="changeStatus(index == 0 ? 'no' : 'yes')"
-        >{{item}}</view>
-      </view>
-    </view>
-  </view>
+        >{{item}}</cover-view>
+      </cover-view>
+    </cover-view>
+  </cover-view>
 </template>
 <script>
 import wepy from '@wepy/core';
@@ -124,9 +124,9 @@ wepy.component({
         title: '系统提示',
         content: [],
         button: ['取消', '确定']
-      },
-      twoWay: true
-    }
+      }
+    },
+    title: {}
   },
   data: {
     animation: new Object(),
