@@ -1,0 +1,136 @@
+<style lang='less'>
+</style>
+<template>
+  <view class="none"> </view>
+</template>
+<script>
+import wepy from '@wepy/core'
+// const app = getApp()
+const bgAudioManager = wx.getBackgroundAudioManager()
+const { MusicManager } = require('./NetEaseCloudMusicApi/src/MusicManager')
+
+wepy.component({
+  options: {
+    multipleSlots: true // 在组件定义时的选项中启用多slot支持
+  },
+  props: {},
+  data: {
+    // motto: 'Hello World',
+    // userInfo: {},
+    // hasUserInfo: false,
+    // canIUse: wx.canIUse('button.open-type.getUserInfo'),
+    // musciName: '抛物线'
+  },
+  computed: {},
+  created() {
+    this.test()
+    // if (app.globalData.userInfo) {
+    //   this.setData({
+    //     userInfo: app.globalData.userInfo,
+    //     hasUserInfo: true
+    //   })
+    // } else if (this.data.canIUse) {
+    //   // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
+    //   // 所以此处加入 callback 以防止这种情况
+    //   app.userInfoReadyCallback = res => {
+    //     this.setData({
+    //       userInfo: res.userInfo,
+    //       hasUserInfo: true
+    //     })
+    //   }
+    // } else {
+    //   // 在没有 open-type=getUserInfo 版本的兼容处理
+    //   wx.getUserInfo({
+    //     success: res => {
+    //       app.globalData.userInfo = res.userInfo
+    //       this.setData({
+    //         userInfo: res.userInfo,
+    //         hasUserInfo: true
+    //       })
+    //     }
+    //   })
+    // }
+  },
+  methods: {
+    async test() {
+      // 搜索歌曲
+      let musicSearchHelper = MusicManager.getMusicSearchHelper({
+        keyword: 'Abandon',
+        limit: 10
+      })
+      console.log(`现在是第${musicSearchHelper.getCurrentPage()}页`)
+      console.log(await musicSearchHelper.getSearchResult())
+      musicSearchHelper.nextPage()
+      console.log(`现在是第${musicSearchHelper.getCurrentPage()}页`)
+      console.log(await musicSearchHelper.getSearchResult())
+      musicSearchHelper.previousPage()
+      console.log(`现在是第${musicSearchHelper.getCurrentPage()}页`)
+      console.log(await musicSearchHelper.getSearchResult())
+      console.log(musicSearchHelper)
+
+      // 获取歌曲url
+      let songs = await musicSearchHelper.getSearchResult()
+      if (songs.length != 0) {
+        console.log('查找到音乐')
+        let musicId = songs[0].id
+        let musicUrlHelper = MusicManager.getMusicUrlHelper(musicId)
+        console.log(`歌曲的ID是：${musicId}`)
+        let url = await musicUrlHelper.getUrlResult()
+        console.log(`歌曲的url链接是：${url}`)
+      } else {
+        console.log('没有查找到音乐')
+      }
+
+      // 搜索用户
+      // let userSearchHelper = MusicManager.getUserSearchHelper({
+      //   userName: 'JabinGP',
+      //   limit: 20
+      // })
+      // let users = await userSearchHelper.getSearchResult()
+      // console.log(users)
+
+      // 获取用户歌单
+      // let userListHelper = MusicManager.getUserListHelper(users[0].userId)
+      // let iLikeList = await userListHelper.getILikeList()
+      // console.log(iLikeList)
+
+      // 获取我喜欢歌单
+      // let userListDeatilHelper = MusicManager.getUserListDetailHelper(
+      //   iLikeList.id
+      // )
+      // let listDetail = await userListDeatilHelper.getDeatil()
+      // console.log(listDetail)
+      // let timer = 0
+      // for(let song of listDetail.tracks){
+      //   let musicUrlHelper = MusicManager.getMusicUrlHelper(song.id);
+      //   console.log(`歌曲的ID是：${musicUrlHelper.musicId}`);
+      //   let url2 = await musicUrlHelper.getUrlResult();
+      //   console.log(`歌曲的url链接是：${url2}`);
+      //   if(timer++>20)break;
+      // }
+    },
+    // bindViewTap: function() {
+    //   wx.navigateTo({
+    //     url: '../logs/logs'
+    //   })
+    // },
+    // inputMusicName: function(e) {
+    //   console.log(e)
+    //   this.setData({
+    //     musciName: e.detail.value
+    //   })
+    //   console.log(this.data)
+    // },
+    // getUserInfo: function(e) {
+    //   console.log(e)
+    //   app.globalData.userInfo = e.detail.userInfo
+    //   this.setData({
+    //     userInfo: e.detail.userInfo,
+    //     hasUserInfo: true
+    //   })
+    // },
+    openMusic: function() {}
+  },
+  mixins: []
+})
+</script>

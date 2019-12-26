@@ -400,7 +400,11 @@ wepy.page({
 {
 navigationBarTitleText: '',
 usingComponents: {
+<<<<<<< HEAD
  "my-modal": "../components/modal",
+=======
+ 'play-music': '../components/music'
+>>>>>>> 069fc26d21998273cd62c3e0bc94892b12a994b1
 }
 }
 </config>
