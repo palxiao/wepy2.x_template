@@ -18,8 +18,7 @@
   "dependencies": {
     "@wepy/core": "^2.0.0-alpha.9",
     "@wepy/x": "^2.0.2",
-    "miniprogram-slide-view": "0.0.3",
-    "simple-canvas-posters": "^0.2.5"
+    "miniprogram-slide-view": "0.0.3"
   },
   "devDependencies": {
     "@wepy/cli": "^2.0.0-alpha.20",

@@ -1,0 +1,53 @@
+<style lang='less' scoped>
+@import '../../assets/styles/base';
+.header,
+.footer {
+  background-color: #ffffff;
+  width: 100%;
+  z-index: 999;
+  justify-content: space-around;
+  .btn {
+    height: 100%;
+    width: 100%;
+  }
+}
+.header {
+  position: fixed;
+  top: 0;
+  height: 80rpx;
+}
+.footer {
+  height: 100rpx;
+}
+</style>
+<template>
+  <cover-view v-if="is==='head'" class="flex-layout header">
+    <cover-view class="btn flex-layout" @tap="action('preview')">预览</cover-view>
+    <cover-view class="btn flex-layout" @tap="preview">保存</cover-view>
+  </cover-view>
+  <cover-view v-else-if="is==='foot'" class="flex-layout footer">
+    <cover-view class="btn flex-layout">随机</cover-view>
+    <cover-view class="btn flex-layout" @tap="action('editBtn')">编辑</cover-view>
+    <cover-view class="btn flex-layout" @tap="action('changePhoto')">更换背景</cover-view>
+  </cover-view>
+</template>
+<script>
+import wepy from '@wepy/core'
+wepy.component({
+  options: {
+    multipleSlots: true // 在组件定义时的选项中启用多slot支持
+  },
+  props: {
+    is: {}
+  },
+  data: {},
+  computed: {},
+  created() {},
+  methods: {
+    action(fn) {
+      this.$emit('action', fn)
+    },
+  },
+  mixins: []
+})
+</script>

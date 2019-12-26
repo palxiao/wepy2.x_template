@@ -395,7 +395,8 @@ page{
       group: '../components/group',
       "slide-view": "module:miniprogram-slide-view",
       modal: "../components/modal",
-      "my-swiper": "../components/common/Swiper"
+      "my-swiper": "../components/common/Swiper",
+      'play-music': '../components/music'
     }
 }
 </config>

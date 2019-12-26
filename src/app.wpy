@@ -1,5 +1,5 @@
 <style lang="less">
-  @import "./assets/styles/base";
+@import './assets/styles/base';
 .container {
   height: 100%;
   display: flex;
@@ -11,12 +11,11 @@
 </style>
 
 <script>
-import wepy from '@wepy/core';
-import eventHub from './utils/common/eventHub';
-import vuex from '@wepy/x';
+import wepy from '@wepy/core'
+import eventHub from './utils/common/eventHub'
+import vuex from '@wepy/x'
 
-wepy.use(vuex);
-
+wepy.use(vuex)
 
 wepy.app({
   hooks: {
@@ -32,39 +31,37 @@ wepy.app({
   },
 
   onLaunch() {
-    this.testAsync();
+    this.testAsync()
     eventHub.$on('app-launch', (...args) => {
-      console.log('app-launch event emitted, the params are:');
-      console.log(args);
-    });
+      console.log('app-launch event emitted, the params are:')
+      console.log(args)
+    })
     this.bgm = wx.createInnerAudioContext()
   },
   onHide() {
-    console.log('bye-bye');
-    
+    console.log('bye-bye')
   },
   onShow() {
-    console.log('look at me');
+    console.log('look at me')
     if (this.bgm.title) {
-      this.bgm.play();
+      this.bgm.play()
     } else {
       this.bgm.title = 'bgm'
-      this.bgm.src= 'http://m10.music.126.net/20191226000612/578b310d8c89e35215d90bb129a1fe33/ymusic/3c5a/3575/5344/a1224fce59adbdff3d41c31b3a04daa0.mp3'
+      this.bgm.src =
+        'http://m10.music.126.net/20191226000612/578b310d8c89e35215d90bb129a1fe33/ymusic/3c5a/3575/5344/a1224fce59adbdff3d41c31b3a04daa0.mp3'
       // this.bgm.src = 'http://m10.music.126.net/20191225235520/3fa46cb4c6a4615efa11d1255be327da/ymusic/015c/0f59/0e5a/6675cd477783c969f6f69088d744fe0b.mp3'
       // this.bgm.play();
       this.bgm.onPlay(() => {
-        console.log("音乐播放开始");
-      });
+        console.log('音乐播放开始')
+      })
       this.bgm.onEnded(() => {
-        this.bgm.play();
+        this.bgm.play()
       })
     }
-      
   },
 
   methods: {
-
-    sleep (s) {
+    sleep(s) {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           resolve('promise resolved')
@@ -72,12 +69,12 @@ wepy.app({
       })
     },
 
-    async testAsync () {
-      let d = await this.sleep(3);
-      console.log(d);
+    async testAsync() {
+      let d = await this.sleep(3)
+      console.log(d)
     }
   }
-});
+})
 </script>
 <config>
 {
