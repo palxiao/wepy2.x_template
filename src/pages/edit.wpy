@@ -1,14 +1,23 @@
 <template>
-  <div style="overflow:auto;">
-    <button @tap="openEdit">{{showEdit?'end of':'fu*k it'}}</button>
-    <canvas canvas-id="canvas" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
-      <cover-view v-show="showEdit" style="{{'width:100%;height:'+height+'px;'}}" class="maskPanel">
-        <cover-view @tap="edit" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.728+'px;left: '+34*ratio+'px;'}}" class="edit-title"></cover-view>
-      </cover-view>
-    </canvas>
+  <div>
+    <!-- <play-music /> -->
+    <cover-view class="header">
+      <cover-view @tap="preview">预览</cover-view>
+    </cover-view>
     
-    <button @tap="test2">change photo test</button>
-    <button @tap="preview">preview shuqian ohyeah</button>
+    <div class="content">
+      <canvas canvas-id="canvas" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
+        <cover-view v-show="showEdit" style="{{'width:100%;height:'+height+'px;'}}" class="maskPanel">
+          <cover-view @tap="edit" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.728+'px;left: '+34*ratio+'px;'}}" class="edit-title"></cover-view>
+        </cover-view>
+      </canvas>
+    </div>
+
+    <cover-view class="footer">
+      <cover-view>随机</cover-view>
+      <cover-view @tap="openEdit">{{showEdit?'点击编辑':'编辑'}}</cover-view>
+      <cover-view @tap="test2">更换背景</cover-view>
+    </cover-view>
 
     <my-modal :showModalStatus="modelShow" @changeModal="changeModal" title="编辑模式">
       <cover-view slot="test">
@@ -35,7 +44,7 @@ wepy.page({
   },
   //   mixins: [testMixin],
   data: {
-    scale: 1,
+    scale: 0.9,
     width: 375,
     height: 0,
     // num: 66,
@@ -213,7 +222,7 @@ wepy.page({
 
           .drawImage({
             id: 'bg',
-            width: 375 * this.ratio,
+            width: 375 * this.ratio+2,
             height: this.height,
             path: this.temp2,
             referLayer: {
@@ -393,6 +402,30 @@ wepy.page({
     position: absolute;
     border: 2rpx dashed rgba(255,255,255,1);
   }
+}
+.header, .footer {
+  background-color: #ffffff;
+  position: fixed;
+  width: 100%;
+  z-index: 9;
+}
+.header {
+  top: 0;
+  height: 80rpx;
+}
+.footer {
+  bottom: 0;
+  height: 100rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.content {
+  margin: 80rpx 0 100rpx 0;
+  background-color: #d9d9d9;
+  display: flex;
+  justify-content: center;
+  padding: 28rpx 0;
 }
 
 </style>
