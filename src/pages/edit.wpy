@@ -4,11 +4,12 @@
 
     <div class="content">
       <canvas canvas-id="canvas" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
-        <!-- 蒙版 -->
+        <!-- 蒙版 Start -->
         <cover-view v-show="showEdit" style="{{'width:100%;height:'+height+'px;'}}" class="maskPanel">
           <cover-view @tap="edit('title')" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.728+'px;left: '+34*ratio+'px;'}}"
             class="edit-title"></cover-view>
         </cover-view>
+        <!-- 蒙版 End -->
       </canvas>
     </div>
 

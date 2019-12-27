@@ -86,7 +86,7 @@
 import wepy from '@wepy/core';
 import eventHub from '../utils/common/eventHub';
 import { mapState } from '@wepy/x';
-import store from '../store';
+import store from '@/store';
 import testMixin from '../mixins/test';
 import api from '../api'
 
@@ -389,13 +389,13 @@ page{
 {
     navigationBarTitleText: '精图打卡',
     usingComponents: {
-      panel: '~@/components/panel',
-      counter: '~counter',
-      list: '../components/list',
-      group: '../components/group',
+      panel: '~@/components/other/panel',
+      counter: '~@/components/other/counter',
+      list: '~@/components/other/list',
+      group: '~@/components/other/group',
       "slide-view": "module:miniprogram-slide-view",
-      "my-swiper": "../components/common/Swiper",
-      'play-music': '../components/music'
+      "my-swiper": "~@/components/common/Swiper",
+      'play-music': '~@/components/music'
     }
 }
 </config>

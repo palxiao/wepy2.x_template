@@ -16,18 +16,6 @@ import {
       } else return value
     } else return value;
   }
-  function signText(value) {
-    if (value === 'invited') { // 被邀请
-      return '已报名'
-    } else if (value === 'apply') { //已报名
-      return '待通过'
-    } else if (value === 'reject') {
-      return '被拒绝'
-    }
-  }
-  function getConstant(param) {
-    if (Constant[param]) return Constant[param]
-  }
   
   function getCurrentTime() {
     var keep = '';
@@ -43,40 +31,12 @@ import {
     keep = y + '' + m + '' + d + '' + h + '' + f + '' + s;
     return keep; //20160614134947
   }
-  
-  function objLength(input) {
-    var type = toString(input);
-    var length = 0;
-    if (type != "[object Object]") {
-      //throw "输入必须为对象{}！"
-    } else {
-      for (var key in input) {
-        if (key != "number") {
-          length++;
-        }
-  
-      }
-    }
-    return length;
-  }
+
   //验证是否是手机号码
   function vailPhone(number) {
     let flag = false;
     let myreg = /^(((13[0-9]{1})|(14[0-9]{1})|(17[0]{1})|(15[0-3]{1})|(15[5-9]{1})|(18[0-9]{1}))+\d{8})$/;
     if (number.length != 11) {
-      flag = flag;
-    } else if (!myreg.test(number)) {
-      flag = flag;
-    } else {
-      flag = true;
-    }
-    return flag;
-  }
-  //验证是否西班牙手机(6开头 9位数)
-  function ifSpanish(number) {
-    let flag = false;
-    let myreg = /^([6|7|9]{1}(\d+){8})$/;
-    if (number.length != 9) {
       flag = flag;
     } else if (!myreg.test(number)) {
       flag = flag;
@@ -143,21 +103,6 @@ import {
   function replaceMaohao(txt) {
     return txt.replace(/\:/ig, '')
   }
-  //转换星星分数
-  function convertStarArray(score) {
-    //1 全星,0 空星,2半星
-    var arr = []
-    for (var i = 1; i <= 5; i++) {
-      if (score >= i) {
-        arr.push(1)
-      } else if (score > i - 1 && score < i + 1) {
-        arr.push(2)
-      } else {
-        arr.push(0)
-      }
-    }
-    return arr
-  }
   /**
    * 倒计时
    * @param {int} intDiff
@@ -181,30 +126,6 @@ import {
     if (second <= 9) res_second = '0' + res_second;
     var left_time = '剩余' + res_day + res_hour + res_minute + res_second;
     return left_time
-  }
-  /**
-   * 跳转页面
-   * @param {string} url 'order_detail'
-   */
-  function openPage(url, param) {
-    param = param || {}
-    var arr = [];
-    if (!typeof (param) === Object) return false;
-    for (var i in param) {
-      arr.push(i + '=' + param[i]);
-    }
-    arr = arr.join('&');
-    url = url + '?' + arr
-    // console.log(url);
-    // return url;
-    wx.navigateTo({
-      url: url
-    })
-  }
-  //数据转化
-  function formatNumber(n) {
-    n = n.toString()
-    return n[1] ? n : '0' + n
   }
   //格式化时间戳
   function formatTime(number, format) {
@@ -245,135 +166,25 @@ import {
     }
   }
   
-  function getAsUriParameters(data) {
-    var uri = ''
-    for (var i in data) {
-      if (data[i] instanceof Array) {
-        var keyE = encodeURIComponent(i + '[]');
-        for (var j in data[i]) {
-          uri += keyE + '=' + encodeURIComponent(data[i][j]) + '&'
-        }
-      } else if (data[i] instanceof Object) {
-        for (var j in data[i]) {
-          var keyE = encodeURIComponent(i + '[' + j + ']');
-          uri += keyE + '=' + encodeURIComponent(data[i][j]) + '&'
-        }
-      } else {
-        uri += i + '=' + encodeURIComponent(data[i]) + '&'
-      }
-    }
-    return uri
-  };
-  
-  
-  /**
-   * 本地数组搜索工具
-   */
-  function localSearch(groups, search) {
-    // console.log(groups,search)
-    //防止干扰，深拷贝对象
-    groups = JSON.parse(JSON.stringify(groups))
-  
-    if (isArray(groups)) {
-      //新的联系人组
-      let newGroups = []
-      groups.forEach(group => {
-        //遍历联系人组
-        let users = group.users
-        //搜索后的联系人
-        let newUsers = []
-        if (isArray(users)) {
-          //遍历联系人组中的联系人
-          users.forEach(user => {
-            //判断是否显示联系人
-            if (isShowUser(user, search)) {
-              newUsers.push(user)
-            }
-          })
-          group.users = newUsers
-        }
-        //存在联系人添加到联系人组
-        if (newUsers.length > 0) {
-          newGroups.push(group)
-        }
-  
-      })
-      return newGroups
-    }
-    return groups
-  }
-  /**
-   * 根据条件判断是否显示联系人
-   */
-  function isShowUser(user, search) {
-    user.showTel1 = false
-    user.showTel2 = false
-    user.showTel3 = false
-    if (!search.name) {
-      return true
-    }
-    //name文字匹配
-    if (search.name && search.name.length > 0 && user.name.indexOf(search.name) >= 0) {
-      return true
-    }
-    //中文全拼字母匹配
-    let pyletter = user.pingyin
-    if (pyletter && pyletter.length > 0 && pyletter.toUpperCase().indexOf(search.name.toUpperCase()) >= 0) {
-      return true
-    }
-    //中文全拼字母匹配
-    pyletter = user.pyFirstLetter
-    if (pyletter && pyletter.length > 0 && pyletter.toUpperCase().indexOf(search.name.toUpperCase()) >= 0) {
-      return true
-    }
-    //手机号搜索
-    if (user.tel1 && user.tel1.indexOf(search.name) >= 0) {
-      user.showTel1 = true
-      user.showTel2 = false
-      user.showTel3 = false
-      return true
-    }
-    if (user.tel2 && user.tel2.indexOf(search.name) >= 0) {
-      user.showTel1 = false
-      user.showTel2 = true
-      user.showTel3 = false
-      return true
-    }
-    if (user.tel3 && user.tel3.indexOf(search.name) >= 0) {
-      user.showTel1 = false
-      user.showTel2 = false
-      user.showTel3 = true
-      return true
-    }
-    return false
-  }
   /**
    * 判断是否是数组
    */
-  function isArray(o) {
-    return Object.prototype.toString.call(o) == '[object Array]';
-  }
+  // function isArray(o) {
+  //   return Object.prototype.toString.call(o) == '[object Array]';
+  // }
   
   module.exports = {
     getCurrentTime: getCurrentTime,
-    objLength: objLength,
     displayProp: displayProp,
     sTrim: sTrim,
     replaceMaohao: replaceMaohao,
     vailPhone: vailPhone,
-    ifSpanish: ifSpanish,
     div: div,
     mul: mul,
     accAdd: accAdd,
-    convertStarArray: convertStarArray,
     timer: timer,
-    openPage: openPage,
     formatTime: formatTime,
     clipBoard: clipBoard,
     fullImg: fullImg,
-    getAsUriParameters,
-    localSearch: localSearch,
-    getConstant: getConstant,
-    signText: signText
   }
   
