@@ -9,6 +9,7 @@ export default {
         width: 375,
         height: 0,
         showEdit: false,
+        showEditModal: false,
     },
     methods: {
         /**
@@ -68,6 +69,12 @@ export default {
                 }
             });
         },
+        /**
+         * 打开编辑框
+         */
+        edit() {
+            this.showEditModal = true;
+          },
     },
     created() {
         wx.showLoading()

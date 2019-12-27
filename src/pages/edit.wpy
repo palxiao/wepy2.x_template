@@ -4,6 +4,7 @@
 
     <div class="content">
       <canvas canvas-id="canvas" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
+        <!-- 蒙版 -->
         <cover-view v-show="showEdit" style="{{'width:100%;height:'+height+'px;'}}" class="maskPanel">
           <cover-view @tap="edit" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.728+'px;left: '+34*ratio+'px;'}}"
             class="edit-title"></cover-view>
@@ -11,14 +12,8 @@
       </canvas>
     </div>
 
-    <my-menu is="foot" @action="menuAction"></my-menu>
-
-<!-- TODO 抽取到组件中 -->
-    <my-modal :showModalStatus="modelShow" @changeModal="changeModal" title="编辑模式">
-      <cover-view slot="test">
-        <input v-model="title" class="weui-input" :focus="focus" />
-      </cover-view>
-    </my-modal>
+    <my-menu is="foot" :showModal="showEditModal" @modalReturn="editModalChange" @action="menuAction"></my-menu>
+    
   </div>
 </template>
  
@@ -28,6 +23,7 @@ import store from '@/store'
 import editMixin from '@/mixins/edit'
 import api from '@/api'
 import SimpleCanvas from '@/utils/plugins/canvasTool'
+import eventHub from '@/utils/common/eventHub';
 
 wepy.page({
   store,
@@ -47,10 +43,7 @@ wepy.page({
     pre_height: 0,
 
     title: `扑街`,
-
-    ////////
-    modelShow: false,
-    focus: false
+    
   },
 
   created() {},
@@ -58,18 +51,12 @@ wepy.page({
   computed: {},
 
   methods: {
-    edit() {
-      this.modelShow = true
-      setTimeout(() => {
-        this.focus = true
-      }, 100)
-    },
-    changeModal(e) {
-      this.draw()
-      setTimeout(() => {
-        this.modelShow = e
-        this.focus = false
-      }, 100)
+    
+    editModalChange(e) {
+      console.log(e);
+      
+      this.showEditModal = false
+        // this.draw()
     },
     async draw() {
       const _this = this
@@ -206,7 +193,6 @@ wepy.page({
 {
 navigationBarTitleText: '',
   usingComponents: {
-    "my-modal": "../components/modal",
     "my-menu": "../components/EditorMenu",
   }
 }

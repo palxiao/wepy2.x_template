@@ -21,6 +21,7 @@
 }
 </style>
 <template>
+<div>
   <cover-view v-if="is==='head'" class="flex-layout header">
     <cover-view class="btn flex-layout" @tap="action('preview')">预览</cover-view>
     <cover-view class="btn flex-layout" @tap="preview">保存</cover-view>
@@ -30,24 +31,59 @@
     <cover-view class="btn flex-layout" @tap="action('editBtn')">编辑</cover-view>
     <cover-view class="btn flex-layout" @tap="action('changePhoto')">更换背景</cover-view>
   </cover-view>
+
+  <my-modal :showModalStatus="modelShow" @changeModal="changeModal" title="编辑模式">
+      <cover-view slot="test">
+        <input v-model="title" class="weui-input" :focus="focus" />
+      </cover-view>
+    </my-modal>
+</div>
+  
 </template>
 <script>
-import wepy from '@wepy/core'
+import wepy from '@wepy/core';
+import eventHub from '@/utils/common/eventHub';
 wepy.component({
   options: {
     multipleSlots: true // 在组件定义时的选项中启用多slot支持
   },
   props: {
-    is: {}
+    is: {},
+    showModal: Boolean
   },
-  data: {},
+  data: {
+    modelShow: false,
+    focus: false
+  },
   computed: {},
-  created() {},
+  created() {
+    
+  },
   methods: {
     action(fn) {
-      this.$emit('action', fn)
+      this.$emit('action', fn);
     },
+    changeModal(e) {
+      this.modelShow = e
+      this.focus = false
+      this.$emit('modalReturn',1111)
+    }
+  },
+  watch: {
+    showModal(val) {
+      this.modelShow = true
+      setTimeout(() => {
+        this.focus = true
+      }, 100)
+    }
   },
   mixins: []
-})
+});
 </script>
+<config>
+{
+  usingComponents: {
+    "my-modal": "../../components/common/Modal",
+  }
+}
+</config>

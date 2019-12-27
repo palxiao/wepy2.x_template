@@ -1,4 +1,5 @@
 <style lang='less' scoped>
+@import '../../assets/styles/base';
 .btn {
   width: 80%;
   padding: 20rpx 0;
@@ -61,7 +62,9 @@
 }
 .button-div {
   display: flex;
-  margin-top: 50rpx;
+  justify-content: space-around;
+  margin-top: 38rpx;
+  height: 70rpx;
   > view {
     flex: 5;
     padding: 10px;
@@ -70,9 +73,10 @@
     border-top: 1px solid #e8e8ea;
   }
   .btn_no {
-    border-right: 1px solid #e8e8ea;
+    width: 100%;
   }
   .btn_yes {
+    width: 100%;
     color: #3cc51f;
   }
 }
@@ -94,7 +98,7 @@
           wx:key="index"
           bind
           wx:if="{{index <= 1}}"
-          class="{{index == 0 ? 'btn_no' : 'btn_yes'}}"
+          class="flex-layout {{index == 0 ? 'btn_no' : 'btn_yes'}}"
           @tap="changeStatus(index == 0 ? 'no' : 'yes')"
         >{{item}}</cover-view>
       </cover-view>
