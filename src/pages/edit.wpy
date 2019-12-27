@@ -50,7 +50,6 @@ wepy.page({
   computed: {},
 
   methods: {
-    
     async draw() {
       wx.showLoading()
       const _this = this
@@ -84,7 +83,7 @@ wepy.page({
         })
         .drawWrapText({
           id: 'start',
-          text: '',
+          text: ' ',
           fontSize: 0,
           top: 0
         })
@@ -122,24 +121,12 @@ wepy.page({
         .drawWrapText({
           id: '#contect',
           fontSize: 16,
-          left: 40,
-          width: 300,
-          text: `开始旅程吧，不要管前路在何方`,
+          left: 40 * this.ratio,
+          width: 230 *this.ratio,
+          text: `开始旅程吧，不要管前路在在何方开始旅程吧，不要管前路在何方`,
           referLayer: {
             id: 'bg',
             top: -120
-          }
-        })
-        .drawWrapText({
-          id: '#demo',
-          fontSize: 12,
-          left: 230,
-          width: 200,
-          text: `(*/ω＼*) 每日打卡demo`,
-          color: '#999',
-          referLayer: {
-            id: 'bg',
-            top: -250
           }
         })
 
@@ -148,7 +135,7 @@ wepy.page({
           this.createPic(this)
         }, 10)
       })
-    },
+    }
   },
   events: {}
 })
