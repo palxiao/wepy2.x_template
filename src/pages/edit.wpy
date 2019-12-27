@@ -6,14 +6,14 @@
       <canvas canvas-id="canvas" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
         <!-- 蒙版 -->
         <cover-view v-show="showEdit" style="{{'width:100%;height:'+height+'px;'}}" class="maskPanel">
-          <cover-view @tap="edit" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.728+'px;left: '+34*ratio+'px;'}}"
+          <cover-view @tap="edit('title')" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.728+'px;left: '+34*ratio+'px;'}}"
             class="edit-title"></cover-view>
         </cover-view>
       </canvas>
     </div>
 
-    <my-menu is="foot" :showModal="showEditModal" @modalReturn="editModalChange" @action="menuAction"></my-menu>
-    
+    <my-menu is="foot" :showModal="showEditModal" :text="editText" @modalReturn="editModalChange" @action="menuAction"></my-menu>
+
   </div>
 </template>
  
@@ -23,7 +23,7 @@ import store from '@/store'
 import editMixin from '@/mixins/edit'
 import api from '@/api'
 import SimpleCanvas from '@/utils/plugins/canvasTool'
-import eventHub from '@/utils/common/eventHub';
+import eventHub from '@/utils/common/eventHub'
 
 wepy.page({
   store,
@@ -33,17 +33,15 @@ wepy.page({
   // },
   mixins: [editMixin],
   data: {
-    
     temp: '../assets/images/T-00-00.png',
-    temp2: '../assets/images/T-00-01.png',
-    
+    bgImg: '../assets/images/T-00-01.png',
+
     bg_width_original: 0,
     bg_height_original: 0,
     pre_width: 0,
     pre_height: 0,
 
-    title: `扑街`,
-    
+    title: `扑街`
   },
 
   created() {},
@@ -52,13 +50,8 @@ wepy.page({
 
   methods: {
     
-    editModalChange(e) {
-      console.log(e);
-      
-      this.showEditModal = false
-        // this.draw()
-    },
     async draw() {
+      wx.showLoading()
       const _this = this
 
       if (this.bg_width_original === 0) {
@@ -98,7 +91,7 @@ wepy.page({
           id: 'bg',
           width: 375 * this.ratio + 2,
           height: this.height,
-          path: this.temp2,
+          path: this.bgImg,
           referLayer: {
             id: 'start',
             top: 0
@@ -154,20 +147,6 @@ wepy.page({
           this.createPic(this)
         }, 10)
       })
-    },
-
-    menuAction(fn) { // TODO 抽取到mixin
-      switch (fn) {
-        case 'preview':
-          this.preview()
-          break
-        case 'editBtn':
-          this.showEdit = !this.showEdit
-          break
-        case 'changePhoto':
-          this.changePhoto('temp2')
-          break
-      }
     },
   },
   events: {}

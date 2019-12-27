@@ -1,5 +1,8 @@
 <style lang='less' scoped>
-@import '../../assets/styles/base';
+.noflex-layout {
+  text-align: center;
+  line-height: 68rpx;
+}
 .btn {
   width: 80%;
   padding: 20rpx 0;
@@ -40,7 +43,7 @@
   text-align: center;
 }
 .drawer_content {
-  max-height: 420rpx;
+  height: 200rpx;
   overflow-y: scroll; /*超出父盒子高度可滚动*/
   padding: 20rpx;
   .item {
@@ -83,45 +86,39 @@
 </style>
 <template>
   <!--使用animation属性指定需要执行的动画-->
-  <cover-view wx:if="{{showModalStatus}}" class="drawer_screen">
+  <cover-view wx:if="{{show}}" class="drawer_screen">
     <cover-view animation="{{animationData}}" class="drawer_box">
       <!-- <view class="drawer_screen"> -->
       <!--drawer content-->
       <cover-view class="drawer_title">{{title || '系统提示'}}</cover-view>
       <cover-view class="drawer_content">
-        <cover-view wx:for="{{modalData.content}}" wx:key="index" class="item">{{item}}</cover-view>
+        <!-- <cover-view wx:for="{{modalData.content}}" wx:key="index" class="item">{{item}}</cover-view> -->
         <slot name="test"></slot>
       </cover-view>
       <cover-view class="button-div">
-        <cover-view
-          wx:for="{{modalData.button}}"
-          wx:key="index"
-          bind
-          wx:if="{{index <= 1}}"
-          class="flex-layout {{index == 0 ? 'btn_no' : 'btn_yes'}}"
-          @tap="changeStatus(index == 0 ? 'no' : 'yes')"
-        >{{item}}</cover-view>
+        <cover-view v-for="(item, index) in modalData.button" :key="index" class="noflex-layout {{index == 0 ? 'btn_no' : 'btn_yes'}}"
+          @tap="changeStatus(index)">{{item}}</cover-view>
       </cover-view>
     </cover-view>
   </cover-view>
 </template>
 <script>
-import wepy from '@wepy/core';
+import wepy from '@wepy/core'
 wepy.component({
   options: {
     multipleSlots: true // 在组件定义时的选项中启用多slot支持
   },
   props: {
-    showModalStatus: {
+    show: {
       type: Boolean,
       default: false,
       twoWay: true
     },
-    currentStatu: {
-      type: String,
-      default: 'no',
-      twoWay: true
-    },
+    // currentStatu: {
+    //   type: String,
+    //   default: 'no',
+    //   twoWay: true
+    // },
     modalData: {
       type: Object,
       default: {
@@ -138,24 +135,21 @@ wepy.component({
   },
   methods: {
     changeStatus(status) {
-      // console.log(status);
-      let that = this;
-      // that.showModalStatus = false;
-      that.currentStatu = status;
-      this.$emit('changeModal', false);
-      // that.$apply();
+      // that.show = false;
+      // this.currentStatu = status;
+      this.$emit('changeModal', status)
       // that.animate();
     },
     animate() {
-      let that = this;
+      let that = this
       let animation = wx.createAnimation({
-        duration: 200, //动画时长
-        timingFunction: 'linear', //线性
-        delay: 0 //0则不延迟
-      });
+        duration: 200, // 动画时长
+        timingFunction: 'linear', // 线性
+        delay: 0 // 0则不延迟
+      })
 
       // 第2步：这个动画实例赋给当前的动画实例
-      that.animation = animation;
+      that.animation = animation
 
       // that.$apply();
 
@@ -163,10 +157,10 @@ wepy.component({
       animation
         .opacity(0)
         .rotateX(-100)
-        .step();
+        .step()
 
       // 第4步：导出动画对象赋给数据对象储存
-      that.animationData = animation.export();
+      that.animationData = animation.export()
 
       // 第5步：设置定时器到指定时候后，执行第二组动画
       setTimeout(function() {
@@ -174,20 +168,19 @@ wepy.component({
         animation
           .opacity(1)
           .rotateX(0)
-          .step();
+          .step()
         // 给数据对象储存的第一组动画，更替为执行完第二组动画的动画对象
-        that.animationData = animation;
+        that.animationData = animation
         // that.$apply();
-      }, 200);
+      }, 200)
     }
   },
 
   watch: {
-    showModalStatus(val) {
-      let that = this;
+    show(val) {
+      let that = this
       // that.animate();
-      console.log(val);
     }
   }
-});
+})
 </script>

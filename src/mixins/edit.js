@@ -10,6 +10,8 @@ export default {
         height: 0,
         showEdit: false,
         showEditModal: false,
+        editText: '',
+        editFlag: ''
     },
     methods: {
         /**
@@ -57,6 +59,9 @@ export default {
          * 更换背景图片
          */
         changePhoto(name) {
+            if (!name) {
+                name = 'bgImg'
+            }
             const _this = this;
             wx.chooseImage({
                 count: 1,
@@ -72,12 +77,32 @@ export default {
         /**
          * 打开编辑框
          */
-        edit() {
+        edit(e) {
+            this.editFlag = e
+            this.editText = this[e]
             this.showEditModal = true;
-          },
+        },
+        /**
+         * 关闭modal重新渲染
+         */
+        editModalChange(args) {
+            if (args.index === 1) {
+                this[this.editFlag] = args.text
+                this.draw()
+            }
+            this.showEditModal = false
+        },
+        /**
+         * 菜单动作
+         */
+        menuAction(fn) {
+            this[fn]()
+        },
+        editBtn() {
+            this.showEdit = !this.showEdit
+        }
     },
     created() {
-        wx.showLoading()
         try {
             const res = wx.getSystemInfoSync();
             this.wWidth = res.windowWidth
