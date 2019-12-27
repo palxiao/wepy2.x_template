@@ -171,7 +171,7 @@ wepy.page({
 </style>
 <config>
 {
-navigationBarTitleText: '',
+navigationBarTitleText: '编辑图签',
   usingComponents: {
     "my-menu": "../components/EditorMenu",
   }

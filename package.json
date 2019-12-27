@@ -10,15 +10,13 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "wepy": {
-    "module-a": false,
-    "./src/components/list": "./src/components/wepy-list.wpy"
+    "module-a": false
   },
   "author": "ShawnPhang",
   "license": "MIT",
   "dependencies": {
     "@wepy/core": "^2.0.0-alpha.9",
-    "@wepy/x": "^2.0.2",
-    "miniprogram-slide-view": "0.0.3"
+    "@wepy/x": "^2.0.2"
   },
   "devDependencies": {
     "@wepy/cli": "^2.0.0-alpha.20",

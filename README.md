@@ -36,6 +36,12 @@ wepy.page({
     ....
 })
 // 用法与Vuex一致
+  import { mapState, mapActions } from '@wepy/x';
+  
+    // computed: mapState([ 'xxx' ]), // 对应 mutations
+    // methods: {
+    //    ...mapActions(['xxx','xxx']) // 对应 actions
+    // }
 ```
 
 #### 自带事件广播
@@ -82,5 +88,3 @@ vscode创建页面/组件的模板快捷指令
 封装httpRequest
 
 补充小程序缺少的自定义modal模态对话框组件(完善中)
-
-
