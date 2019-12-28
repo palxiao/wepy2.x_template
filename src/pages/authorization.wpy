@@ -1,0 +1,103 @@
+<template>
+    <div class="container">
+        <view class="flex_column">
+            <view class="au_t0">需要使用你的微信昵称和头像</view>
+            <button
+                open-type="getUserInfo"
+                lang="zh_CN"
+                bindgetuserinfo="onGotUserInfo"
+                class="au_btn hit_active"
+            >点击进入</button>
+            <view class="quxiao" bindtap="quxiao">取消</view>
+        </view>
+    </div>
+</template>
+ 
+<script>
+import wepy from '@wepy/core';
+// import eventHub from '@/utils/common/eventHub';
+// import store from '@/store';
+// import testMixin from '@/mixins/test';
+// import api from '@/api';
+
+wepy.page({
+  // store,
+
+  hooks: {
+    // Page 级别 hook, 只对当前 Page 的 setData 生效。
+  },
+  //   mixins: [testMixin],
+  data: {},
+
+  created() {},
+
+  computed: {},
+
+  methods: {
+    onGotUserInfo: e => {
+      console.log(e.$wx.detail.userInfo);
+      wx.navigateTo({
+        url: 'index' // 跳转编辑
+      });
+    },
+    quxiao() {
+      wx.navigateBack({
+        delta: 1
+      });
+    }
+  },
+  events: {}
+});
+</script>
+ 
+<style lang='less' scoped>
+.au_img0 {
+  width: 144rpx;
+  height: 144rpx;
+  margin-top: 287rpx;
+}
+
+.au_t0 {
+  margin-top: 40rpx;
+  font-size: 28rpx;
+  color: #333;
+  letter-spacing: 1.08rpx;
+  text-align: center;
+  line-height: 40rpx;
+}
+
+.au_btn {
+  margin-top: 110rpx;
+  height: 88rpx;
+  width: 524rpx;
+  text-align: center;
+  line-height: 88rpx;
+  background: #f64d4a;
+  color: white;
+  font-family: PingFangSC-Medium;
+  font-size: 30rpx;
+  letter-spacing: 1.15rpx;
+  background-image: linear-gradient(
+    -224deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(112, 112, 112, 0.1) 50%
+  );
+  border-radius: 44rpx;
+}
+
+.quxiao {
+  margin-top: 40rpx;
+  font-size: 26rpx;
+  color: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  text-align: center;
+}
+</style>
+<config>
+{
+navigationBarTitleText: '制作图签',
+  usingComponents: {
+  
+  }
+}
+</config>

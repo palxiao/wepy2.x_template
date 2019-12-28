@@ -1,5 +1,5 @@
 
-
+import { savePhoto } from '@/utils';
 export default {
     data: {
         wWidth: 0,
@@ -11,7 +11,12 @@ export default {
         showEdit: false,
         showEditModal: false,
         editText: '',
-        editFlag: ''
+        editFlag: '',
+        avatarUrl: '',
+        nickName: '',
+        year: new Date().getFullYear(),
+        month: new Date().getMonth() + 1,
+        day: new Date().getDate()
     },
     methods: {
         /**
@@ -38,6 +43,10 @@ export default {
                 urls // 需要预览的图片http链接列表
             })
         },
+        save() {
+            savePhoto(this.previewPic)
+        },
+
         /**
          * 生成canvas描述的图片
          */
@@ -103,6 +112,8 @@ export default {
         }
     },
     created() {
+        this.avatarUrl = this.$app.$options.globalData.userInfo.avatarUrl
+        this.nickName = this.$app.$options.globalData.userInfo.nickName
         try {
             const res = wx.getSystemInfoSync();
             this.wWidth = res.windowWidth
@@ -113,5 +124,7 @@ export default {
             // Do something when catch error
         }
         this.draw();
+        console.log(this.year, this.month, this.day);
+        
     },
 }

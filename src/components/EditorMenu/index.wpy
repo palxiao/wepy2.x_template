@@ -92,7 +92,7 @@
   <div>
     <cover-view v-if="is==='head'" class="noflex-layout header">
       <cover-view class="btn noflex-layout" @tap="action('preview')">预览</cover-view>
-      <cover-view class="btn noflex-layout" @tap="preview">保存</cover-view>
+      <cover-view class="btn noflex-layout" @tap="action('save')">保存</cover-view>
     </cover-view>
     <cover-view v-else-if="is==='foot'" class="noflex-layout footer">
       <cover-view class="btn noflex-layout">随机</cover-view>

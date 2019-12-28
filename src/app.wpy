@@ -57,7 +57,8 @@ wepy.app({
 {
     pages: [
       'pages/index',
-      'pages/edit'
+      'pages/T0',
+      'pages/authorization',
     ],
     window: {
       backgroundTextStyle: 'light',

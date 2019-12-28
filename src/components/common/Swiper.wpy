@@ -31,6 +31,7 @@ wepy.component({
   methods: {
     swiperChange(e) {
       this.currentIndex = e.$wx.detail.current
+      this.$emit('change', this.currentIndex)
     }
   },
 

@@ -3,24 +3,25 @@
 <template>
   <div class="container">
 
-    <button open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">
+    <button class="content" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">
       <div class="userinfo">
         <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover" />
         <div class="userinfo-nickname">{{ userInfo.nickName }}</div>
       </div>
     </button>
-    <my-swiper @tap="testEdit" :imgUrls="imgUrls" />
+
+    <my-swiper @tap="openEditor" @change="swiperChange" :imgUrls="imgUrls" />
 
   </div>
 </template>
 
 <script>
-import wepy from '@wepy/core'
-import eventHub from '../utils/common/eventHub'
-import { mapState } from '@wepy/x'
-import store from '@/store'
+import wepy from '@wepy/core';
+import eventHub from '../utils/common/eventHub';
+import { mapState } from '@wepy/x';
+import store from '@/store';
 // import testMixin from '../mixins/test';
-import api from '@/api'
+import api from '@/api';
 
 wepy.page({
   store,
@@ -32,12 +33,13 @@ wepy.page({
   // mixins: [testMixin],
 
   data: {
+    swiperIndex: 0,
     userInfo: {
-      nickName: '加载中...'
+      nickName: '选择一个模板开始..'
     },
     imgUrls: [
-      '../../assets/images/q01.png',
       '../../assets/images/q02.png',
+      '../../assets/images/q01.png',
       '../../assets/images/q00.png'
     ]
   },
@@ -47,34 +49,41 @@ wepy.page({
     //   console.log(res);
     // })
 
-    let self = this
-
-    wx.getUserInfo({
-      success(res) {
-        self.userInfo = res.userInfo
-      },
-      fail(e) {
-        console.log(e)
-      }
-    })
+    this.getUser();
   },
 
   computed: {
-    ...mapState(['counter']),
+    ...mapState(['counter'])
   },
 
   methods: {
-    onGotUserInfo: e => {
-      console.log(e.$wx.detail.userInfo)
+    getUser() {
+      const _this = this;
+      wx.getUserInfo({
+        success(res) {
+          _this.userInfo = res.userInfo;
+          _this.$app.$options.globalData.userInfo = res.userInfo;
+        }
+      });
     },
-    testEdit() {
-      wx.navigateTo({
-        url: 'edit' // 跳转地址
-      })
+    onGotUserInfo: e => {},
+    swiperChange(index) {
+      this.swiperIndex = index;
+    },
+    openEditor() {
+      if (this.$app.$options.globalData.userInfo) {
+        wx.navigateTo({
+          url: 'T' + this.swiperIndex // 跳转编辑
+        });
+      } else {
+        wx.navigateTo({
+          url: 'authorization' // 授权
+        });
+      }
     }
   },
   events: {}
-})
+});
 </script>
 <style lang="less">
 @import url('../assets/styles/index.less');

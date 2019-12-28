@@ -185,6 +185,47 @@ function getAsUriParameters(data) {
   }
   return uri
 };
+function savePhoto(url) {
+  wx.saveImageToPhotosAlbum({
+    filePath: url,
+    success: () => {
+      wx.showToast({
+        title: title || '保存成功',
+        icon: 'success',
+      })
+    },
+    fail: res => {
+      if (res.errMsg == 'saveImageToPhotosAlbum:fail cancel') {
+        return;
+      }
+      authorize(() => {
+        openSetting() // 失败打开设置
+      })
+    }
+  })
+}
+function authorize(cb) {
+  wx.authorize({
+    scope: "scope.writePhotosAlbum",
+    success() {
+      savePhoto()
+    },
+    fail() {
+      if (cb) { cb() } // 失败回调
+    }
+  })
+}
+function openSetting() {
+  wx.showModal({
+    title: '确定提示',
+    content: '需要打开小程序授权保存到相册',
+    success(res) {
+      if (res.confirm) {
+        wx.openSetting({})
+      }
+    }
+  })
+}
 
 /**
  * 判断是否是数组
@@ -206,5 +247,6 @@ module.exports = {
   formatTime: formatTime,
   clipBoard: clipBoard,
   fullImg: fullImg,
-  getAsUriParameters
+  getAsUriParameters,
+  savePhoto
 }

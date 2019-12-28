@@ -160,7 +160,11 @@ var SimpleCanvas = (function () {
         ctx.setFontSize(fontSize);
         for (var a = 0; a < chr.length; a += 1) {
             if (ctx.measureText(temp).width < width) {
-                temp += chr[a];
+                
+                if (chr[a] == '|') {
+                    row.push(temp);
+                    temp = '';
+                }else temp += chr[a];
             }
             else {
                 a -= 1;
