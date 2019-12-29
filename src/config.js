@@ -6,7 +6,6 @@
  * 服务器地址
  * @type {String}
  */
-// export const API_URL = "https://xinhui.bicobrand.com/";
 export const API_URL = "https://www.madcoder.cn/tests/";
 
 /**

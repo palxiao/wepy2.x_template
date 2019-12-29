@@ -110,7 +110,7 @@ var SimpleCanvas = (function () {
     };
     SimpleCanvas.prototype.drawImage = function (layer) {
         var _a = relativePosition.call(this, layer), left = _a.left, top = _a.top, path = _a.path, width = _a.width, height = _a.height, mode = _a.mode, sWidth = _a.sWidth, sHeight = _a.sHeight;
-        var _b = this, ctx = _b.ctx, scale = _b.scale;
+        var _b = this, ctx = _b.ctx, scale = _b.scale;        
         if (mode && mode === 'center') {
             var sLeft = 0;
             var sTop = 0;
@@ -186,7 +186,7 @@ var SimpleCanvas = (function () {
         return this;
     };
     SimpleCanvas.prototype.draw = function (complete) {
-        var ctx = this.ctx;        
+        var ctx = this.ctx;
         ctx.draw(false, function () {
             complete && complete();
         });

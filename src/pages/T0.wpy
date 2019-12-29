@@ -4,16 +4,16 @@
 
     <div class="content">
       <canvas canvas-id="canvas" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
-        
+
         <cover-view v-show="showEdit" style="{{'width:100%;height:'+height+'px;'}}" class="maskPanel">
           <!-- 蒙版 Start -->
           <cover-view @tap="edit('title')" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.61+'px;left: '+34*ratio+'px;'}}"
             class="edit-title"></cover-view>
           <cover-view @tap="edit('desc')" style="{{'width:'+180+'px;height:'+50+'px;top: '+height*0.7+'px;left: '+34*ratio+'px;'}}"
-          class="edit-title"></cover-view>
+            class="edit-title"></cover-view>
           <!-- 蒙版 End -->
         </cover-view>
-       
+
       </canvas>
     </div>
 
@@ -38,8 +38,8 @@ wepy.page({
   // },
   mixins: [editMixin],
   data: {
-    temp: '../assets/images/T-00-00.png',
-    bgImg: '../assets/images/T-00-01.png',
+    temp: 'cloud://daka.6461-daka-1301019118/T-00-00.png',
+    bgImg: 'cloud://daka.6461-daka-1301019118/T-00-01.png',
 
     bg_width_original: 0,
     bg_height_original: 0,
@@ -50,9 +50,7 @@ wepy.page({
     desc: '那就远去吧，|我即将逝去的 2019。'
   },
 
-  created() {
-    
-  },
+  created() {},
 
   computed: {},
 
@@ -62,20 +60,22 @@ wepy.page({
       const _this = this
 
       if (this.bg_width_original === 0) {
-        const bgImg = await this.downloadSome('../assets/images/T-00-01.png')
+        const bgImg = await this.downloadCloud(this.bgImg)
+        this.bgImg = bgImg.path
         _this.bg_width_original = bgImg.width
         _this.bg_height_original = bgImg.height
         _this.height = parseInt((bgImg.height * _this.wWidth) / bgImg.width)
       }
 
       if (this.pre_width === 0) {
-        const preImg = await this.downloadSome('../assets/images/T-00-00.png')
+        const preImg = await this.downloadCloud(this.temp)
+        this.temp = preImg.path
         _this.pre_width =
           (preImg.width * _this.wWidth) / _this.bg_width_original
         _this.pre_height = parseInt(
           (preImg.height * _this.pre_width) / preImg.width
         )
-        
+
         const localAvatart = await this.downloadSome(this.avatarUrl)
         this.avatarUrl = localAvatart.path
       }
@@ -91,7 +91,7 @@ wepy.page({
           width: this.width * this.ratio,
           height: this.height
         })
-        
+
         .drawWrapText({
           id: 'start',
           text: ' ',
@@ -122,9 +122,9 @@ wepy.page({
         .drawCircleImage({
           id: 'avatar',
           path: this.avatarUrl,
-          left: 40*this.ratio,
+          left: 40 * this.ratio,
           d: 50,
-          top: 380*this.ratio
+          top: 380 * this.ratio
           // referLayer: {
           //   id: 'bg',
           //   top: 280
@@ -133,52 +133,52 @@ wepy.page({
         .drawWrapText({
           id: '#nickname',
           fontSize: 14,
-          top: 385 *this.ratio,
+          top: 385 * this.ratio,
           text: this.nickName,
           referLayer: {
             id: 'avatar',
-            left: 16*this.ratio
+            left: 16 * this.ratio
           }
         })
         .drawWrapText({
           id: '#guanjianci',
           fontSize: 14,
           color: '#999',
-          top: 406*this.ratio,
+          top: 406 * this.ratio,
           text: '我今天的关键词是',
           referLayer: {
             id: 'avatar',
-            left: 16*this.ratio
+            left: 16 * this.ratio
           }
         })
         .drawWrapText({
           id: '#month',
-          text: '十二月',
+          text: this.monthStr,
           fontSize: 16,
-          left: 290*this.ratio,
+          left: 290 * this.ratio,
           referLayer: {
             id: 'bg',
-            top: -(284*this.ratio)
+            top: -(284 * this.ratio)
           }
         })
         .drawWrapText({
           id: '#day',
-          text: '28',
+          text: this.day,
           fontSize: 38,
-          left: 292*this.ratio,
+          left: 292 * this.ratio,
           referLayer: {
             id: 'bg',
-            top: -(268*this.ratio)
+            top: -(268 * this.ratio)
           }
         })
         .drawWrapText({
           id: '#year',
-          text: '2019',
+          text: this.year,
           fontSize: 18,
-          left: 295*this.ratio,
+          left: 295 * this.ratio,
           referLayer: {
             id: 'bg',
-            top: -(226*this.ratio)
+            top: -(226 * this.ratio)
           }
         })
         .drawWrapText({
@@ -188,7 +188,7 @@ wepy.page({
           text: this.title,
           referLayer: {
             id: 'bg',
-            top: -(210*this.ratio)
+            top: -(210 * this.ratio)
           }
         })
         .drawWrapText({
@@ -196,11 +196,11 @@ wepy.page({
           fontSize: 16,
           lineHeight: 6,
           left: 40 * this.ratio,
-          width: 230 *this.ratio,
+          width: 230 * this.ratio,
           text: this.desc,
           referLayer: {
             id: 'bg',
-            top: -(150*this.ratio)
+            top: -(150 * this.ratio)
           }
         })
 
@@ -208,6 +208,12 @@ wepy.page({
         setTimeout(() => {
           this.createPic(this)
         }, 10)
+      })
+    },
+    randomText() {
+      api.hitokoto().then(res => {
+        this.desc = res.hitokoto
+        this.draw()
       })
     }
   },

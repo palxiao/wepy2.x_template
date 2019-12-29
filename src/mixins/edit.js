@@ -1,5 +1,8 @@
 
-import { savePhoto } from '@/utils';
+import { savePhoto, dateConversion, getImageInfo } from '@/utils';
+// import * as api from '@/api'
+const nowDay = new Date().getDate() + ''
+const nowMonth = (new Date().getMonth() + 1) + ''
 export default {
     data: {
         wWidth: 0,
@@ -14,9 +17,10 @@ export default {
         editFlag: '',
         avatarUrl: '',
         nickName: '',
-        year: new Date().getFullYear(),
-        month: new Date().getMonth() + 1,
-        day: new Date().getDate()
+        year: new Date().getFullYear() + '',
+        month: nowMonth.length > 1 ? nowMonth + '' : '0' + nowMonth,
+        day: nowDay.length > 1 ? nowDay + '' : '0' + nowDay,
+        monthStr: dateConversion(new Date()).month + '月'
     },
     methods: {
         /**
@@ -30,6 +34,18 @@ export default {
                         resolve(res)
                     }
                 })
+            })
+        },
+        /**
+         * 下载云图片
+         */
+        downloadCloud(src) {
+            return new Promise(resolve => {
+                wx.cloud.downloadFile({
+                    fileID: src
+                }).then(async res => {
+                    resolve(await getImageInfo(res.tempFilePath))
+                }).catch(e => { })
             })
         },
         /**
@@ -109,9 +125,12 @@ export default {
         },
         editBtn() {
             this.showEdit = !this.showEdit
-        }
+        },
     },
     created() {
+        wx.cloud.init({
+            env: 'daka'
+        })
         this.avatarUrl = this.$app.$options.globalData.userInfo.avatarUrl
         this.nickName = this.$app.$options.globalData.userInfo.nickName
         try {
@@ -124,7 +143,5 @@ export default {
             // Do something when catch error
         }
         this.draw();
-        console.log(this.year, this.month, this.day);
-        
     },
 }

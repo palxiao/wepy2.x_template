@@ -1,6 +1,5 @@
 <style lang="less">
 @import './assets/styles/base';
-
 </style>
 
 <script>
@@ -20,36 +19,36 @@ wepy.app({
     // }
   },
   globalData: {
-    userInfo: null
+    userInfo: null,
+    playMusic: true,
+    bgm: null
   },
 
   onLaunch() {
-    this.bgm = wx.createInnerAudioContext()
+    this.player = wx.createInnerAudioContext()
   },
   onHide() {
     console.log('bye-bye')
   },
   onShow() {
-    console.log('look at me')
-    if (this.bgm.title) {
-      this.bgm.play()
-    } else {
-      this.bgm.title = 'bgm'
-      this.bgm.src =
-        'http://m10.music.126.net/20191226000612/578b310d8c89e35215d90bb129a1fe33/ymusic/3c5a/3575/5344/a1224fce59adbdff3d41c31b3a04daa0.mp3'
-      // this.bgm.src = 'http://m10.music.126.net/20191225235520/3fa46cb4c6a4615efa11d1255be327da/ymusic/015c/0f59/0e5a/6675cd477783c969f6f69088d744fe0b.mp3'
-      // this.bgm.play();
-      this.bgm.onPlay(() => {
-        console.log('音乐播放开始')
-      })
-      this.bgm.onEnded(() => {
-        this.bgm.play()
-      })
+    if (this.$options.globalData.playMusic) {
+      if (this.player.src) {
+        this.player.play()
+      } else {
+        this.player.title = 'bgm'
+        this.player.src = this.$options.globalData.bgm
+        this.player.play()
+        // this.player.onPlay(() => {
+        //   console.log('音乐播放开始')
+        // })
+        this.player.onEnded(() => {
+          this.player.play()
+        })
+      }
     }
   },
-
   methods: {
-
+    
   }
 })
 </script>

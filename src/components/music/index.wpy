@@ -23,7 +23,8 @@ wepy.component({
   },
   computed: {},
   created() {
-    this.test()
+    // this.test()
+    this.getMusicById(524148423)
     // if (app.globalData.userInfo) {
     //   this.setData({
     //     userInfo: app.globalData.userInfo,
@@ -71,12 +72,8 @@ wepy.component({
       // 获取歌曲url
       let songs = await musicSearchHelper.getSearchResult()
       if (songs.length != 0) {
-        console.log('查找到音乐')
         let musicId = songs[0].id
-        let musicUrlHelper = MusicManager.getMusicUrlHelper(musicId)
-        console.log(`歌曲的ID是：${musicId}`)
-        let url = await musicUrlHelper.getUrlResult()
-        console.log(`歌曲的url链接是：${url}`)
+        this.getMusicById(musicId)
       } else {
         console.log('没有查找到音乐')
       }
@@ -109,26 +106,15 @@ wepy.component({
       //   if(timer++>20)break;
       // }
     },
-    // bindViewTap: function() {
-    //   wx.navigateTo({
-    //     url: '../logs/logs'
-    //   })
-    // },
-    // inputMusicName: function(e) {
-    //   console.log(e)
-    //   this.setData({
-    //     musciName: e.detail.value
-    //   })
-    //   console.log(this.data)
-    // },
-    // getUserInfo: function(e) {
-    //   console.log(e)
-    //   app.globalData.userInfo = e.detail.userInfo
-    //   this.setData({
-    //     userInfo: e.detail.userInfo,
-    //     hasUserInfo: true
-    //   })
-    // },
+    async getMusicById(id) {
+      let musicUrlHelper = MusicManager.getMusicUrlHelper(id)
+      // console.log(`歌曲的ID是：${id}`)
+      let url = await musicUrlHelper.getUrlResult()
+      console.log(`歌曲的url链接是：${url}`)
+      console.log(this);
+      
+      this.$app.$options.globalData.bgm = url;
+    },
     openMusic: function() {}
   },
   mixins: []

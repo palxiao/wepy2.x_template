@@ -2,6 +2,7 @@
 <wxs module="m1" lang="babel" src="../utils/widget/test.wxs"></wxs>
 <template>
   <div class="container">
+    <play-music />
 
     <button class="content" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">
       <div class="userinfo">
@@ -12,13 +13,15 @@
 
     <my-swiper @tap="openEditor" @change="swiperChange" :imgUrls="imgUrls" />
 
+    <official-account style="margin-top:20rpx;"></official-account>
+
   </div>
 </template>
 
 <script>
 import wepy from '@wepy/core';
 import eventHub from '../utils/common/eventHub';
-import { mapState } from '@wepy/x';
+// import { mapState, mapActions } from '@wepy/x';
 import store from '@/store';
 // import testMixin from '../mixins/test';
 import api from '@/api';
@@ -53,10 +56,11 @@ wepy.page({
   },
 
   computed: {
-    ...mapState(['counter'])
+    
   },
 
   methods: {
+    // ...mapActions(['playMusic']) ,
     getUser() {
       const _this = this;
       wx.getUserInfo({
@@ -90,7 +94,7 @@ wepy.page({
 </style>
 <config>
 {
-    navigationBarTitleText: '精图打卡',
+    navigationBarTitleText: '言叶图签',
     usingComponents: {
       "my-swiper": "~@/components/common/Swiper",
       'play-music': '~@/components/music'

@@ -226,6 +226,27 @@ function openSetting() {
     }
   })
 }
+function dateConversion(date) {
+  let numStr = date.getFullYear() + '' + (date.getMonth() + 1) + '' + date.getDate() + ''
+  // let numStr = str.replace(/[^0-9]+/g, '');
+  const chinese = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+  let year = chinese[numStr[0]] + chinese[numStr[1]] + chinese[numStr[2]] + chinese[numStr[3]];
+  let month = numStr[4] === '0' ? chinese[numStr[5]] : chinese[10] + chinese[numStr[5]];
+  let day = numStr[6] === '0' ? chinese[numStr[7]] : chinese[10] + chinese[numStr[7]];
+  return {
+    year, month, day
+  }
+}
+function getImageInfo(path) {
+  return new Promise(resolve => {
+    wx.getImageInfo({
+      src: path,
+      success(res) {
+        resolve(res)
+      }
+    })
+  })
+}
 
 /**
  * 判断是否是数组
@@ -248,5 +269,7 @@ module.exports = {
   clipBoard: clipBoard,
   fullImg: fullImg,
   getAsUriParameters,
-  savePhoto
+  savePhoto,
+  dateConversion,
+  getImageInfo
 }
