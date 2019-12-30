@@ -38,13 +38,16 @@ wepy.page({
   // },
   mixins: [editMixin],
   data: {
-    temp: 'cloud://daka.6461-daka-1301019118/T-00-00.png',
-    bgImg: 'cloud://daka.6461-daka-1301019118/T-00-01.png',
+    pre: 'cloud://daka.6461-daka-1301019118/T-01-01.png',
+    bgImg: 'cloud://daka.6461-daka-1301019118/T-01-00.png',
+    yinhao: 'cloud://daka.6461-daka-1301019118/T-01-02.png',
 
     bg_width_original: 0,
     bg_height_original: 0,
     pre_width: 0,
     pre_height: 0,
+    yinhao_width: 0,
+    yinhao_height: 0,
 
     title: `扑街`,
     desc: '那就远去吧，|我即将逝去的 2019。'
@@ -70,13 +73,19 @@ wepy.page({
       }
 
       if (this.pre_width === 0) {
-        const preImg = await this.downloadCloud(this.temp)
-        this.temp = preImg.path
+        const preImg = await this.downloadCloud(this.pre)
+        this.pre = preImg.path
         _this.pre_width =
           (preImg.width * _this.wWidth) / _this.bg_width_original
         _this.pre_height = parseInt(
           (preImg.height * _this.pre_width) / preImg.width
         )
+      }
+      if (this.yinhao_width === 0) {
+        const Img = await this.downloadCloud(this.yinhao)
+        this.yinhao = Img.path
+        this.yinhao_width = Img.width
+        this.yinhao_height = Img.height
       }
 
       const canvas = new SimpleCanvas({
@@ -112,10 +121,10 @@ wepy.page({
           left: 13 * this.ratio,
           width: this.pre_width,
           height: this.pre_height,
-          path: this.temp,
+          path: this.pre,
           referLayer: {
             id: 'bg',
-            top: -(this.pre_height + 25 * this.ratio)
+            top: -(this.pre_height + 108 * this.ratio)
           }
         })
         .drawCircleImage({
@@ -123,7 +132,7 @@ wepy.page({
           path: this.avatarUrl,
           left: 40 * this.ratio,
           d: 50,
-          top: 380 * this.ratio
+          top: 43 * this.ratio
           // referLayer: {
           //   id: 'bg',
           //   top: 280
@@ -131,23 +140,23 @@ wepy.page({
         })
         .drawWrapText({
           id: '#nickname',
-          fontSize: 14,
-          top: 385 * this.ratio,
+          fontSize: 18,
+          top: 55 * this.ratio,
           text: this.nickName,
           referLayer: {
             id: 'avatar',
             left: 16 * this.ratio
           }
         })
-        .drawWrapText({
-          id: '#guanjianci',
-          fontSize: 14,
-          color: '#999',
-          top: 406 * this.ratio,
-          text: '我今天的关键词是',
+        .drawImage({
+          id: 'yinhao',
+          width: this.yinhao_width/2 * this.ratio,
+          height: this.yinhao_height/2 *this.ratio,
+          path: this.yinhao,
+          left: 300,
           referLayer: {
-            id: 'avatar',
-            left: 16 * this.ratio
+            id: '#nickname',
+            top: 0
           }
         })
         .drawWrapText({
@@ -188,7 +197,7 @@ wepy.page({
           path: this.qrcode00,
           referLayer: {
             id: '#year',
-            top: 120 * this.ratio
+            top: 120
           }
         })
         .drawWrapText({

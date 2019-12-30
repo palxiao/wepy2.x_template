@@ -1,12 +1,12 @@
 <style lang="less">
 @import './assets/styles/base';
+
 </style>
 
 <script>
 import wepy from '@wepy/core'
 import eventHub from './utils/common/eventHub'
 import vuex from '@wepy/x'
-import testMixin from '@/mixins/test';
 
 wepy.use(vuex)
 
@@ -20,13 +20,14 @@ wepy.app({
     // }
   },
   globalData: {
-    userInfo: null,
+    userInfo: {
+      avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/z5dplLf56JL4Pibib6zn6OicsTPZO64wUeibibs9dPZRgbfQCkxm5yBDx0noVYL1d6djjVpQyNrNaGLNAw4ecLmOiahQ/132',
+      nickName: '测试昵称'
+    },
     isMusicPlay: false,
     bgm: null,
     player: wx.createInnerAudioContext()
   },
-
-  mixins: [testMixin],
 
   onLaunch() {
     this.player = this.$options.globalData.player
@@ -61,6 +62,7 @@ wepy.app({
     pages: [
       'pages/index',
       'pages/T0',
+      'pages/T1',
       'pages/authorization',
     ],
     window: {

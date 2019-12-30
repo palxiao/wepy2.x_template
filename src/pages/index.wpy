@@ -4,7 +4,7 @@
   <div class="container">
     <play-music />
 
-    <button class="content" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">
+    <button class="head" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">
       <div class="userinfo">
         <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover" />
         <div class="userinfo-nickname">{{ userInfo.nickName }}</div>

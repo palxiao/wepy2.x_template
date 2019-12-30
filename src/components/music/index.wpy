@@ -1,15 +1,66 @@
-<style lang='less'>
+<style lang='less' scoped>
+@import url('~@/assets/styles/iconfont/iconfont.less');
+.animationFrozen,
+.animationSlow {
+  position: fixed;
+  right: 10rpx;
+  top: 6rpx;
+  z-index: 99;
+  width: 100rpx;
+  height: 100rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.animationSlow {
+  animation-name: myfirst; /*动画的名称 */
+  animation-duration: 2000ms; /*动画从开始到结束的时间*/
+  animation-timing-function: linear; /*动画执行快慢的参数*/
+  animation-iteration-count: infinite; /*动画执行多少次的参数*/ /*以下是兼容ios所需，参数意义与上相同*/
+  -webkit-animation-name: myfirst;
+  -webkit-animation-duration: 2000ms;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-iteration-count: infinite;
+}
+@keyframes myfirst {
+  /*开始转的角度*/
+  from {
+    transform: rotate(0deg);
+  } /*结束的角度*/
+  to {
+    transform: rotate(360deg);
+  }
+}
+/*兼容ios*/
+@-webkit-keyframes myfirst {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.yy-mplay {
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 58rpx;
+}
 </style>
 <template>
-  <view class="none">
-    <button @tap="playMusic">开关</button>
-  </view>
+  <div class="">
+    <!-- <div class="animationSlow" style="animation-duration:{{duration}}ms;-webkit-animation-duration:{{duration}}ms;animation-play-state:{{status}};-webkit-animation-play-state:{{status}};" @tap="playMusic"> -->
+    <div v-if="run" class="animationSlow" @tap="playMusic">
+      <i class="icon yy-mplay"></i>
+    </div>
+    <div v-else class="animationFrozen" @tap="playMusic">
+      <i class="icon yy-mplay"></i>
+    </div>
+  </div>
 </template>
 <script>
-import wepy from '@wepy/core';
+import wepy from '@wepy/core'
 // const app = getApp()
-const bgAudioManager = wx.getBackgroundAudioManager();
-const { MusicManager } = require('./NetEaseCloudMusicApi/src/MusicManager');
+const bgAudioManager = wx.getBackgroundAudioManager()
+const { MusicManager } = require('./NetEaseCloudMusicApi/src/MusicManager')
 
 wepy.component({
   options: {
@@ -17,16 +68,14 @@ wepy.component({
   },
   props: {},
   data: {
-    // motto: 'Hello World',
-    // userInfo: {},
-    // hasUserInfo: false,
-    // canIUse: wx.canIUse('button.open-type.getUserInfo'),
-    // musciName: '抛物线'
+    status: '', // paused|running;
+    duration: 0,
+    run: false
   },
   computed: {},
   created() {
     // this.test()
-    this.getMusicById(524148423);
+    this.getMusicById(524148423)
     // if (app.globalData.userInfo) {
     //   this.setData({
     //     userInfo: app.globalData.userInfo,
@@ -60,24 +109,24 @@ wepy.component({
       let musicSearchHelper = MusicManager.getMusicSearchHelper({
         keyword: 'Abandon',
         limit: 10
-      });
-      console.log(`现在是第${musicSearchHelper.getCurrentPage()}页`);
-      console.log(await musicSearchHelper.getSearchResult());
-      musicSearchHelper.nextPage();
-      console.log(`现在是第${musicSearchHelper.getCurrentPage()}页`);
-      console.log(await musicSearchHelper.getSearchResult());
-      musicSearchHelper.previousPage();
-      console.log(`现在是第${musicSearchHelper.getCurrentPage()}页`);
-      console.log(await musicSearchHelper.getSearchResult());
-      console.log(musicSearchHelper);
+      })
+      console.log(`现在是第${musicSearchHelper.getCurrentPage()}页`)
+      console.log(await musicSearchHelper.getSearchResult())
+      musicSearchHelper.nextPage()
+      console.log(`现在是第${musicSearchHelper.getCurrentPage()}页`)
+      console.log(await musicSearchHelper.getSearchResult())
+      musicSearchHelper.previousPage()
+      console.log(`现在是第${musicSearchHelper.getCurrentPage()}页`)
+      console.log(await musicSearchHelper.getSearchResult())
+      console.log(musicSearchHelper)
 
       // 获取歌曲url
-      let songs = await musicSearchHelper.getSearchResult();
+      let songs = await musicSearchHelper.getSearchResult()
       if (songs.length != 0) {
-        let musicId = songs[0].id;
-        this.getMusicById(musicId);
+        let musicId = songs[0].id
+        this.getMusicById(musicId)
       } else {
-        console.log('没有查找到音乐');
+        console.log('没有查找到音乐')
       }
 
       // 搜索用户
@@ -109,30 +158,42 @@ wepy.component({
       // }
     },
     async getMusicById(id) {
-      let musicUrlHelper = MusicManager.getMusicUrlHelper(id);
+      let musicUrlHelper = MusicManager.getMusicUrlHelper(id)
       // console.log(`歌曲的ID是：${id}`)
-      let url = await musicUrlHelper.getUrlResult();
-      console.log(`歌曲的url链接是：${url}`);
-      this.$app.$options.globalData.bgm = url;
+      let url = await musicUrlHelper.getUrlResult()
+      console.log(`歌曲的url链接是：${url}`)
+      this.$app.$options.globalData.bgm = url
     },
     // openMusic: function() {},
     playMusic() {
-      const isMusicPlay = this.$app.$options.globalData.isMusicPlay;
-      const player = this.$app.$options.globalData.player;
-      this.$app.$options.globalData.isMusicPlay = !isMusicPlay;
+      const isMusicPlay = this.$app.$options.globalData.isMusicPlay
+      const player = this.$app.$options.globalData.player
+      this.$app.$options.globalData.isMusicPlay = !isMusicPlay
       if (this.$app.$options.globalData.isMusicPlay) {
-        console.log('播放');
-        
-        player.title = 'bgm';
-        player.src = this.$app.$options.globalData.bgm;
-        player.play();
+        console.log('播放')
+        // this.runForIOS(2000)
+        this.run = true
+        player.title = 'bgm'
+        player.src = this.$app.$options.globalData.bgm
+        player.play()
       } else {
-        console.log('停止');
-        
-        player.stop();
+        console.log('停止')
+        // this.runForIOS(0)
+        this.run = false
+        player.stop()
       }
-    }
+    },
+    // runForIOS(time) {
+    //   this.status = 'paused'
+    //   this.duration = time
+    //   if (time === 0) {
+    //     return
+    //   }
+    //   setTimeout(() => {
+    //     this.status = 'running'
+    //   }, 10)
+    // }
   },
   mixins: []
-});
+})
 </script>

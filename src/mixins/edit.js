@@ -20,9 +20,23 @@ export default {
         year: new Date().getFullYear() + '',
         month: nowMonth.length > 1 ? nowMonth + '' : '0' + nowMonth,
         day: nowDay.length > 1 ? nowDay + '' : '0' + nowDay,
-        monthStr: dateConversion(new Date()).month + '月'
+        monthStr: dateConversion(new Date()).month + '月',
+        qrcode00: 'cloud://daka.6461-daka-1301019118/qrcode00.jpg',
+        qrcode01: 'cloud://daka.6461-daka-1301019118/qrcode01.png',
+        prepare: true
     },
     methods: {
+        async prepareImg() {
+            if (this.prepare) {
+                const localAvatart = await this.downloadSome(this.avatarUrl)
+                this.avatarUrl = localAvatart.path
+                const qr0 = await this.downloadCloud(this.qrcode00)
+                this.qrcode00 = qr0.path
+                const qr1 = await this.downloadCloud(this.qrcode01)
+                this.qrcode01 = qr1.path
+                this.prepare = false
+            }
+        },
         /**
          * 下载图片
          */
