@@ -1,13 +1,15 @@
 <style lang='less'>
 </style>
 <template>
-  <view class="none"> </view>
+  <view class="none">
+    <button @tap="playMusic">开关</button>
+  </view>
 </template>
 <script>
-import wepy from '@wepy/core'
+import wepy from '@wepy/core';
 // const app = getApp()
-const bgAudioManager = wx.getBackgroundAudioManager()
-const { MusicManager } = require('./NetEaseCloudMusicApi/src/MusicManager')
+const bgAudioManager = wx.getBackgroundAudioManager();
+const { MusicManager } = require('./NetEaseCloudMusicApi/src/MusicManager');
 
 wepy.component({
   options: {
@@ -24,7 +26,7 @@ wepy.component({
   computed: {},
   created() {
     // this.test()
-    this.getMusicById(524148423)
+    this.getMusicById(524148423);
     // if (app.globalData.userInfo) {
     //   this.setData({
     //     userInfo: app.globalData.userInfo,
@@ -58,24 +60,24 @@ wepy.component({
       let musicSearchHelper = MusicManager.getMusicSearchHelper({
         keyword: 'Abandon',
         limit: 10
-      })
-      console.log(`现在是第${musicSearchHelper.getCurrentPage()}页`)
-      console.log(await musicSearchHelper.getSearchResult())
-      musicSearchHelper.nextPage()
-      console.log(`现在是第${musicSearchHelper.getCurrentPage()}页`)
-      console.log(await musicSearchHelper.getSearchResult())
-      musicSearchHelper.previousPage()
-      console.log(`现在是第${musicSearchHelper.getCurrentPage()}页`)
-      console.log(await musicSearchHelper.getSearchResult())
-      console.log(musicSearchHelper)
+      });
+      console.log(`现在是第${musicSearchHelper.getCurrentPage()}页`);
+      console.log(await musicSearchHelper.getSearchResult());
+      musicSearchHelper.nextPage();
+      console.log(`现在是第${musicSearchHelper.getCurrentPage()}页`);
+      console.log(await musicSearchHelper.getSearchResult());
+      musicSearchHelper.previousPage();
+      console.log(`现在是第${musicSearchHelper.getCurrentPage()}页`);
+      console.log(await musicSearchHelper.getSearchResult());
+      console.log(musicSearchHelper);
 
       // 获取歌曲url
-      let songs = await musicSearchHelper.getSearchResult()
+      let songs = await musicSearchHelper.getSearchResult();
       if (songs.length != 0) {
-        let musicId = songs[0].id
-        this.getMusicById(musicId)
+        let musicId = songs[0].id;
+        this.getMusicById(musicId);
       } else {
-        console.log('没有查找到音乐')
+        console.log('没有查找到音乐');
       }
 
       // 搜索用户
@@ -107,16 +109,30 @@ wepy.component({
       // }
     },
     async getMusicById(id) {
-      let musicUrlHelper = MusicManager.getMusicUrlHelper(id)
+      let musicUrlHelper = MusicManager.getMusicUrlHelper(id);
       // console.log(`歌曲的ID是：${id}`)
-      let url = await musicUrlHelper.getUrlResult()
-      console.log(`歌曲的url链接是：${url}`)
-      console.log(this);
-      
+      let url = await musicUrlHelper.getUrlResult();
+      console.log(`歌曲的url链接是：${url}`);
       this.$app.$options.globalData.bgm = url;
     },
-    openMusic: function() {}
+    // openMusic: function() {},
+    playMusic() {
+      const isMusicPlay = this.$app.$options.globalData.isMusicPlay;
+      const player = this.$app.$options.globalData.player;
+      this.$app.$options.globalData.isMusicPlay = !isMusicPlay;
+      if (this.$app.$options.globalData.isMusicPlay) {
+        console.log('播放');
+        
+        player.title = 'bgm';
+        player.src = this.$app.$options.globalData.bgm;
+        player.play();
+      } else {
+        console.log('停止');
+        
+        player.stop();
+      }
+    }
   },
   mixins: []
-})
+});
 </script>

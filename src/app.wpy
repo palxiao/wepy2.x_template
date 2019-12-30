@@ -6,6 +6,7 @@
 import wepy from '@wepy/core'
 import eventHub from './utils/common/eventHub'
 import vuex from '@wepy/x'
+import testMixin from '@/mixins/test';
 
 wepy.use(vuex)
 
@@ -20,18 +21,21 @@ wepy.app({
   },
   globalData: {
     userInfo: null,
-    playMusic: true,
-    bgm: null
+    isMusicPlay: false,
+    bgm: null,
+    player: wx.createInnerAudioContext()
   },
 
+  mixins: [testMixin],
+
   onLaunch() {
-    this.player = wx.createInnerAudioContext()
+    this.player = this.$options.globalData.player
   },
   onHide() {
     console.log('bye-bye')
   },
   onShow() {
-    if (this.$options.globalData.playMusic) {
+    if (this.$options.globalData.isMusicPlay) {
       if (this.player.src) {
         this.player.play()
       } else {
