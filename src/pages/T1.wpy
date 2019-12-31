@@ -7,9 +7,11 @@
 
         <cover-view v-show="showEdit" style="{{'width:100%;height:'+height+'px;'}}" class="maskPanel">
           <!-- 蒙版 Start -->
-          <cover-view @tap="edit('title')" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.61+'px;left: '+34*ratio+'px;'}}"
+          <cover-view @tap="edit('title')" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.55+'px;left: '+34*ratio+'px;'}}"
             class="edit-title"></cover-view>
-          <cover-view @tap="edit('desc')" style="{{'width:'+180+'px;height:'+50+'px;top: '+height*0.7+'px;left: '+34*ratio+'px;'}}"
+          <cover-view @tap="edit('desc')" style="{{'width:'+267*ratio+'px;height:'+50+'px;top: '+height*0.63+'px;left: '+34*ratio+'px;'}}"
+            class="edit-title"></cover-view>
+          <cover-view @tap="edit('note')" style="{{'width:'+140*ratio+'px;height:'+18+'px;top: '+height*0.837+'px;left: '+34*ratio+'px;'}}"
             class="edit-title"></cover-view>
           <!-- 蒙版 End -->
         </cover-view>
@@ -38,9 +40,12 @@ wepy.page({
   // },
   mixins: [editMixin],
   data: {
+    editImg: 'main',
     pre: 'cloud://daka.6461-daka-1301019118/T-01-01.png',
     bgImg: 'cloud://daka.6461-daka-1301019118/T-01-00.png',
     yinhao: 'cloud://daka.6461-daka-1301019118/T-01-02.png',
+    main: 'cloud://daka.6461-daka-1301019118/T-01-04.png',
+    xuxian: 'cloud://daka.6461-daka-1301019118/T-01-03.png',
 
     bg_width_original: 0,
     bg_height_original: 0,
@@ -48,9 +53,14 @@ wepy.page({
     pre_height: 0,
     yinhao_width: 0,
     yinhao_height: 0,
+    main_width: 0,
+    main_height: 0,
+    xuxian_width: 0,
+    xuxian_height: 0,
 
-    title: `扑街`,
-    desc: '那就远去吧，|我即将逝去的 2019。'
+    title: `人生`,
+    desc: '人生就像一盒巧克力，|你永远不知道，|下一块会是什么味道。',
+    note: '宜：珍惜 / 忌：浪费'
   },
 
   created() {},
@@ -67,26 +77,23 @@ wepy.page({
       if (this.bg_width_original === 0) {
         const bgImg = await this.downloadCloud(this.bgImg)
         this.bgImg = bgImg.path
-        _this.bg_width_original = bgImg.width
-        _this.bg_height_original = bgImg.height
-        _this.height = parseInt((bgImg.height * _this.wWidth) / bgImg.width)
+        this.bg_width_original = bgImg.width
+        this.bg_height_original = bgImg.height
+        this.height = parseInt((bgImg.height * this.wWidth) / bgImg.width)
       }
 
       if (this.pre_width === 0) {
         const preImg = await this.downloadCloud(this.pre)
         this.pre = preImg.path
-        _this.pre_width =
-          (preImg.width * _this.wWidth) / _this.bg_width_original
-        _this.pre_height = parseInt(
-          (preImg.height * _this.pre_width) / preImg.width
+        this.pre_width = (preImg.width * this.wWidth) / this.bg_width_original
+        this.pre_height = parseInt(
+          (preImg.height * this.pre_width) / preImg.width
         )
       }
-      if (this.yinhao_width === 0) {
-        const Img = await this.downloadCloud(this.yinhao)
-        this.yinhao = Img.path
-        this.yinhao_width = Img.width
-        this.yinhao_height = Img.height
-      }
+
+      await this.generalLoadImg('yinhao')
+      await this.generalLoadImg('main')
+      await this.generalLoadImg('xuxian')
 
       const canvas = new SimpleCanvas({
         scale: this.scale,
@@ -124,15 +131,37 @@ wepy.page({
           path: this.pre,
           referLayer: {
             id: 'bg',
-            top: -(this.pre_height + 108 * this.ratio)
+            top: -(this.pre_height + 102 * this.ratio)
+          }
+        })
+        .drawImage({
+          id: 'main',
+          path: this.main,
+          width: (this.main_width / 2) * this.ratio,
+          height: (this.main_height / 2) * this.ratio,
+          left: 48 * this.ratio,
+          referLayer: {
+            id: 'preBox',
+            top: -this.pre_height + 78 * this.ratio
+          }
+        })
+        .drawImage({
+          id: 'xuxian',
+          path: this.xuxian,
+          width: (this.xuxian_width / 2) * this.ratio,
+          height: (this.xuxian_height / 2) * this.ratio,
+          left: 50 * this.ratio,
+          referLayer: {
+            id: 'preBox',
+            top: -165 * this.ratio
           }
         })
         .drawCircleImage({
           id: 'avatar',
           path: this.avatarUrl,
-          left: 40 * this.ratio,
+          left: 50 * this.ratio,
           d: 50,
-          top: 43 * this.ratio
+          top: 44 * this.ratio
           // referLayer: {
           //   id: 'bg',
           //   top: 280
@@ -141,7 +170,7 @@ wepy.page({
         .drawWrapText({
           id: '#nickname',
           fontSize: 18,
-          top: 55 * this.ratio,
+          top: 56 * this.ratio,
           text: this.nickName,
           referLayer: {
             id: 'avatar',
@@ -150,76 +179,96 @@ wepy.page({
         })
         .drawImage({
           id: 'yinhao',
-          width: this.yinhao_width/2 * this.ratio,
-          height: this.yinhao_height/2 *this.ratio,
+          width: (this.yinhao_width / 2) * this.ratio,
+          height: (this.yinhao_height / 2) * this.ratio,
           path: this.yinhao,
-          left: 300,
+          left: 280 * this.ratio,
           referLayer: {
             id: '#nickname',
-            top: 0
-          }
-        })
-        .drawWrapText({
-          id: '#month',
-          text: this.monthStr,
-          fontSize: 16,
-          left: 290 * this.ratio,
-          referLayer: {
-            id: 'bg',
-            top: -(284 * this.ratio)
-          }
-        })
-        .drawWrapText({
-          id: '#day',
-          text: this.day,
-          fontSize: 38,
-          left: 292 * this.ratio,
-          referLayer: {
-            id: 'bg',
-            top: -(268 * this.ratio)
-          }
-        })
-        .drawWrapText({
-          id: '#year',
-          text: this.year,
-          fontSize: 18,
-          left: 295 * this.ratio,
-          referLayer: {
-            id: 'bg',
-            top: -(226 * this.ratio)
-          }
-        })
-        .drawImage({
-          id: 'qrcode',
-          width: 43 * this.ratio,
-          height: 43 * this.ratio,
-          left: this.width - 43 * this.ratio - 40,
-          path: this.qrcode00,
-          referLayer: {
-            id: '#year',
-            top: 120
+            top: -20
           }
         })
         .drawWrapText({
           id: '#title',
           fontSize: 32,
-          left: 40 * this.ratio,
+          left: 50 * this.ratio,
           text: this.title,
           referLayer: {
             id: 'bg',
-            top: -(210 * this.ratio)
+            top: -(256 * this.ratio)
+          }
+        })
+        .drawWrapText({
+          id: '#beitai',
+          fontSize: 14,
+          text: '每/日/一/签',
+          left: 250 * this.ratio,
+          referLayer: {
+            id: '#title',
+            top: -16
           }
         })
         .drawWrapText({
           id: '#contect',
-          fontSize: 16,
+          fontSize: 14,
           lineHeight: 6,
-          left: 40 * this.ratio,
+          left: 50 * this.ratio,
           width: 230 * this.ratio,
           text: this.desc,
           referLayer: {
             id: 'bg',
-            top: -(150 * this.ratio)
+            top: -(200 * this.ratio)
+          }
+        })
+        .drawWrapText({
+          id: '#year',
+          text: this.year,
+          fontSize: 24,
+          left: 42 * this.ratio,
+          referLayer: {
+            id: 'bg',
+            top: -(78 * this.ratio)
+          }
+        })
+        .drawWrapText({
+          id: '#note',
+          text: this.note,
+          fontSize: 14,
+          left: 42 * this.ratio,
+          referLayer: {
+            id: '#year',
+            top: 10 * this.ratio
+          }
+        })
+        .drawWrapText({
+          id: '#month',
+          text: '.' + this.month,
+          fontSize: 24,
+          left: 24 * this.ratio * 3 + 31 * this.ratio,
+          referLayer: {
+            id: 'bg',
+            top: -(78 * this.ratio)
+          }
+        })
+        .drawWrapText({
+          id: '#day',
+          text: '.' + this.date,
+          fontSize: 24,
+          left: 24 * this.ratio * 4 + 44 * this.ratio,
+          referLayer: {
+            id: 'bg',
+            top: -(78 * this.ratio)
+          }
+        })
+        .drawImage({
+          id: 'qrcode',
+          width: 86 * this.ratio,
+          height: 86 * this.ratio,
+          left: 260 * this.ratio,
+          path: this.qrcode01,
+          referLayer: {
+            id: 'preBox',
+            top: 2 * this.ratio
           }
         })
 

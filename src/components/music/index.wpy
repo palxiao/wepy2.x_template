@@ -163,6 +163,7 @@ wepy.component({
       let url = await musicUrlHelper.getUrlResult()
       console.log(`歌曲的url链接是：${url}`)
       this.$app.$options.globalData.bgm = url
+      this.playMusic()
     },
     // openMusic: function() {},
     playMusic() {

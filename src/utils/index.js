@@ -227,14 +227,18 @@ function openSetting() {
   })
 }
 function dateConversion(date) {
-  let numStr = date.getFullYear() + '' + (date.getMonth() + 1) + '' + date.getDate() + ''
+  const o_month = (date.getMonth() + 1).toString().length <= 1 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+  const o_date = date.getDate().toString().length <= 1 ? '0' + date.getDate() : date.getDate()
+  let numStr = date.getFullYear() + '' + o_month + '' + o_date + ''
   // let numStr = str.replace(/[^0-9]+/g, '');
   const chinese = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+  var cc = ["日", "一", "二", "三", "四", "五", "六"];
   let year = chinese[numStr[0]] + chinese[numStr[1]] + chinese[numStr[2]] + chinese[numStr[3]];
   let month = numStr[4] === '0' ? chinese[numStr[5]] : chinese[10] + chinese[numStr[5]];
-  let day = numStr[6] === '0' ? chinese[numStr[7]] : chinese[10] + chinese[numStr[7]];
+  let date = numStr[6] === '0' ? chinese[numStr[7]] : chinese[10] + chinese[numStr[7]];
+  const day = cc[date.getDay()]
   return {
-    year, month, day
+    year, month, day, date
   }
 }
 function getImageInfo(path) {

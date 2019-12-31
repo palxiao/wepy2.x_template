@@ -19,13 +19,22 @@ export default {
         nickName: '',
         year: new Date().getFullYear() + '',
         month: nowMonth.length > 1 ? nowMonth + '' : '0' + nowMonth,
-        day: nowDay.length > 1 ? nowDay + '' : '0' + nowDay,
+        date: nowDay.length > 1 ? nowDay + '' : '0' + nowDay,
         monthStr: dateConversion(new Date()).month + '月',
+        dayStr: dateConversion(new Date()).day,
         qrcode00: 'cloud://daka.6461-daka-1301019118/qrcode00.jpg',
         qrcode01: 'cloud://daka.6461-daka-1301019118/qrcode01.png',
         prepare: true
     },
     methods: {
+        async generalLoadImg(name) {
+            if (this[name + '_width'] === 0) {
+                const Img = await this.downloadCloud(this[name])
+                this[name] = Img.path
+                this[name + '_width'] = Img.width
+                this[name + '_height'] = Img.height
+            }
+        },
         async prepareImg() {
             if (this.prepare) {
                 const localAvatart = await this.downloadSome(this.avatarUrl)
@@ -97,11 +106,9 @@ export default {
         /**
          * 更换背景图片
          */
-        changePhoto(name) {
-            if (!name) {
-                name = 'bgImg'
-            }
-            const _this = this;
+        changePhoto() {
+            const name = this.editImg
+            const _this = this
             wx.chooseImage({
                 count: 1,
                 sizeType: ['original', 'compressed'],
