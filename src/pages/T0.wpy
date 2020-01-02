@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="done">
     <my-menu is="head" @action="menuAction"></my-menu>
 
     <div class="content">
@@ -17,7 +17,7 @@
       </canvas>
     </div>
 
-    <my-menu is="foot" :showModal="showEditModal" :text="editText" @modalReturn="editModalChange" @action="menuAction"></my-menu>
+    <my-menu v-if="audit" is="foot" :showModal="showEditModal" :text="editText" @modalReturn="editModalChange" @action="menuAction"></my-menu>
 
   </div>
 </template>
@@ -40,15 +40,15 @@ wepy.page({
   data: {
     editImg: 'bgImg',
     temp: 'cloud://daka.6461-daka-1301019118/T-00-00.png',
-    bgImg: 'cloud://daka.6461-daka-1301019118/T-00-01.png',
+    bgImg: 'cloud://daka.6461-daka-1301019118/T-00-01 (1).png',
 
     bg_width_original: 0,
     bg_height_original: 0,
     pre_width: 0,
     pre_height: 0,
 
-    title: `扑街`,
-    desc: '那就远去吧，|我即将逝去的 2019。'
+    title: `旅途`,
+    desc: '走上人生的旅途吧|前途很远，也很暗|然而不要怕，不怕的人面前才有路'
   },
 
   created() {},
@@ -56,8 +56,8 @@ wepy.page({
   computed: {},
 
   methods: {
-    async draw() {
-      wx.showLoading()
+    async draw(cb) {
+      wx.showLoading({ title: '努力加载中..' })
       const _this = this
 
       await this.prepareImg()
@@ -154,42 +154,53 @@ wepy.page({
         .drawWrapText({
           id: '#month',
           text: this.monthStr,
-          fontSize: 16,
-          left: 290 * this.ratio,
+          fontSize: 16 * this.ratio,
+          left: 294 * this.ratio,
           referLayer: {
             id: 'bg',
             top: -(284 * this.ratio)
           }
         })
+        .createRectangle({
+          id: '#line0',
+          width: 40,
+          height: 1,
+          backgroundColor: '#000',
+          left: 290 * this.ratio,
+          referLayer: {
+            id: '#month',
+            top: 8
+          }
+        })
         .drawWrapText({
           id: '#day',
           text: this.date,
-          fontSize: 38,
-          left: 292 * this.ratio,
+          fontSize: 38 * this.ratio,
+          left: 290 * this.ratio,
           referLayer: {
             id: 'bg',
-            top: -(268 * this.ratio)
+            top: -(264 * this.ratio)
+          }
+        })
+        .createRectangle({
+          id: '#line1',
+          width: 40,
+          height: 1,
+          backgroundColor: '#000',
+          left: 290 * this.ratio,
+          referLayer: {
+            id: '#day',
+            top: 8
           }
         })
         .drawWrapText({
           id: '#year',
           text: this.year,
-          fontSize: 18,
-          left: 295 * this.ratio,
+          fontSize: 18 * this.ratio,
+          left: 288 * this.ratio,
           referLayer: {
             id: 'bg',
-            top: -(226 * this.ratio)
-          }
-        })
-        .drawImage({
-          id: 'qrcode',
-          width: 43 * this.ratio,
-          height: 43 * this.ratio,
-          left: this.width - 43 * this.ratio - 40,
-          path: this.qrcode00,
-          referLayer: {
-            id: '#year',
-            top: 120 * this.ratio
+            top: -(216 * this.ratio)
           }
         })
         .drawWrapText({
@@ -214,7 +225,29 @@ wepy.page({
             top: -(150 * this.ratio)
           }
         })
+        .drawImage({
+          id: 'qrcode',
+          width: 64 * this.ratio,
+          height: 64 * this.ratio,
+          left: 285 * this.ratio,
+          path: this.qrcode00,
+          referLayer: {
+            id: 'bg',
+            top: -(100 * this.ratio)
+          }
+        })
+        .drawWrapText({
+          id: '#note',
+          text: '每/日/一/签',
+          fontSize: 14 * this.ratio,
+          left: 40 * this.ratio,
+          referLayer: {
+            id: 'bg',
+            top: -(54 * this.ratio)
+          }
+        })
 
+      if (cb) cb()
       canvas.draw(() => {
         setTimeout(() => {
           this.createPic(this)
@@ -250,7 +283,7 @@ wepy.page({
 </style>
 <config>
 {
-navigationBarTitleText: '编辑图签',
+navigationBarTitleText: '查看图签',
   usingComponents: {
     "my-menu": "../components/EditorMenu",
   }

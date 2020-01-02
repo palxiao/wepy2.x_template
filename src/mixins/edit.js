@@ -1,10 +1,12 @@
 
 import { savePhoto, dateConversion, getImageInfo } from '@/utils';
+import api from '@/api';
 // import * as api from '@/api'
 const nowDay = new Date().getDate() + ''
 const nowMonth = (new Date().getMonth() + 1) + ''
 export default {
     data: {
+        audit: 0,
         wWidth: 0,
         ratio: 0,
         previewPic: '',
@@ -24,7 +26,8 @@ export default {
         dayStr: dateConversion(new Date()).day,
         qrcode00: 'cloud://daka.6461-daka-1301019118/qrcode00.jpg',
         qrcode01: 'cloud://daka.6461-daka-1301019118/qrcode01.png',
-        prepare: true
+        prepare: true,
+        done: false
     },
     methods: {
         async generalLoadImg(name) {
@@ -148,7 +151,9 @@ export default {
             this.showEdit = !this.showEdit
         },
     },
-    created() {
+    async created() {
+        const res = await api.audit({ id: 1 })
+        this.audit = res.result.status
         wx.cloud.init({
             env: 'daka'
         })
@@ -163,6 +168,7 @@ export default {
         } catch (e) {
             // Do something when catch error
         }
-        this.draw();
+        // this.draw().then(() => { this.done = true })
+        this.draw(() => { this.done = true })
     },
 }

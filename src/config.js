@@ -6,7 +6,7 @@
  * 服务器地址
  * @type {String}
  */
-export const API_URL = "https://www.madcoder.cn/tests/";
+export const API_URL = "https://app.palxp.com:8888/";
 
 /**
  * 图片地址

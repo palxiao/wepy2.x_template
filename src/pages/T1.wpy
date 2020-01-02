@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="done">
     <my-menu is="head" @action="menuAction"></my-menu>
 
     <div class="content">
@@ -19,7 +19,7 @@
       </canvas>
     </div>
 
-    <my-menu is="foot" :showModal="showEditModal" :text="editText" @modalReturn="editModalChange" @action="menuAction"></my-menu>
+    <my-menu v-if="audit" is="foot" :showModal="showEditModal" :text="editText" @modalReturn="editModalChange" @action="menuAction"></my-menu>
 
   </div>
 </template>
@@ -68,8 +68,8 @@ wepy.page({
   computed: {},
 
   methods: {
-    async draw() {
-      wx.showLoading()
+    async draw(cb) {
+      wx.showLoading({ title: '努力加载中..' })
       const _this = this
 
       await this.prepareImg()
@@ -272,6 +272,7 @@ wepy.page({
           }
         })
 
+      if (cb) cb()
       canvas.draw(() => {
         setTimeout(() => {
           this.createPic(this)
@@ -307,7 +308,7 @@ wepy.page({
 </style>
 <config>
 {
-navigationBarTitleText: '编辑图签',
+navigationBarTitleText: '查看图签',
   usingComponents: {
     "my-menu": "../components/EditorMenu",
   }

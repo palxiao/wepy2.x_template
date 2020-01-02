@@ -170,6 +170,9 @@ wepy.component({
       const isMusicPlay = this.$app.$options.globalData.isMusicPlay
       const player = this.$app.$options.globalData.player
       this.$app.$options.globalData.isMusicPlay = !isMusicPlay
+      player.onEnded(() => {
+        player.play()
+      })
       if (this.$app.$options.globalData.isMusicPlay) {
         console.log('播放')
         // this.runForIOS(2000)
@@ -183,7 +186,7 @@ wepy.component({
         this.run = false
         player.stop()
       }
-    },
+    }
     // runForIOS(time) {
     //   this.status = 'paused'
     //   this.duration = time

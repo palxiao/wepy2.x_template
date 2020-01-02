@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="done">
     <my-menu is="head" @action="menuAction"></my-menu>
 
     <div class="content">
@@ -17,7 +17,7 @@
       </canvas>
     </div>
 
-    <my-menu is="foot" :showModal="showEditModal" :text="editText" @modalReturn="editModalChange" @action="menuAction"></my-menu>
+    <my-menu v-if="audit" is="foot" :showModal="showEditModal" :text="editText" @modalReturn="editModalChange" @action="menuAction"></my-menu>
 
   </div>
 </template>
@@ -51,7 +51,7 @@ wepy.page({
     dateImg_height: 0,
 
     title: `你好！早安！`,
-    desc: '说点什么吧。',
+    desc: '心若向阳无畏悲伤，永远相信今天比昨天更美好。'
   },
 
   created() {},
@@ -59,8 +59,8 @@ wepy.page({
   computed: {},
 
   methods: {
-    async draw() {
-      wx.showLoading()
+    async draw(cb) {
+      wx.showLoading({ title: '努力加载中..' })
       const _this = this
 
       await this.prepareImg()
@@ -145,7 +145,7 @@ wepy.page({
         })
         .drawWrapText({
           id: '#month',
-          text: '.'+this.month,
+          text: '.' + this.month,
           fontSize: 20,
           left: 291 * this.ratio,
           referLayer: {
@@ -155,7 +155,7 @@ wepy.page({
         })
         .drawWrapText({
           id: '#date',
-          text: '.'+this.date,
+          text: '.' + this.date,
           fontSize: 20,
           left: 319 * this.ratio,
           referLayer: {
@@ -165,7 +165,7 @@ wepy.page({
         })
         .drawWrapText({
           id: '#day',
-          text: '星期'+this.dayStr,
+          text: '星期' + this.dayStr,
           fontSize: 24,
           left: 258 * this.ratio,
           referLayer: {
@@ -173,7 +173,7 @@ wepy.page({
             top: -(35 * this.ratio)
           }
         })
-        
+
         // .drawCircleImage({
         //   id: 'avatar',
         //   path: this.avatarUrl,
@@ -206,7 +206,7 @@ wepy.page({
         //     left: 16 * this.ratio
         //   }
         // })
-        
+
         .drawImage({
           id: 'qrcode',
           width: 64 * this.ratio,
@@ -251,6 +251,7 @@ wepy.page({
           }
         })
 
+      if (cb) cb()
       canvas.draw(() => {
         setTimeout(() => {
           this.createPic(this)
@@ -286,7 +287,7 @@ wepy.page({
 </style>
 <config>
 {
-navigationBarTitleText: '编辑图签',
+navigationBarTitleText: '查看图签',
   usingComponents: {
     "my-menu": "../components/EditorMenu",
   }

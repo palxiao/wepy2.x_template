@@ -1,12 +1,11 @@
 import { wxRequest } from '../utils/wxRequest';
-import {API_URL} from '../config'
-const prefix = API_URL
+import { API_URL } from '../config'
 
-const test = (params) => wxRequest(params, prefix + 'sleep.php?time=1&t=css&c=');
+const audit = (params) => wxRequest(params, API_URL + 'miniProgram/audit');
 
 const hitokoto = () => wxRequest({}, 'https://v1.hitokoto.cn/')
 
 module.exports = {
-    test,
+    audit,
     hitokoto
 }

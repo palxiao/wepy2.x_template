@@ -13,7 +13,7 @@
 
     <my-swiper @tap="openEditor" @change="swiperChange" :imgUrls="imgUrls" />
 
-    <official-account style="margin-top:20rpx;"></official-account>
+    <official-account style="margin-top:40rpx;"></official-account>
 
   </div>
 </template>
@@ -38,12 +38,12 @@ wepy.page({
   data: {
     swiperIndex: 0,
     userInfo: {
-      nickName: '选择一个模板开始..'
+      nickName: '选择一个图片..'
     },
     imgUrls: [
-      '../../assets/images/q02.png',
-      '../../assets/images/q01.png',
-      '../../assets/images/q00.png'
+      'cloud://daka.6461-daka-1301019118/T/T00.png',
+      'cloud://daka.6461-daka-1301019118/T/T01.png',
+      'cloud://daka.6461-daka-1301019118/T/T02.png'
     ]
   },
 
