@@ -45,9 +45,6 @@ wepy.app({
 {
     pages: [
       'pages/index',
-      'pages/T0',
-      'pages/T1',
-      'pages/T2',
       'pages/authorization',
     ],
     window: {
