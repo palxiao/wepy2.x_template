@@ -58,6 +58,8 @@
 </template>
 <script>
 import wepy from '@wepy/core'
+import editMixin from '@/mixins/edit'
+import { vibrate } from '@/utils';
 // const app = getApp()
 const bgAudioManager = wx.getBackgroundAudioManager()
 const { MusicManager } = require('./NetEaseCloudMusicApi/src/MusicManager')
@@ -167,6 +169,7 @@ wepy.component({
     },
     // openMusic: function() {},
     playMusic() {
+      vibrate()
       const isMusicPlay = this.$app.$options.globalData.isMusicPlay
       const player = this.$app.$options.globalData.player
       this.$app.$options.globalData.isMusicPlay = !isMusicPlay

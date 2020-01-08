@@ -25,7 +25,7 @@ export default new Vuex.Store({
           state.player.play()
         })
       }
-    }
+    },
   },
   actions: {
     playMusic ({ commit }) {

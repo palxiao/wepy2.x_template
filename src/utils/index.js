@@ -251,6 +251,10 @@ function getImageInfo(path) {
     })
   })
 }
+function vibrate() {
+  /**手机振动 */
+  wx.vibrateShort()
+}
 
 /**
  * 判断是否是数组
@@ -275,5 +279,6 @@ module.exports = {
   getAsUriParameters,
   savePhoto,
   dateConversion,
-  getImageInfo
+  getImageInfo,
+  vibrate
 }
