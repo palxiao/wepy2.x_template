@@ -25,33 +25,16 @@ wepy.app({
     //   avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/z5dplLf56JL4Pibib6zn6OicsTPZO64wUeibibs9dPZRgbfQCkxm5yBDx0noVYL1d6djjVpQyNrNaGLNAw4ecLmOiahQ/132',
     //   nickName: '测试昵称'
     // },
-    isMusicPlay: false,
-    bgm: null,
-    player: wx.createInnerAudioContext()
   },
 
   onLaunch() {
-    this.player = this.$options.globalData.player
+    
   },
   onHide() {
     console.log('bye-bye')
   },
   onShow() {
-    if (this.$options.globalData.isMusicPlay) {
-      if (this.player.src) {
-        this.player.play()
-      } else {
-        this.player.title = 'bgm'
-        this.player.src = this.$options.globalData.bgm
-        this.player.play()
-        // this.player.onPlay(() => {
-        //   console.log('音乐播放开始')
-        // })
-        this.player.onEnded(() => {
-          this.player.play()
-        })
-      }
-    }
+    
   },
   methods: {
     

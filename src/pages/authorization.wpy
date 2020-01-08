@@ -37,7 +37,7 @@ wepy.page({
     onGotUserInfo: e => {
       console.log(e.$wx.detail.userInfo);
       wx.navigateTo({
-        url: 'index' // 跳转编辑
+        url: 'index'
       });
     },
     quxiao() {

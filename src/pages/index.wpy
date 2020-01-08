@@ -2,7 +2,6 @@
 <wxs module="m1" lang="babel" src="../utils/widget/test.wxs"></wxs>
 <template>
   <div class="container">
-    <play-music />
 
     <button class="head" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">
       <div class="userinfo">
@@ -11,7 +10,7 @@
       </div>
     </button>
 
-    <my-swiper @tap="openEditor" @change="swiperChange" :imgUrls="imgUrls" />
+    <!-- <my-swiper @tap="openEditor" @change="swiperChange" :imgUrls="imgUrls" /> -->
 
     <official-account style="margin-top:40rpx;"></official-account>
 
@@ -36,15 +35,9 @@ wepy.page({
   // mixins: [testMixin],
 
   data: {
-    swiperIndex: 0,
     userInfo: {
-      nickName: '选择一个图片..'
+      nickName: '请登录'
     },
-    imgUrls: [
-      'cloud://daka.6461-daka-1301019118/T/T00.png',
-      'cloud://daka.6461-daka-1301019118/T/T01.png',
-      'cloud://daka.6461-daka-1301019118/T/T02.png'
-    ]
   },
 
   created() {
@@ -60,7 +53,7 @@ wepy.page({
   },
 
   methods: {
-    // ...mapActions(['playMusic']) ,
+    // ...mapActions(['']) ,
     getUser() {
       const _this = this;
       wx.getUserInfo({
@@ -71,19 +64,10 @@ wepy.page({
       });
     },
     onGotUserInfo: e => {},
-    swiperChange(index) {
-      this.swiperIndex = index;
-    },
-    openEditor() {
-      if (this.$app.$options.globalData.userInfo) {
-        wx.navigateTo({
-          url: 'T' + this.swiperIndex // 跳转编辑
-        });
-      } else {
-        wx.navigateTo({
+    authorize() {
+      wx.navigateTo({
           url: 'authorization' // 授权
         });
-      }
     }
   },
   events: {}
@@ -94,10 +78,9 @@ wepy.page({
 </style>
 <config>
 {
-    navigationBarTitleText: '言叶图签',
+    navigationBarTitleText: '小程序名称',
     usingComponents: {
       "my-swiper": "~@/components/common/Swiper",
-      'play-music': '~@/components/music'
     }
 }
 </config>
