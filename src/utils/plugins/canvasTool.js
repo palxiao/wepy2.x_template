@@ -8,7 +8,7 @@ function addLayer(layer) {
             this[layer.id] = layer;
         }
         else {
-            console.warn('建议id格式为#xxx,以免跟现有属性重复', layer);
+            console.warn('id可能跟现有属性重复', layer);
         }
     }
     else {
