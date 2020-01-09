@@ -15,8 +15,10 @@
   "author": "ShawnPhang",
   "license": "MIT",
   "dependencies": {
+    "@minidesign/image-cropper": "0.0.9",
     "@wepy/core": "^2.0.0-alpha.9",
-    "@wepy/x": "^2.0.2"
+    "@wepy/x": "^2.0.2",
+    "miniprogram-cropper": "^1.0.5"
   },
   "devDependencies": {
     "@wepy/cli": "^2.0.0-alpha.20",
