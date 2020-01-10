@@ -139,6 +139,7 @@
 <script>
 import wepy from '@wepy/core'
 import eventHub from '@/utils/common/eventHub'
+import { vibrate } from '@/utils';
 wepy.component({
   options: {
     multipleSlots: true // 在组件定义时的选项中启用多slot支持
@@ -160,6 +161,7 @@ wepy.component({
   created() {},
   methods: {
     action(fn) {
+      vibrate()
       this.$emit('action', fn)
     },
     changeModal(index) {

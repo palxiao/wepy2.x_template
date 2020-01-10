@@ -1,5 +1,5 @@
 
-import { savePhoto, dateConversion, getImageInfo } from '@/utils';
+import { savePhoto, dateConversion, getImageInfo, vibrate } from '@/utils';
 import eventHub from '@/utils/common/eventHub'
 import api from '@/api';
 // import * as api from '@/api'
@@ -103,8 +103,6 @@ export default {
                 canvasId: 'canvas',
                 success: (res) => {
                     _this.previewPic = res.tempFilePath
-                    console.log('预览图片:'+_this.previewPic);
-                    
                 },
                 fail: (e) => {
                     console.log('fail creat Img', e);
@@ -139,6 +137,7 @@ export default {
          * 打开编辑框
          */
         edit(e) {
+            vibrate()
             this.editFlag = e
             this.editText = this[e]
             this.showEditModal = true;

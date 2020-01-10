@@ -190,7 +190,7 @@ function savePhoto(url) {
     filePath: url,
     success: () => {
       wx.showToast({
-        title: title || '保存成功',
+        title: '保存成功',
         icon: 'success',
       })
     },

@@ -28,7 +28,7 @@
 import wepy from '@wepy/core';
 import eventHub from '@/utils/common/eventHub';
 import store from '@/store';
-// import testMixin from '@/mixins/test';
+import { vibrate } from '@/utils';
 import api from '@/api';
 import WeCropper from 'we-cropper';
 const device = wx.getSystemInfoSync();
@@ -36,6 +36,8 @@ const width = device.windowWidth;
 const height = device.windowHeight - 40;
 
 let cropper = null;
+let ratio = 0;
+let constant = 1;
 
 wepy.page({
   store,
@@ -58,42 +60,45 @@ wepy.page({
   created() {
     let cropWidth = wx.getStorageSync('cropWidth');
     let cropHeight = wx.getStorageSync('cropHeight');
-    console.log('接受：', cropWidth, cropHeight);
-    if (cropWidth > width) {
-      const ratio = cropWidth / cropHeight;
-      const temp = (ratio / 2) * cropWidth;
-      cropHeight = (ratio / 2) * cropHeight;
-      cropWidth = temp;
-    }
-    const newCut = {};
 
-    newCut.width = cropWidth;
-    newCut.height = cropHeight;
-    newCut.x = (width - cropWidth) / 2;
-    newCut.y = (height - cropHeight) / 2;
+    ratio =
+      cropWidth > cropHeight ? cropHeight / cropWidth : cropWidth / cropHeight;
 
-    this.options.cut = newCut;
-
-    console.log('最终：', cropWidth, cropHeight);
-
-    // this.crop = this.$wx.selectComponent('#myCrop')
-
-    // const { id, targetId } = this.options;
-    // const option = Object.assign(this.options, {
-    // ctx: wx.createCanvasContext(id, this),
-    // targetCtx: wx.createCanvasContext(targetId, this)
-    // });
-    cropper = new WeCropper(this.options);
-
-    setTimeout(() => {
-      cropper.pushOrign(this.$store.state.cropImg);
-    }, 10);
+    this.calculate(cropWidth, cropHeight);
   },
 
   computed: {},
 
   methods: {
+    calculate(cropWidth, cropHeight) {
+      if (cropWidth > width) {
+        const temp = ratio * cropWidth;
+        cropHeight = ratio * cropHeight;
+        cropWidth = temp;
+        this.calculate(cropWidth, cropHeight);
+      } else {
+        console.log('zuizhong', cropWidth, cropHeight);
+        this.creatCrop(cropWidth, cropHeight);
+      }
+    },
+    creatCrop(cropWidth, cropHeight) {
+      const newCut = {};
+
+      newCut.width = cropWidth;
+      newCut.height = cropHeight;
+      newCut.x = (width - cropWidth) / 2;
+      newCut.y = (height - cropHeight) / 2;
+
+      this.options.cut = newCut;
+
+      cropper = new WeCropper(this.options);
+
+      setTimeout(() => {
+        cropper.pushOrign(this.$store.state.cropImg);
+      }, 10);
+    },
     complete() {
+      vibrate()
       cropper.getCropperImage().then(src => {
         eventHub.$emit('changePhoto', { url: src });
         wx.navigateBack({
