@@ -14,24 +14,6 @@
     <my-swiper @tap="openEditor" @change="swiperChange" :imgUrls="imgUrls" />
 
     <official-account style="margin-top:40rpx;"></official-account>
-<!-- https://we-plugin.github.io/we-cropper/#/api?id=%E6%9E%84%E9%80%A0%E5%99%A8%E5%8F%82%E6%95%B0 -->
-<view @tap="uploadTap">上123123213</view> ----- <view @tap="getCropperImage">生12537216</view>
-    <miniprogram-cropper id="crop" :options="cropperOpt"></miniprogram-cropper>
-    <view
-    class="cropper-buttons" 
-    :style="{ color:cropperOpt.boundStyle.color}">
-    <view
-        class="upload btn"
-        bindtap="uploadTap">
-        上传图片
-    </view>
-    <view
-        class="getCropperImage btn"
-        :style="{ backgroundColor: cropperOpt.boundStyle.color }"
-        bindtap="getCropperImage">
-        生成图片
-    </view>
-</view>
 
   </div>
 </template>
@@ -43,9 +25,6 @@ import eventHub from '../utils/common/eventHub';
 import store from '@/store';
 // import testMixin from '../mixins/test';
 import api from '@/api';
-const device = wx.getSystemInfoSync()
-const width = device.windowWidth
-const height = device.windowHeight - 50
 
 wepy.page({
   store,
@@ -57,27 +36,6 @@ wepy.page({
   // mixins: [testMixin],
 
   data: {
-    crop: null,
-    cropperOpt: {
-            id: 'cropper',
-            targetId: 'targetCropper',
-            pixelRatio: device.pixelRatio,
-            width,
-            height,
-            scale: 2.5,
-            zoom: 8,
-            cut: {
-                x: (width - 300) / 2,
-                y: (height - 300) / 2,
-                width: 300,
-                height: 300
-            },
-            boundStyle: {
-                color: '#ffffff',
-                mask: 'rgba(0,0,0,0.8)',
-                lineWidth: 1
-            }
-        },
     swiperIndex: 0,
     userInfo: {
       nickName: '选择一个图片..'
@@ -90,7 +48,6 @@ wepy.page({
   },
 
   created() {
-    this.crop = this.$wx.selectComponent('#crop')
     // api.test().then((res) => {
     //   console.log(res);
     // })
@@ -103,36 +60,6 @@ wepy.page({
   },
 
   methods: {
-    uploadTap () {
-        const self = this
- 
-        if (this.crop) {
-            wx.chooseImage({
-                count: 1, // 默认9
-                sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
-                sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
-                success (res) {
-                    const src = res.tempFilePaths[0]
-                    //  获取裁剪图片资源后，给data添加src属性及其值
-            
-                    self.crop.pushOrign(src)
-                }
-            })
-        }
-    },
- 
-    getCropperImage () {
-        this.crop.getCropperImage()
-            .then((src) => {
-                wx.previewImage({
-                current: '', // 当前显示图片的http链接
-                urls: [src] // 需要预览的图片http链接列表
-                })
-            })
-            .catch(() => {
-                console.log('获取图片地址失败，请稍后重试')
-            })
-    },
     // ...mapActions(['playMusic']) ,
     getUser() {
       const _this = this;
@@ -171,7 +98,6 @@ wepy.page({
     usingComponents: {
       "my-swiper": "~@/components/common/Swiper",
       'play-music': '~@/components/music',
-      "miniprogram-cropper": "module:miniprogram-cropper"
     }
 }
 </config>

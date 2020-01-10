@@ -20,12 +20,12 @@ wepy.app({
     // }
   },
   globalData: {
-    userInfo: null,
-    // userInfo: {
-    //   avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/z5dplLf56JL4Pibib6zn6OicsTPZO64wUeibibs9dPZRgbfQCkxm5yBDx0noVYL1d6djjVpQyNrNaGLNAw4ecLmOiahQ/132',
-    //   nickName: '测试昵称'
-    // },
-    isMusicPlay: false,
+    // userInfo: null,
+    userInfo: {
+      avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/z5dplLf56JL4Pibib6zn6OicsTPZO64wUeibibs9dPZRgbfQCkxm5yBDx0noVYL1d6djjVpQyNrNaGLNAw4ecLmOiahQ/132',
+      nickName: '测试昵称'
+    },
+    // isMusicPlay: false,
     bgm: null,
     player: wx.createInnerAudioContext()
   },
@@ -66,6 +66,7 @@ wepy.app({
       'pages/T1',
       'pages/T2',
       'pages/authorization',
+      'pages/Cropper'
     ],
     window: {
       backgroundTextStyle: 'light',

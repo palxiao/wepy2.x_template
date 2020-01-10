@@ -4,11 +4,15 @@ import api from '@/api';
 // import * as api from '@/api'
 const nowDay = new Date().getDate() + ''
 const nowMonth = (new Date().getMonth() + 1) + ''
+
+const device = wx.getSystemInfoSync();
+const wWidth = device.windowWidth
+const ratio = device.windowWidth / 375;
 export default {
     data: {
         audit: 0,
-        wWidth: 0,
-        ratio: 0,
+        wWidth,
+        ratio,
         previewPic: '',
         scale: 0.9,
         width: 375,
@@ -27,7 +31,8 @@ export default {
         qrcode00: 'cloud://daka.6461-daka-1301019118/qrcode00.jpg',
         qrcode01: 'cloud://daka.6461-daka-1301019118/qrcode01.png',
         prepare: true,
-        done: false
+        done: false,
+
     },
     methods: {
         async generalLoadImg(name) {
@@ -114,12 +119,16 @@ export default {
             const _this = this
             wx.chooseImage({
                 count: 1,
-                sizeType: ['original', 'compressed'],
+                sizeType: ['compressed'],
                 sourceType: ['album', 'camera'],
                 success(res) {
                     const tempFilePaths = res.tempFilePaths;
-                    _this[name] = tempFilePaths[0];
-                    _this.draw();
+                    _this.$store.state.cropImg = tempFilePaths[0]
+                    wx.setStorageSync('cropWidth', _this[name + '_width'])
+                    wx.setStorageSync('cropHeight', _this[name + '_height'])
+                    wx.navigateTo({ url: 'Cropper' })
+                    // _this[name] = tempFilePaths[0];
+                    // _this.draw();
                 }
             });
         },
@@ -159,16 +168,11 @@ export default {
         })
         this.avatarUrl = this.$app.$options.globalData.userInfo.avatarUrl
         this.nickName = this.$app.$options.globalData.userInfo.nickName
-        try {
-            const res = wx.getSystemInfoSync();
-            this.wWidth = res.windowWidth
-            console.log('机宽：' + this.wWidth);
-            this.ratio = res.windowWidth / 375;
-            console.log('系数：' + this.ratio);
-        } catch (e) {
-            // Do something when catch error
-        }
         // this.draw().then(() => { this.done = true })
-        this.draw(() => { this.done = true })
+        this.draw(() => {
+            this.done = true
+
+        })
+
     },
 }

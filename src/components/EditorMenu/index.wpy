@@ -23,6 +23,7 @@
   }
 }
 .footer {
+  position: relative;
   z-index: 99999;
   height: 100rpx;
   .btn {
@@ -70,8 +71,8 @@
 .button-div {
   display: flex;
   justify-content: space-around;
-  margin-top: 38rpx;
-  height: 70rpx;
+  margin-top: 5rpx;
+  // height: 70rpx;
   > view {
     flex: 5;
     padding: 10px;
@@ -87,6 +88,14 @@
     color: #3cc51f;
   }
 }
+.vertical {
+  height: 24rpx;
+  width: 4rpx;
+  background: rgba(0,0,0,.4);
+  position: absolute;
+  top: 38rpx;
+  z-index: 9;
+}
 </style>
 <template>
   <div>
@@ -94,14 +103,25 @@
       <cover-view class="btn noflex-layout" @tap="action('preview')">预览</cover-view>
       <cover-view class="btn noflex-layout" @tap="action('save')">保存</cover-view>
     </cover-view>
-    <cover-view v-else-if="is==='foot'" class="noflex-layout footer">
+    <cover-view v-else-if="is==='foot'&&!modelShow" class="noflex-layout footer">
       <cover-view class="btn noflex-layout" @tap="action('randomText')">随机</cover-view>
-      <cover-view class="btn noflex-layout" @tap="action('editBtn')">编辑</cover-view>
+      <cover-view class="vertical" style="margin-left: 250rpx;"></cover-view>
+      <cover-view class="btn noflex-layout" @tap="action('editBtn')">点击编辑</cover-view>
+      <cover-view class="vertical" style="margin-left: 500rpx;"></cover-view>
       <cover-view class="btn noflex-layout" @tap="action('changePhoto')">更换背景</cover-view>
     </cover-view>
 
     <!-- <my-modal :show="modelShow" @changeModal="changeModal" title="编辑模式"> -->
-    <cover-view v-show="modelShow" class="drawer_screen">
+    <view v-show="modelShow" class="drawer_screen">
+      <view class="drawer_box">
+        <textarea class="cover-input" placeholder="写点什么.." v-model="editing" auto-height :focus="focus"></textarea>
+        <view class="button-div">
+          <view v-for="(item, index) in modalData.button" :key="index" class="{{index == 0 ? 'btn_no' : 'btn_yes'}}"
+            @tap="changeModal(index)">{{item}}</view>
+        </view>
+      </view>
+    </view>
+    <!-- <cover-view v-show="modelShow" class="drawer_screen">
       <cover-view class="drawer_box">
         <cover-view @tap="clickEdit" class="cover-text">{{editing}}</cover-view>
         <textarea class="cover-input" placeholder="写点什么.." v-model="editing" auto-height :focus="focus"></textarea>
@@ -110,7 +130,7 @@
             @tap="changeModal(index)">{{item}}</cover-view>
         </cover-view>
       </cover-view>
-    </cover-view>
+    </cover-view> -->
     <!-- </my-modal> -->
   </div>
 
@@ -147,12 +167,12 @@ wepy.component({
         text: this.editing
       })
     },
-    clickEdit() {
-      this.focus = false
-      setTimeout(() => {
-        this.focus = true
-      }, 100);
-    }
+    // clickEdit() {
+    //   this.focus = false
+    //   setTimeout(() => {
+    //     this.focus = true
+    //   }, 100)
+    // },
   },
   watch: {
     showModal(val) {

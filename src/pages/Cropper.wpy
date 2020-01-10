@@ -1,0 +1,95 @@
+<template>
+    <div class='container'>
+        <!-- https://we-plugin.github.io/we-cropper/#/api?id=%E6%9E%84%E9%80%A0%E5%99%A8%E5%8F%82%E6%95%B0 -->
+        <miniprogram-cropper v-show="cropShow" id="myCrop" :options="cropperOpt"></miniprogram-cropper>
+        <view @tap="complete" class="ok-btn">完成</view>
+    </div>
+</template>
+ 
+<script>
+import wepy from '@wepy/core'
+// import eventHub from '@/utils/common/eventHub';
+import store from '@/store'
+// import testMixin from '@/mixins/test';
+import api from '@/api'
+const device = wx.getSystemInfoSync()
+const width = device.windowWidth
+const height = device.windowHeight - 40
+let cropWidth = wx.getStorageSync('cropWidth')
+let cropHeight = wx.getStorageSync('cropHeight')
+if (cropWidth > width) {
+  const ratio = cropWidth / cropHeight
+  const temp = (ratio / 2) * cropWidth
+  cropHeight = (ratio / 2) * cropHeight
+  cropWidth = temp
+}
+
+wepy.page({
+  store,
+
+  hooks: {
+    // Page 级别 hook, 只对当前 Page 的 setData 生效。
+  },
+  //   mixins: [testMixin],
+  data: {
+    crop: null,
+    cropperOpt: {
+      id: 'cropper',
+      targetId: 'targetCropper',
+      pixelRatio: device.pixelRatio,
+      width,
+      height,
+      cut: {
+        x: (width - cropWidth) / 2,
+        y: (height - cropHeight) / 2,
+        width: cropWidth,
+        height: cropHeight
+      }
+    }
+  },
+
+  created() {
+    console.log(width, height)
+    console.log(cropWidth, cropHeight)
+
+    this.crop = this.$wx.selectComponent('#myCrop')
+
+    setTimeout(() => {
+      this.crop.pushOrign(this.$store.state.cropImg)
+    }, 100)
+  },
+
+  computed: {},
+
+  methods: {
+    complete() {
+      this.crop
+        .getCropperImage()
+        .then(src => {
+          console.log(src);
+          
+        })
+        .catch(() => {
+          console.log('获取图片地址失败，请稍后重试')
+        })
+    }
+  },
+  events: {}
+})
+</script>
+ 
+<style lang='less' scoped>
+.ok-btn {
+  text-align: center;
+  height: 40px;
+  line-height: 40px;
+}
+</style>
+<config>
+{
+navigationBarTitleText: '选择图片',
+usingComponents: {
+ "miniprogram-cropper": "module:miniprogram-cropper"
+}
+}
+</config>

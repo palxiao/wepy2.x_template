@@ -45,8 +45,8 @@ wepy.page({
 
     bg_width_original: 0,
     bg_height_original: 0,
-    pre_width: 0,
-    pre_height: 0,
+    main_width: 0,
+    main_height: 0,
     dateImg_width: 0,
     dateImg_height: 0,
 
@@ -73,12 +73,12 @@ wepy.page({
         this.height = parseInt((bgImg.height * this.wWidth) / bgImg.width)
       }
 
-      if (this.pre_width === 0) {
+      if (this.main_width === 0) {
         const preImg = await this.downloadCloud(this.main)
         this.main = preImg.path
-        this.pre_width = (preImg.width * this.wWidth) / this.bg_width_original
-        this.pre_height = parseInt(
-          (preImg.height * this.pre_width) / preImg.width
+        this.main_width = (preImg.width * this.wWidth) / this.bg_width_original
+        this.main_height = parseInt(
+          (preImg.height * this.main_width) / preImg.width
         )
       }
 
