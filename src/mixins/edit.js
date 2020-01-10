@@ -11,6 +11,7 @@ const wWidth = device.windowWidth
 const ratio = device.windowWidth / 375;
 export default {
     data: {
+        canvasId: 'canvas' + Math.ceil(Math.random() * 998),
         audit: 0,
         wWidth,
         ratio,
@@ -100,7 +101,7 @@ export default {
          */
         createPic(_this) {
             wx.canvasToTempFilePath({
-                canvasId: 'canvas',
+                canvasId: this.canvasId,
                 success: (res) => {
                     _this.previewPic = res.tempFilePath
                 },

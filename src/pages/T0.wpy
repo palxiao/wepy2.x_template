@@ -4,7 +4,7 @@
       <my-menu is="head" @action="menuAction"></my-menu>
 
       <div v-show="!showEditModal" class="content">
-        <canvas canvas-id="canvas" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
+        <canvas canvas-id="{{canvasId}}" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
 
           <cover-view v-show="showEdit" style="{{'width:100%;height:'+height+'px;'}}" class="maskPanel">
             <!-- 蒙版 Start -->
@@ -75,8 +75,7 @@ wepy.page({
       if (this.pre_width === 0) {
         const preImg = await this.downloadCloud(this.temp)
         this.temp = preImg.path
-        _this.pre_width =
-          (preImg.width * _this.wWidth) / _this.bgImg_width
+        _this.pre_width = (preImg.width * _this.wWidth) / _this.bgImg_width
         _this.pre_height = parseInt(
           (preImg.height * _this.pre_width) / preImg.width
         )
@@ -84,7 +83,7 @@ wepy.page({
 
       const canvas = new SimpleCanvas({
         scale: this.scale,
-        canvasId: 'canvas'
+        canvasId: this.canvasId
       })
       canvas
         .createArtboard({

@@ -3,7 +3,7 @@
     <my-menu is="head" @action="menuAction"></my-menu>
 
     <div class="content">
-      <canvas canvas-id="canvas" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
+      <canvas canvas-id="{{canvasId}}" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
 
         <cover-view v-show="showEdit" style="{{'width:100%;height:'+height+'px;'}}" class="maskPanel">
           <!-- 蒙版 Start -->
