@@ -26,6 +26,7 @@
   position: relative;
   z-index: 99999;
   height: 100rpx;
+  margin-bottom: 20rpx;
   .btn {
     line-height: 104rpx;
     width: 249rpx;
@@ -104,9 +105,9 @@
       <cover-view class="btn noflex-layout" @tap="action('save')">保存</cover-view>
     </cover-view>
     <cover-view v-else-if="is==='foot'&&!modelShow" class="noflex-layout footer">
-      <cover-view class="btn noflex-layout" @tap="action('randomText')">随机</cover-view>
+      <cover-view class="btn noflex-layout" @tap="action('randomText')">随机一言</cover-view>
       <cover-view class="vertical" style="margin-left: 250rpx;"></cover-view>
-      <cover-view class="btn noflex-layout" @tap="action('editBtn')">点击编辑</cover-view>
+      <cover-view class="btn noflex-layout" @tap="action('editBtn')">编辑开关</cover-view>
       <cover-view class="vertical" style="margin-left: 500rpx;"></cover-view>
       <cover-view class="btn noflex-layout" @tap="action('changePhoto')">更换背景</cover-view>
     </cover-view>

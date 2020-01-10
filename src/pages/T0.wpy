@@ -31,7 +31,6 @@ import store from '@/store'
 import editMixin from '@/mixins/edit'
 import api from '@/api'
 import SimpleCanvas from '@/utils/plugins/canvasTool'
-import eventHub from '@/utils/common/eventHub'
 
 wepy.page({
   store,

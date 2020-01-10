@@ -1,5 +1,6 @@
 
 import { savePhoto, dateConversion, getImageInfo } from '@/utils';
+import eventHub from '@/utils/common/eventHub'
 import api from '@/api';
 // import * as api from '@/api'
 const nowDay = new Date().getDate() + ''
@@ -102,6 +103,8 @@ export default {
                 canvasId: 'canvas',
                 success: (res) => {
                     _this.previewPic = res.tempFilePath
+                    console.log('预览图片:'+_this.previewPic);
+                    
                 },
                 fail: (e) => {
                     console.log('fail creat Img', e);
@@ -126,7 +129,7 @@ export default {
                     _this.$store.state.cropImg = tempFilePaths[0]
                     wx.setStorageSync('cropWidth', _this[name + '_width'])
                     wx.setStorageSync('cropHeight', _this[name + '_height'])
-                    wx.navigateTo({ url: 'Cropper' })
+                    wx.navigateTo({ url: 'Cropper2' })
                     // _this[name] = tempFilePaths[0];
                     // _this.draw();
                 }
@@ -171,8 +174,16 @@ export default {
         // this.draw().then(() => { this.done = true })
         this.draw(() => {
             this.done = true
-
         })
-
+        const _this = this
+        eventHub.$on('changePhoto', (...args) => {
+            _this[_this.editImg] = args[0].url;
+            setTimeout(() => {
+                wx.showLoading({ title: '施加魔法中..' })
+                setTimeout(() => {
+                    _this.draw();
+                }, 1000);
+            }, 300);
+        });
     },
 }

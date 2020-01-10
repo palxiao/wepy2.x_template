@@ -1,5 +1,5 @@
 <template>
-    <div class='container'>
+    <div class="">
         <!-- https://we-plugin.github.io/we-cropper/#/api?id=%E6%9E%84%E9%80%A0%E5%99%A8%E5%8F%82%E6%95%B0 -->
         <miniprogram-cropper v-show="cropShow" id="myCrop" :options="cropperOpt"></miniprogram-cropper>
         <view @tap="complete" class="ok-btn">完成</view>
@@ -8,21 +8,15 @@
  
 <script>
 import wepy from '@wepy/core'
-// import eventHub from '@/utils/common/eventHub';
+import eventHub from '@/utils/common/eventHub';
 import store from '@/store'
 // import testMixin from '@/mixins/test';
 import api from '@/api'
 const device = wx.getSystemInfoSync()
 const width = device.windowWidth
 const height = device.windowHeight - 40
-let cropWidth = wx.getStorageSync('cropWidth')
-let cropHeight = wx.getStorageSync('cropHeight')
-if (cropWidth > width) {
-  const ratio = cropWidth / cropHeight
-  const temp = (ratio / 2) * cropWidth
-  cropHeight = (ratio / 2) * cropHeight
-  cropWidth = temp
-}
+const cropWidth = 0
+const cropHeight = 0
 
 wepy.page({
   store,
@@ -49,12 +43,32 @@ wepy.page({
   },
 
   created() {
-    console.log(width, height)
-    console.log(cropWidth, cropHeight)
+    let cropWidth = wx.getStorageSync('cropWidth')
+    let cropHeight = wx.getStorageSync('cropHeight')
+    console.log('接受：',cropWidth, cropHeight);
 
-    this.crop = this.$wx.selectComponent('#myCrop')
+    if (cropWidth > width) {
+      const ratio = cropWidth / cropHeight
+      const temp = (ratio / 2) * cropWidth
+      cropHeight = (ratio / 2) * cropHeight
+      cropWidth = temp
+    }
+
+    this.cropperOpt.cut.width = cropWidth
+    this.cropperOpt.cut.height = cropHeight
+    this.cropperOpt.cut.x = (width - cropWidth) / 2
+    this.cropperOpt.cut.y = (height - cropHeight) / 2
+
+
+    console.log('最终：',cropWidth, cropHeight)
+
+    // setTimeout(() => {
+      this.crop = this.$wx.selectComponent('#myCrop')
+    // }, 2000);
 
     setTimeout(() => {
+      console.log(this.crop);
+      
       this.crop.pushOrign(this.$store.state.cropImg)
     }, 100)
   },
@@ -66,8 +80,10 @@ wepy.page({
       this.crop
         .getCropperImage()
         .then(src => {
-          console.log(src);
-          
+          eventHub.$emit('changePhoto', { url: src });
+          wx.navigateBack({
+            delta: 1
+          })
         })
         .catch(() => {
           console.log('获取图片地址失败，请稍后重试')

@@ -28,7 +28,6 @@ import store from '@/store'
 import editMixin from '@/mixins/edit'
 import api from '@/api'
 import SimpleCanvas from '@/utils/plugins/canvasTool'
-import eventHub from '@/utils/common/eventHub'
 
 wepy.page({
   store,
@@ -114,8 +113,8 @@ wepy.page({
         })
         .drawImage({
           id: 'preBox',
-          width: this.pre_width,
-          height: this.pre_height,
+          width: this.main_width,
+          height: this.main_height,
           path: this.main,
           referLayer: {
             id: 'bg',
@@ -130,7 +129,7 @@ wepy.page({
           left: 234 * this.ratio,
           referLayer: {
             id: 'preBox',
-            top: -this.pre_height - 35
+            top: -this.main_height - 35
           }
         })
         .drawWrapText({
@@ -241,7 +240,7 @@ wepy.page({
           }
         })
         .drawWrapText({
-          id: '#title',
+          id: '#bt',
           fontSize: 18,
           left: 40 * this.ratio,
           text: '每/日/一/签',
