@@ -3,27 +3,43 @@
 <template>
   <div class="container">
 
-    <button class="head" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">
+    <!-- <button class="head" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">
       <div class="userinfo">
         <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover" />
         <div class="userinfo-nickname">{{ userInfo.nickName }}</div>
       </div>
-    </button>
+    </button> -->
 
     <!-- <my-swiper @tap="openEditor" @change="swiperChange" :imgUrls="imgUrls" /> -->
+    <image mode="aspectFill" class="bg" style="min-height:{{wHeight}}px" src="../assets/images/bg00.png" />
+    <image @tap="add" mode="aspectFit" class="title" src="../assets/images/title.png" />
+    <div class="add">添加目标</div>
+    <image class="bottom-image" mode="aspectFit" src="../assets/images/bg02.png" />
 
-    <official-account style="margin-top:40rpx;"></official-account>
+    <scroll-view scroll-y="true" class="content" style="height:{{wHeight*0.68}}px;">
+      <!-- bindscrolltoupper="upper" bindscrolltolower="lower" bindscroll="scroll" scroll-into-view="{{toView}}" scroll-top="{{scrollTop}}" -->
+      <!-- <checkbox-group bindchange="checkboxChange"> -->
+        <div class="checkbox" v-for="(item,index) in items" :key="index">
+          <checkbox @tap="checkboxSelect(index)" :value="item.value" :checked="item.checked" />
+          <input v-show="item.edit" class="weui-input" placeholder="将会获取焦点"/>
+          <text @tap="edit(index)" class="{{item.checked?'del':''}}" style="margin-left: 10rpx;">{{item.value}}</text>
+        </div>
+      <!-- </checkbox-group> -->
+    </scroll-view>
+
+    <!-- <official-account style="margin-top:40rpx;"></official-account> -->
 
   </div>
 </template>
 
 <script>
-import wepy from '@wepy/core';
-import eventHub from '../utils/common/eventHub';
+import wepy from '@wepy/core'
+import eventHub from '../utils/common/eventHub'
 // import { mapState, mapActions } from '@wepy/x';
-import store from '@/store';
+import store from '@/store'
 // import testMixin from '../mixins/test';
-import api from '@/api';
+import api from '@/api'
+const system = wx.getSystemInfoSync()
 
 wepy.page({
   store,
@@ -35,9 +51,19 @@ wepy.page({
   // mixins: [testMixin],
 
   data: {
+    wHeight: system.windowHeight,
     userInfo: {
       nickName: '请登录'
     },
+    items: [
+      { name: 'USA', value: '同样交通拥堵', checked: false, edit: 0 },
+      { name: 'CHN', value: '持续持续许昌县', checked: 'true' },
+      { name: 'BRA', value: '阿斯顿撒大所', checked: 0 },
+      { name: 'USA', value: '但是高i扩大师傅', checked: false },
+      { name: 'CHN', value: '涨幅达后放电饭锅', checked: 'true' },
+      { name: 'BRA', value: '皮卡剧机箱内找客户', checked: 0 },
+      { name: 'BRA', value: '灰色空间傲龙岛', checked: 0 },
+    ]
   },
 
   created() {
@@ -45,40 +71,86 @@ wepy.page({
     //   console.log(res);
     // })
 
-    this.getUser();
+    this.getUser()
   },
 
-  computed: {
-    
-  },
+  computed: {},
 
   methods: {
+    add() {},
+    checkboxChange(e) {
+      // console.log('checkbox发生change事件，携带value值为：', e.$wx.detail.value)
+    },
+    checkboxSelect(index) {
+      this.items[index].checked = !this.items[index].checked
+    },
+    edit(index) {
+      this.items[index].edit = 111
+    },
     // ...mapActions(['']) ,
     getUser() {
-      const _this = this;
+      const _this = this
       wx.getUserInfo({
         success(res) {
-          _this.userInfo = res.userInfo;
-          _this.$app.$options.globalData.userInfo = res.userInfo;
+          _this.userInfo = res.userInfo
+          _this.$app.$options.globalData.userInfo = res.userInfo
         }
-      });
+      })
     },
     onGotUserInfo: e => {},
     authorize() {
       wx.navigateTo({
-          url: 'authorization' // 授权
-        });
+        url: 'authorization' // 授权
+      })
     }
   },
   events: {}
-});
+})
 </script>
 <style lang="less">
 @import url('../assets/styles/index.less');
+.title {
+  position: absolute;
+  height: 306rpx;
+  width: 100%;
+}
+.bg {
+  position: absolute;
+  width: 100%;
+  opacity: 0.6;
+}
+.bottom-image {
+  position: absolute;
+  bottom: 0;
+  height: 270rpx;
+  width: 278rpx;
+  left: 230rpx;
+  opacity: 0.8;
+}
+.content {
+  position: absolute;
+  top: 325rpx;
+  margin-left: 20rpx;
+  .checkbox {
+    width: 654rpx;
+    display: block;
+    padding: 18rpx 70rpx 18rpx 50rpx;
+  }
+  .del {
+    text-decoration: line-through;
+    color: rgba(0, 0, 0, 0.4);
+  }
+}
+.add {
+  position: absolute;
+  left: 200rpx;
+  top: 200rpx;
+  color: rgba(0, 0, 0, 0.7);
+}
 </style>
 <config>
 {
-    navigationBarTitleText: '小程序名称',
+    navigationBarTitleText: '🐸',
     usingComponents: {
       "my-swiper": "~@/components/common/Swiper",
     }
