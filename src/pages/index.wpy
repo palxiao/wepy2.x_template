@@ -13,18 +13,22 @@
     <!-- <my-swiper @tap="openEditor" @change="swiperChange" :imgUrls="imgUrls" /> -->
     <image mode="aspectFill" class="bg" style="min-height:{{wHeight}}px" src="../assets/images/bg00.png" />
     <image @tap="add" mode="aspectFit" class="title" src="../assets/images/title.png" />
-    <div class="add">添加目标</div>
+    <div @tap="add" class="add"> + 添加目标</div>
     <image class="bottom-image" mode="aspectFit" src="../assets/images/bg02.png" />
 
     <scroll-view scroll-y="true" class="content" style="height:{{wHeight*0.68}}px;">
       <!-- bindscrolltoupper="upper" bindscrolltolower="lower" bindscroll="scroll" scroll-into-view="{{toView}}" scroll-top="{{scrollTop}}" -->
       <!-- <checkbox-group bindchange="checkboxChange"> -->
-        <div class="checkbox" v-for="(item,index) in items" :key="index">
+        <div class="checkbox" v-if="!item.checked" v-for="(item,index) in items" :key="'do'+index">
           <checkbox @tap="checkboxSelect(index)" :value="item.value" :checked="item.checked" />
-          <input v-show="item.edit" class="weui-input" placeholder="将会获取焦点"/>
-          <text @tap="edit(index)" class="{{item.checked?'del':''}}" style="margin-left: 10rpx;">{{item.value}}</text>
+          <input v-if="item.edit" class="defalut" :focus="item.edit" bindblur="blur(index)" v-model="item.value" :placeholder="pihua"/>
+          <text v-else @tap="edit(index)" class="{{item.checked?'del':'defalut'}}">{{item.value}}</text>
         </div>
       <!-- </checkbox-group> -->
+      <div class="checkbox" v-if="ditem.checked" v-for="(ditem,dindex) in complete" :key="'done'+dindex">
+          <checkbox @tap="checkboxSelect(dindex, true)" :value="ditem.value" :checked="ditem.checked" />
+          <text class="{{ditem.checked?'del':'defalut'}}">{{ditem.value}}</text>
+        </div>
     </scroll-view>
 
     <!-- <official-account style="margin-top:40rpx;"></official-account> -->
@@ -51,18 +55,18 @@ wepy.page({
   // mixins: [testMixin],
 
   data: {
+    pihua: '思考目标对未来发展的影响',//比方说赚他一个亿
     wHeight: system.windowHeight,
     userInfo: {
       nickName: '请登录'
     },
     items: [
-      { name: 'USA', value: '同样交通拥堵', checked: false, edit: 0 },
-      { name: 'CHN', value: '持续持续许昌县', checked: 'true' },
-      { name: 'BRA', value: '阿斯顿撒大所', checked: 0 },
-      { name: 'USA', value: '但是高i扩大师傅', checked: false },
-      { name: 'CHN', value: '涨幅达后放电饭锅', checked: 'true' },
-      { name: 'BRA', value: '皮卡剧机箱内找客户', checked: 0 },
-      { name: 'BRA', value: '灰色空间傲龙岛', checked: 0 },
+      { value: '杀戮空间四大皆空', checked: false, edit: false },
+      { value: '第一句哈个我要默认测试目标一个我要默认测试目标一个要', checked: false, edit: false },
+      { value: '第二句话个我要默认测试一个我要默认测试目标一个我要', checked: false, edit: false }
+    ],
+    complete: [
+      {value: '杀戮空间四大皆空', checked: true, edit: false}
     ]
   },
 
@@ -77,15 +81,41 @@ wepy.page({
   computed: {},
 
   methods: {
-    add() {},
-    checkboxChange(e) {
-      // console.log('checkbox发生change事件，携带value值为：', e.$wx.detail.value)
+    add() {
+      this.items.push({value: '', checked:false, edit: true })
     },
-    checkboxSelect(index) {
+    checkboxChange(e) {
+      console.log('checkbox发生change事件，携带value值为：', e.$wx.detail.value)
+    },
+    checkboxSelect(index, idDone) {
+      if (idDone) {
+        this.complete[index].checked = !this.complete[index].checked
+        this.items.push(this.complete[index])
+        wx.showLoading({mask:true})
+          setTimeout(() => {
+            wx.hideLoading()
+            this.complete.splice(index, 1)
+          }, 800);
+        return
+      }
       this.items[index].checked = !this.items[index].checked
+      this.complete.push(this.items[index])
+      wx.showLoading({mask:true})
+      setTimeout(() => {
+        wx.hideLoading()
+        this.items.splice(index, 1)
+      }, 800);
+      
     },
     edit(index) {
-      this.items[index].edit = 111
+      if (this.items[index]) this.items[index].edit = true
+    },
+    blur(index) {
+      if (!this.items[index].value) {
+        this.items.splice(index, 1)
+        return
+      }
+      this.items[index].edit = false
     },
     // ...mapActions(['']) ,
     getUser() {
@@ -135,6 +165,11 @@ wepy.page({
     width: 654rpx;
     display: block;
     padding: 18rpx 70rpx 18rpx 50rpx;
+  }
+  .defalut, .del {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 20rpx;margin-top: 4rpx;width: 546rpx;
   }
   .del {
     text-decoration: line-through;
