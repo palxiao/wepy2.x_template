@@ -2,7 +2,7 @@
   <div v-if="done">
     <my-menu is="head" @action="menuAction"></my-menu>
 
-    <div class="content">
+    <div v-show="!showEditModal" class="content">
       <canvas canvas-id="{{canvasId}}" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
 
         <cover-view v-show="showEdit" style="{{'width:100%;height:'+height+'px;'}}" class="maskPanel">
@@ -85,7 +85,7 @@ wepy.page({
 
       const canvas = new SimpleCanvas({
         scale: this.scale,
-        canvasId: 'canvas'
+        canvasId: this.canvasId
       })
       canvas
         .createArtboard({
