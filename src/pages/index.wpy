@@ -21,7 +21,7 @@
       <!-- <checkbox-group bindchange="checkboxChange"> -->
 
       <div class="checkbox" v-if="!item.checked" v-for="(item,index) in items" :key="'do'+index" bindlongpress="_longtap"
-        bindtouchstart="touchs" bindtouchend="touchend" bindtouchmove="touchm">
+        bindtouchstart="touchs(index)" bindtouchend="touchend" bindtouchmove="touchm">
         <checkbox @tap="checkboxSelect(index)" :value="item.value" :checked="item.checked" />
         <input v-if="item.edit" class="defalut" :focus="item.edit" bindblur="blur(index)" v-model="item.value"
           :placeholder="pihua" />
@@ -29,17 +29,15 @@
       </div>
 
       <!-- </checkbox-group> -->
-      <div class="checkbox" v-if="ditem.checked" v-for="(ditem,dindex) in complete" :key="'done'+dindex">
+      <div class="checkbox-done" v-if="ditem.checked" v-for="(ditem,dindex) in complete" :key="'done'+dindex">
         <checkbox @tap="checkboxSelect(dindex, true)" :value="ditem.value" :checked="ditem.checked" />
         <text class="{{ditem.checked?'del':'defalut'}}">{{ditem.value}}</text>
       </div>
-    </scroll-view>
 
-    <movable-view class="checkbox" style="background:red;width100rpx;height:100rpx;" :out-of-bounds="true" :x="x" :y="y" direction="vertical"
-      :damping="5000" :friction="1" :disabled="disabled">
-      <!-- :hidden="hidden" -->
-      <view>sadsad</view>
-    </movable-view>
+      <movable-view :out-of-bounds="true" :x="x" :y="y" direction="vertical" :damping="5000" :friction="1" :disabled="disabled">
+        <view :hidden="!flag" class="move-box">{{flag}}</view>
+      </movable-view>
+    </scroll-view>
 
     <!-- <official-account style="margin-top:40rpx;"></official-account> -->
 
@@ -68,9 +66,10 @@ wepy.page({
   data: {
     x: 0,
     y: 0,
+    beginIndex: 0,
     disabled: false,
-    flag: false,
-    hidden: true,
+    flag: null,
+    current: '',
     pihua: '思考目标对未来发展的影响', // 比方说赚他一个亿
     wHeight: system.windowHeight,
     userInfo: {
@@ -93,22 +92,29 @@ wepy.page({
   },
 
   created() {
-    // var query = wx.createSelectorQuery()
-    // var nodesRef = query.selectAll('.checkbox')
-    // nodesRef
-    //   .fields(
-    //   {
-    //     dataset: true,
-    //     rect: true
-    //   },
-    //     result => {
-    //       elements = result
-    //     }
-    //   )
-    //   .exec()
-    // api.test().then((res) => {
-    //   console.log(res);
-    // })
+    this.$nextTick(() => {
+      // const query = wx.createSelectorQuery()
+      // query.select('.checkbox').boundingClientRect()
+      // query.selectViewport().scrollOffset()
+      // query.exec(function(res) {
+      //   console.log(res)
+
+      //   elements = res
+      // })
+      var query = wx.createSelectorQuery()
+      var nodesRef = query.selectAll('.checkbox')
+      nodesRef
+        .fields(
+        {
+          dataset: true,
+          rect: true
+        },
+          result => {
+            elements = result
+          }
+        )
+        .exec()
+    })
 
     this.getUser()
   },
@@ -121,37 +127,34 @@ wepy.page({
       vibrate()
       e = e.$wx
       const detail = e.detail
-      ;(this.x = e.currentTarget.offsetLeft),
-        (this.y = e.currentTarget.offsetTop)
-
-      this.hidden = false
-      this.flag = true
+      this.x = e.currentTarget.offsetLeft
+      this.y = e.currentTarget.offsetTop
+      this.flag = this.current
     },
-    touchs: function(e) {
-      this.beginIndex = e.$wx.currentTarget.dataset.index
+    touchs: function(index) {
+      this.current = this.items[index].value
+      this.beginIndex = index
     },
     // 触摸结束
     touchend: function(e) {
-      console.log('end ----- ')
-
       e = e.$wx
       if (!this.flag) {
         return
       }
-      const x = e.changedTouches[0].pageX
+      // const x = e.changedTouches[0].pageX
       const y = e.changedTouches[0].pageY
       const list = elements
       let data = this.items
       for (var j = 0; j < list.length; j++) {
         const item = list[j]
         if (
-          x > item.left &&
-          x < item.right &&
+          // x > item.left &&
+          // x < item.right &&
           y > item.top &&
           y < item.bottom
         ) {
-          const endIndex = item.dataset.index
-          const beginIndex = this.beginIndex
+          const endIndex = j
+          const beginIndex = this.beginIndex          
           // 向后移动
           if (beginIndex < endIndex) {
             let tem = data[beginIndex]
@@ -167,13 +170,11 @@ wepy.page({
               data[i] = data[i - 1]
             }
             data[endIndex] = tem
-          }
-console.log(data);
-
-          this.items = data
+          }          
+          this.items = data.slice()
         }
       }
-      ;(this.hidden = true), (this.flag = false)
+      this.flag = false
     },
     // 滑动
     touchm: function(e) {
@@ -181,8 +182,7 @@ console.log(data);
       if (this.flag) {
         const x = e.touches[0].pageX
         const y = e.touches[0].pageY
-        this.x = x
-        this.y = y
+        this.y = y - 180
       }
     },
 
@@ -269,7 +269,8 @@ console.log(data);
   position: absolute;
   top: 325rpx;
   margin-left: 20rpx;
-  .checkbox {
+  .checkbox,
+  .checkbox-done {
     width: 654rpx;
     display: block;
     padding: 18rpx 70rpx 18rpx 50rpx;
@@ -292,6 +293,13 @@ console.log(data);
   left: 200rpx;
   top: 200rpx;
   color: rgba(0, 0, 0, 0.7);
+}
+.move-box {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.18);
+  width: 510rpx;
+  padding: 10rpx 150rpx;
+  opacity: 0.92;
 }
 </style>
 <config>
