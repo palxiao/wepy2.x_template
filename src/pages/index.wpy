@@ -1,7 +1,7 @@
 
 <wxs module="m1" lang="babel" src="../utils/widget/test.wxs"></wxs>
 <template>
-  <movable-area class="container">
+  <movable-area style="min-height:{{wHeight}}px;" class="container">
 
     <!-- <button class="head" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">
       <div class="userinfo">
@@ -19,17 +19,14 @@
     <scroll-view scroll-y="true" class="content" style="height:{{wHeight*0.68}}px;">
       <!-- bindscrolltoupper="upper" bindscrolltolower="lower" bindscroll="scroll" scroll-into-view="{{toView}}" scroll-top="{{scrollTop}}" -->
       <!-- <checkbox-group bindchange="checkboxChange"> -->
-      <div class="checkbox" v-if="!item.checked" v-for="(item,index) in items" :key="'do'+index" bindlongpress="_longtap" bindtouchstart="touchs" bindtouchend="touchend" bindtouchmove="touchm">
+
+      <div class="checkbox" v-if="!item.checked" v-for="(item,index) in items" :key="'do'+index" bindlongpress="_longtap"
+        bindtouchstart="touchs" bindtouchend="touchend" bindtouchmove="touchm">
         <checkbox @tap="checkboxSelect(index)" :value="item.value" :checked="item.checked" />
         <input v-if="item.edit" class="defalut" :focus="item.edit" bindblur="blur(index)" v-model="item.value"
           :placeholder="pihua" />
         <text v-else @tap="edit(index)" class="{{item.checked?'del':'defalut'}}">{{item.value}}</text>
       </div>
-
-      <movable-view :x="x" :y="y" direction="all" :damping="5000" :friction="1" :disabled="disabled">
-        <view class='item-move' hidden='{{hidden}}'>
-        </view>
-      </movable-view>
 
       <!-- </checkbox-group> -->
       <div class="checkbox" v-if="ditem.checked" v-for="(ditem,dindex) in complete" :key="'done'+dindex">
@@ -37,6 +34,12 @@
         <text class="{{ditem.checked?'del':'defalut'}}">{{ditem.value}}</text>
       </div>
     </scroll-view>
+
+    <movable-view class="checkbox" style="background:red;width100rpx;height:100rpx;" :out-of-bounds="true" :x="x" :y="y" direction="vertical"
+      :damping="5000" :friction="1" :disabled="disabled">
+      <!-- :hidden="hidden" -->
+      <view>sadsad</view>
+    </movable-view>
 
     <!-- <official-account style="margin-top:40rpx;"></official-account> -->
 
@@ -50,6 +53,7 @@ import eventHub from '../utils/common/eventHub'
 import store from '@/store'
 // import testMixin from '../mixins/test';
 import api from '@/api'
+import { vibrate } from '@/utils'
 const system = wx.getSystemInfoSync()
 let elements = []
 wepy.page({
@@ -64,7 +68,7 @@ wepy.page({
   data: {
     x: 0,
     y: 0,
-    disabled: true,
+    disabled: false,
     flag: false,
     hidden: true,
     pihua: '思考目标对未来发展的影响', // 比方说赚他一个亿
@@ -89,19 +93,19 @@ wepy.page({
   },
 
   created() {
-    var query = wx.createSelectorQuery()
-    var nodesRef = query.selectAll('.checkbox')
-    nodesRef
-      .fields(
-      {
-        dataset: true,
-        rect: true
-      },
-        result => {
-          elements = result
-        }
-      )
-      .exec()
+    // var query = wx.createSelectorQuery()
+    // var nodesRef = query.selectAll('.checkbox')
+    // nodesRef
+    //   .fields(
+    //   {
+    //     dataset: true,
+    //     rect: true
+    //   },
+    //     result => {
+    //       elements = result
+    //     }
+    //   )
+    //   .exec()
     // api.test().then((res) => {
     //   console.log(res);
     // })
@@ -114,6 +118,7 @@ wepy.page({
   methods: {
     // 列表操作
     _longtap: function(e) {
+      vibrate()
       e = e.$wx
       const detail = e.detail
       ;(this.x = e.currentTarget.offsetLeft),
@@ -127,6 +132,8 @@ wepy.page({
     },
     // 触摸结束
     touchend: function(e) {
+      console.log('end ----- ')
+
       e = e.$wx
       if (!this.flag) {
         return
@@ -161,12 +168,12 @@ wepy.page({
             }
             data[endIndex] = tem
           }
+console.log(data);
 
           this.items = data
         }
       }
-      this.hidden= true,
-        this.flag= false
+      ;(this.hidden = true), (this.flag = false)
     },
     // 滑动
     touchm: function(e) {
@@ -174,7 +181,8 @@ wepy.page({
       if (this.flag) {
         const x = e.touches[0].pageX
         const y = e.touches[0].pageY
-        ;(this.x = x - 75), (this.y = y - 45)
+        this.x = x
+        this.y = y
       }
     },
 
@@ -238,7 +246,6 @@ wepy.page({
 @import url('../assets/styles/index.less');
 .container {
   width: 100%;
-  height: 100%;
 }
 .title {
   position: absolute;
