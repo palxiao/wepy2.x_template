@@ -12,7 +12,7 @@ const ratio = device.windowWidth / 375;
 export default {
     data: {
         canvasId: 'canvas' + Math.ceil(Math.random() * 998),
-        audit: 0,
+        audit: 1,
         wWidth,
         ratio,
         previewPic: '',
@@ -121,7 +121,7 @@ export default {
             const _this = this
             wx.chooseImage({
                 count: 1,
-                sizeType: ['compressed'],
+                sizeType: ['original','compressed'],
                 sourceType: ['album', 'camera'],
                 success(res) {
                     const tempFilePaths = res.tempFilePaths;

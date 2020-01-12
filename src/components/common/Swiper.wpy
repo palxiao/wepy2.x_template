@@ -71,7 +71,7 @@ page{
 }
 .active{
   transform: scale(1.2);
-  transition: all .5s ease-in 0s;
+  transition: all .3s ease-in 0s;
   z-index: 20;
   opacity: 1;
 }
