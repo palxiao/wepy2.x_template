@@ -13,15 +13,15 @@
     <!-- <my-swiper @tap="openEditor" @change="swiperChange" :imgUrls="imgUrls" /> -->
     <image mode="aspectFill" class="bg" style="min-height:{{wHeight}}px" src="../assets/images/bg00.png" />
     <image @tap="add" mode="aspectFit" class="title" src="../assets/images/title.png" />
-    <div @tap="add" class="add"> + 添加目标</div>
+    <div @tap="add" class="add"> + 点击添加目标</div>
     <image class="bottom-image" mode="aspectFit" src="../assets/images/bg02.png" />
 
     <scroll-view scroll-y="true" class="content" style="height:{{wHeight*0.68}}px;">
       <!-- bindscrolltoupper="upper" bindscrolltolower="lower" bindscroll="scroll" scroll-into-view="{{toView}}" scroll-top="{{scrollTop}}" -->
       <!-- <checkbox-group bindchange="checkboxChange"> -->
-
-      <div class="checkbox" v-if="!item.checked" v-for="(item,index) in items" :key="'do'+index" bindlongpress="_longtap"
-        bindtouchstart="touchs(index)" bindtouchend="touchend" bindtouchmove="touchm">
+      <!-- v-if="!item.checked" -->
+      <div class="checkbox" v-for="(item,index) in items" :key="'do'+index" bindlongpress="_longtap" bindtouchstart="touchs(index)"
+        bindtouchend="touchend" bindtouchmove="touchm">
         <checkbox @tap="checkboxSelect(index)" :value="item.value" :checked="item.checked" />
         <input v-if="item.edit" class="defalut" :focus="item.edit" bindblur="blur(index)" v-model="item.value"
           :placeholder="pihua" />
@@ -29,9 +29,9 @@
       </div>
 
       <!-- </checkbox-group> -->
-      <div class="checkbox-done" v-if="ditem.checked" v-for="(ditem,dindex) in complete" :key="'done'+dindex">
+      <div class="checkbox-done" v-for="(ditem,dindex) in complete" :key="'done'+dindex">
         <checkbox @tap="checkboxSelect(dindex, true)" :value="ditem.value" :checked="ditem.checked" />
-        <text class="{{ditem.checked?'del':'defalut'}}">{{ditem.value}}</text>
+        <text class="del">{{ditem.value}}</text>
       </div>
 
       <movable-view :out-of-bounds="true" :x="x" :y="y" direction="vertical" :damping="5000" :friction="1" :disabled="disabled">
@@ -75,44 +75,22 @@ wepy.page({
     userInfo: {
       nickName: '请登录'
     },
-    items: [
-      { value: '杀戮空间四大皆空', checked: false, edit: false },
-      {
-        value: '第一句哈个我要默认测试目标一个我要默认测试目标一个要',
-        checked: false,
-        edit: false
-      },
-      {
-        value: '第二句话个我要默认测试一个我要默认测试目标一个我要',
-        checked: false,
-        edit: false
-      }
-    ],
-    complete: [{ value: '杀戮空间四大皆空', checked: true, edit: false }]
+    items: [],
+    complete: []
   },
 
   created() {
     this.$nextTick(() => {
-      // const query = wx.createSelectorQuery()
-      // query.select('.checkbox').boundingClientRect()
-      // query.selectViewport().scrollOffset()
-      // query.exec(function(res) {
-      //   console.log(res)
-
-      //   elements = res
-      // })
-      var query = wx.createSelectorQuery()
-      var nodesRef = query.selectAll('.checkbox')
+      const query = wx.createSelectorQuery()
+      const nodesRef = query.selectAll('.checkbox')
+      const params = {
+        dataset: true,
+        rect: true
+      }
       nodesRef
-        .fields(
-        {
-          dataset: true,
-          rect: true
-        },
-          result => {
-            elements = result
-          }
-        )
+        .fields(params, res => {
+          elements = res
+        })
         .exec()
     })
 
@@ -154,7 +132,7 @@ wepy.page({
           y < item.bottom
         ) {
           const endIndex = j
-          const beginIndex = this.beginIndex          
+          const beginIndex = this.beginIndex
           // 向后移动
           if (beginIndex < endIndex) {
             let tem = data[beginIndex]
@@ -170,7 +148,7 @@ wepy.page({
               data[i] = data[i - 1]
             }
             data[endIndex] = tem
-          }          
+          }
           this.items = data.slice()
         }
       }
@@ -195,22 +173,32 @@ wepy.page({
     },
     checkboxSelect(index, idDone) {
       if (idDone) {
-        this.complete[index].checked = !this.complete[index].checked
-        this.items.push(this.complete[index])
-        wx.showLoading({ mask: true })
-        setTimeout(() => {
-          wx.hideLoading()
-          this.complete.splice(index, 1)
-        }, 800)
-        return
+        wx.showToast({
+          title: '这个目标已经达成了',
+          icon: 'none'
+        })
+        this.complete[index].checked = true
+        this.complete = this.complete.slice()
+      } else {
+        // this.items[index].checked = true // 出错
+        const _this = this
+        wx.showModal({
+          content: '是否完成了该目标',
+          success(res) {
+            if (res.confirm) {
+              const tempObj = {}
+              tempObj.checked = true
+              tempObj.value = _this.items[index].value
+              _this.complete.push(tempObj)
+              console.log('删除' + index)
+              _this.items.splice(index, 1)
+            } else {
+              _this.items[index].checked = false
+              _this.items = _this.items.slice()
+            }
+          }
+        })
       }
-      this.items[index].checked = !this.items[index].checked
-      this.complete.push(this.items[index])
-      wx.showLoading({ mask: true })
-      setTimeout(() => {
-        wx.hideLoading()
-        this.items.splice(index, 1)
-      }, 800)
     },
     edit(index) {
       if (this.items[index]) this.items[index].edit = true
@@ -305,6 +293,7 @@ wepy.page({
 <config>
 {
     navigationBarTitleText: '🐸',
+    disableScroll: true,
     usingComponents: {
       "my-swiper": "~@/components/common/Swiper",
     }
