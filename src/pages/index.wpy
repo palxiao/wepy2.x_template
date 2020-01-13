@@ -12,7 +12,7 @@
 
     <!-- <my-swiper @tap="openEditor" @change="swiperChange" :imgUrls="imgUrls" /> -->
     <image mode="aspectFill" class="bg" style="min-height:{{wHeight}}px" src="../assets/images/bg00.png" />
-    <image @tap="add" mode="aspectFit" class="title" src="../assets/images/title.png" />
+    <image @tap="add" :animation="act" mode="aspectFit" class="title" src="../assets/images/title.png" />
     <div @tap="add" class="add"> + 点击添加目标</div>
     <image class="bottom-image" mode="aspectFit" src="../assets/images/bg02.png" />
 
@@ -39,6 +39,10 @@
       </movable-view>
     </scroll-view>
 
+    <movable-view @tap="authorize" direction="all" :inertia="true" :y="wHeight" class="daka">
+      <text class="icon yy-zhuanhuan"></text><text style="line-height: 50rpx;">同步/打卡</text>
+    </movable-view>
+
     <!-- <official-account style="margin-top:40rpx;"></official-account> -->
 
   </movable-area>
@@ -54,6 +58,7 @@ import api from '@/api'
 import { vibrate } from '@/utils'
 const system = wx.getSystemInfoSync()
 let elements = []
+let animation = null
 wepy.page({
   store,
 
@@ -70,17 +75,39 @@ wepy.page({
     disabled: false,
     flag: null,
     current: '',
-    pihua: '思考目标对未来发展的影响', // 比方说赚他一个亿
+    pihua: '',
     wHeight: system.windowHeight,
     userInfo: {
       nickName: '请登录'
     },
     items: [],
-    complete: []
+    complete: [],
+    act: {}
   },
 
   created() {
+    const read_items = wx.getStorageSync('items')
+    this.items = read_items || [] // 拉取缓存数据
+    const read_complete = wx.getStorageSync('complete')
+    this.complete = read_complete || []
+
     this.$nextTick(() => {
+      this.initDOMTree()
+
+      animation = wx.createAnimation({
+        duration: 200,
+        timingFunction: 'ease' // 'linear'
+      })
+    })
+
+    this.getUser()
+  },
+
+  computed: {},
+
+  methods: {
+    // 初始化
+    initDOMTree() {
       const query = wx.createSelectorQuery()
       const nodesRef = query.selectAll('.checkbox')
       const params = {
@@ -92,14 +119,7 @@ wepy.page({
           elements = res
         })
         .exec()
-    })
-
-    this.getUser()
-  },
-
-  computed: {},
-
-  methods: {
+    },
     // 列表操作
     _longtap: function(e) {
       vibrate()
@@ -149,7 +169,8 @@ wepy.page({
             }
             data[endIndex] = tem
           }
-          this.items = data.slice()
+          this.items = JSON.parse(JSON.stringify(data.slice()))
+          this.syncData()
         }
       }
       this.flag = false
@@ -166,7 +187,27 @@ wepy.page({
 
     // 列表增删改
     add() {
+      const items = [
+        '思考目标对未来发展的影响',
+        '列出一件件你想做的事',
+        '编辑时删除所有文字可删除该目标',
+        '长按目标可以排序',
+        '比方说先挣他一个亿',
+      ]
+      this.pihua = items[Math.floor(Math.random() * items.length)]
+
+      animation.scale(1.12).step()
+      this.act = animation.export()
+      setTimeout(() => {
+        animation.scale(1).step()
+        this.act = animation.export()
+      }, 200)
+      vibrate()
+
       this.items.push({ value: '', checked: false, edit: true })
+      setTimeout(() => {
+        this.initDOMTree()
+      }, 1000)
     },
     checkboxChange(e) {
       console.log('checkbox发生change事件，携带value值为：', e.$wx.detail.value)
@@ -192,6 +233,7 @@ wepy.page({
               _this.complete.push(tempObj)
               console.log('删除' + index)
               _this.items.splice(index, 1)
+              _this.syncData()
             } else {
               _this.items[index].checked = false
               _this.items = _this.items.slice()
@@ -204,11 +246,21 @@ wepy.page({
       if (this.items[index]) this.items[index].edit = true
     },
     blur(index) {
-      if (!this.items[index].value) {
-        this.items.splice(index, 1)
+      if (!this.items[index]) {
         return
       }
-      this.items[index].edit = false
+      if (!this.items[index].value) {
+        this.items.splice(index, 1)
+      } else {
+        this.items[index].edit = false
+      }
+      this.syncData()
+    },
+    syncData() {
+      setTimeout(() => {
+        wx.setStorageSync('items', this.items)
+        wx.setStorageSync('complete', this.complete)
+      }, 800)
     },
     // ...mapActions(['']) ,
     getUser() {
@@ -232,63 +284,7 @@ wepy.page({
 </script>
 <style lang="less">
 @import url('../assets/styles/index.less');
-.container {
-  width: 100%;
-}
-.title {
-  position: absolute;
-  height: 306rpx;
-  width: 100%;
-}
-.bg {
-  position: absolute;
-  width: 100%;
-  opacity: 0.6;
-}
-.bottom-image {
-  position: fixed;
-  bottom: 0;
-  height: 270rpx;
-  width: 278rpx;
-  left: 230rpx;
-  opacity: 0.7;
-}
-.content {
-  position: absolute;
-  top: 325rpx;
-  margin-left: 20rpx;
-  .checkbox,
-  .checkbox-done {
-    width: 654rpx;
-    display: block;
-    padding: 18rpx 70rpx 18rpx 50rpx;
-  }
-  .defalut,
-  .del {
-    display: inline-block;
-    vertical-align: top;
-    margin-left: 20rpx;
-    margin-top: 4rpx;
-    width: 546rpx;
-  }
-  .del {
-    text-decoration: line-through;
-    color: rgba(0, 0, 0, 0.4);
-  }
-}
-.add {
-  position: absolute;
-  left: 200rpx;
-  top: 200rpx;
-  color: rgba(0, 0, 0, 0.7);
-}
-.move-box {
-  background: rgba(255, 255, 255, 1);
-  transform: scale(1.18);
-  width: 510rpx;
-  padding: 10rpx 150rpx;
-  opacity: 0.92;
-}
+@import url('~@/assets/styles/iconfont/iconfont.less');
 </style>
 <config>
 {

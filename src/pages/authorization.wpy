@@ -95,7 +95,7 @@ wepy.page({
 </style>
 <config>
 {
-navigationBarTitleText: '制作图签',
+navigationBarTitleText: '登录',
   usingComponents: {
   
   }

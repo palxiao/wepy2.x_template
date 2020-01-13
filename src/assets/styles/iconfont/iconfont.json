@@ -1,0 +1,23 @@
+{
+  "id": "1590545",
+  "name": "言叶图签",
+  "font_family": "icon",
+  "css_prefix_text": "yy-",
+  "description": "每日一签",
+  "glyphs": [
+    {
+      "icon_id": "774512",
+      "name": "转换",
+      "font_class": "zhuanhuan",
+      "unicode": "e6a0",
+      "unicode_decimal": 59040
+    },
+    {
+      "icon_id": "4198406",
+      "name": "音乐",
+      "font_class": "mplay",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    }
+  ]
+}

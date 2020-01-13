@@ -90,3 +90,6 @@ vscode创建页面/组件的模板快捷指令
 补充小程序缺少的自定义modal模态对话框组件(完善中)
 
 封装小程序保存图片授权逻辑
+
+字体图标引入
+@import url('~@/assets/styles/iconfont/iconfont.less');
