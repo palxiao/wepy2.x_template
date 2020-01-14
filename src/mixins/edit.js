@@ -133,7 +133,7 @@ export default {
                     _this.$store.state.cropImg = tempFilePaths[0]
                     wx.setStorageSync('cropWidth', _this[name + '_width'])
                     wx.setStorageSync('cropHeight', _this[name + '_height'])
-                    wx.navigateTo({ url: 'Cropper2' })
+                    wx.navigateTo({ url: 'Cropper' })
                     // _this[name] = tempFilePaths[0];
                     // _this.draw();
                 }

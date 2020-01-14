@@ -1,0 +1,294 @@
+<template>
+  <div v-if="done">
+    <my-menu is="head" @action="menuAction"></my-menu>
+
+    <div v-show="!showEditModal" class="content">
+      <canvas canvas-id="{{canvasId}}" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
+
+        <cover-view v-show="showEdit" style="{{'width:100%;height:'+height+'px;'}}" class="maskPanel">
+          <!-- 蒙版 Start -->
+          <cover-view @tap="edit('title')" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.61+'px;left: '+34*ratio+'px;'}}"
+            class="edit-title"></cover-view>
+          <cover-view @tap="edit('desc')" style="{{'width:'+280+'px;height:'+50+'px;top: '+height*0.7+'px;left: '+34*ratio+'px;'}}"
+            class="edit-title"></cover-view>
+          <!-- 蒙版 End -->
+        </cover-view>
+
+      </canvas>
+    </div>
+
+    <my-menu v-if="audit" is="foot" :showModal="showEditModal" :text="editText" @modalReturn="editModalChange" @action="menuAction"></my-menu>
+
+  </div>
+</template>
+ 
+<script>
+import wepy from '@wepy/core'
+import store from '@/store'
+import editMixin from '@/mixins/edit'
+import api from '@/api'
+import SimpleCanvas from '@/utils/plugins/canvasTool'
+
+wepy.page({
+  store,
+
+  // hooks: {
+  //   // Page 级别 hook, 只对当前 Page 的 setData 生效。
+  // },
+  mixins: [editMixin],
+  data: {
+    editImg: 'main',
+    bgImg: 'cloud://daka.6461-daka-1301019118/T02/T02-00.png',
+    dateImg: 'cloud://daka.6461-daka-1301019118/T02/T02-01.png',
+    main: 'cloud://daka.6461-daka-1301019118/T02/T02-02.png',
+
+    bg_width_original: 0,
+    bg_height_original: 0,
+    main_width: 0,
+    main_height: 0,
+    dateImg_width: 0,
+    dateImg_height: 0,
+
+    title: `你好！早安！`,
+    desc: '心若向阳无畏悲伤，永远相信今天比昨天更美好。'
+  },
+
+  created() {},
+
+  computed: {},
+
+  methods: {
+    async draw(cb) {
+      wx.showLoading({ title: '努力加载中..' })
+      const _this = this
+
+      await this.prepareImg()
+
+      if (this.bg_width_original === 0) {
+        const bgImg = await this.downloadCloud(this.bgImg)
+        this.bgImg = bgImg.path
+        this.bg_width_original = bgImg.width
+        this.bg_height_original = bgImg.height
+        this.height = parseInt((bgImg.height * this.wWidth) / bgImg.width)
+      }
+
+      if (this.main_width === 0) {
+        const preImg = await this.downloadCloud(this.main)
+        this.main = preImg.path
+        this.main_width = (preImg.width * this.wWidth) / this.bg_width_original
+        this.main_height = parseInt(
+          (preImg.height * this.main_width) / preImg.width
+        )
+      }
+
+      await this.generalLoadImg('dateImg')
+
+      const canvas = new SimpleCanvas({
+        scale: this.scale,
+        canvasId: this.canvasId
+      })
+      canvas
+        .createArtboard({
+          id: 'share',
+          backgroundColor: '#ffffff',
+          width: this.width * this.ratio,
+          height: this.height
+        })
+
+        .drawWrapText({
+          id: 'start',
+          text: ' ',
+          fontSize: 0,
+          top: 0
+        })
+        .drawImage({
+          id: 'bg',
+          width: 375 * this.ratio + 2,
+          height: this.height,
+          path: this.bgImg,
+          referLayer: {
+            id: 'start',
+            top: 0
+          }
+        })
+        .drawImage({
+          id: 'preBox',
+          width: this.main_width,
+          height: this.main_height,
+          path: this.main,
+          referLayer: {
+            id: 'bg',
+            top: -this.height + 50 * this.ratio
+          }
+        })
+        .drawImage({
+          id: 'dateBox',
+          width: (this.dateImg_width / 2) * this.ratio,
+          height: (this.dateImg_height / 2) * this.ratio,
+          path: this.dateImg,
+          left: 234 * this.ratio,
+          referLayer: {
+            id: 'preBox',
+            top: -this.main_height - 35
+          }
+        })
+        .drawWrapText({
+          id: '#year',
+          text: this.year,
+          fontSize: 20,
+          left: 243 * this.ratio,
+          referLayer: {
+            id: 'dateBox',
+            top: -(62 * this.ratio)
+          }
+        })
+        .drawWrapText({
+          id: '#month',
+          text: '.' + this.month,
+          fontSize: 20,
+          left: 291 * this.ratio,
+          referLayer: {
+            id: 'dateBox',
+            top: -(62 * this.ratio)
+          }
+        })
+        .drawWrapText({
+          id: '#date',
+          text: '.' + this.date,
+          fontSize: 20,
+          left: 319 * this.ratio,
+          referLayer: {
+            id: 'dateBox',
+            top: -(62 * this.ratio)
+          }
+        })
+        .drawWrapText({
+          id: '#day',
+          text: '星期' + this.dayStr,
+          fontSize: 24,
+          left: 258 * this.ratio,
+          referLayer: {
+            id: 'dateBox',
+            top: -(35 * this.ratio)
+          }
+        })
+
+        // .drawCircleImage({
+        //   id: 'avatar',
+        //   path: this.avatarUrl,
+        //   left: 40 * this.ratio,
+        //   d: 50,
+        //   top: 380 * this.ratio
+        //   // referLayer: {
+        //   //   id: 'bg',
+        //   //   top: 280
+        //   // }
+        // })
+        // .drawWrapText({
+        //   id: '#nickname',
+        //   fontSize: 14,
+        //   top: 385 * this.ratio,
+        //   text: this.nickName,
+        //   referLayer: {
+        //     id: 'avatar',
+        //     left: 16 * this.ratio
+        //   }
+        // })
+        // .drawWrapText({
+        //   id: '#guanjianci',
+        //   fontSize: 14,
+        //   color: '#999',
+        //   top: 406 * this.ratio,
+        //   text: '我今天的关键词是',
+        //   referLayer: {
+        //     id: 'avatar',
+        //     left: 16 * this.ratio
+        //   }
+        // })
+
+        .drawImage({
+          id: 'qrcode',
+          width: 64 * this.ratio,
+          height: 64 * this.ratio,
+          left: 290 * this.ratio,
+          path: this.qrcode00,
+          referLayer: {
+            id: 'bg',
+            top: -80 * this.ratio
+          }
+        })
+        .drawWrapText({
+          id: '#title',
+          fontSize: 24,
+          left: 40 * this.ratio,
+          text: this.title,
+          referLayer: {
+            id: 'bg',
+            top: -(210 * this.ratio)
+          }
+        })
+        .drawWrapText({
+          id: '#contect',
+          fontSize: 16,
+          lineHeight: 6,
+          left: 40 * this.ratio,
+          width: 260 * this.ratio,
+          text: this.desc,
+          referLayer: {
+            id: 'bg',
+            top: -(150 * this.ratio)
+          }
+        })
+        .drawWrapText({
+          id: '#bt',
+          fontSize: 18,
+          left: 40 * this.ratio,
+          text: '每/日/一/签',
+          referLayer: {
+            id: 'bg',
+            top: -(42 * this.ratio)
+          }
+        })
+
+      if (cb) cb()
+      canvas.draw(() => {
+        setTimeout(() => {
+          this.createPic(this)
+        }, 10)
+      })
+    },
+    // 设置随机文字出现位置
+    randomText() {
+      api.hitokoto().then(res => {
+        this.desc = res.hitokoto
+        this.draw()
+      })
+    }
+  },
+  events: {}
+})
+</script>
+ 
+<style lang='less' scoped>
+@import url('~@/assets/styles/edit.less');
+.maskPanel {
+  background: rgba(0, 0, 0, 0.24);
+  position: absolute;
+  width: 100%;
+  top: 0;
+  z-index: 99;
+  .edit-title {
+    background: rgba(255, 255, 255, 0.3);
+    position: absolute;
+    border: 2rpx dashed rgba(255, 255, 255, 1);
+  }
+}
+</style>
+<config>
+{
+navigationBarTitleText: '查看图签',
+  usingComponents: {
+    "my-menu": "../components/EditorMenu",
+  }
+}
+</config>

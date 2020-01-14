@@ -42,13 +42,20 @@ wepy.page({
       nickName: '选择一个图片..'
     },
     imgUrls: [
+      
+    ],
+    localUrls: [
       'cloud://daka.6461-daka-1301019118/T/T00.png',
       'cloud://daka.6461-daka-1301019118/T/T01.png',
       'cloud://daka.6461-daka-1301019118/T/T02.png'
+    ],
+    httpUrls: [
+      'cloud://daka.6461-daka-1301019118/T/T01.png',
     ]
   },
 
   created() {
+    this.imgUrls = this.imgUrls.cooncat(this.localUrls)
     // api.test().then((res) => {
     //   console.log(res);
     // })
