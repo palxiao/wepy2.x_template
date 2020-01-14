@@ -6,6 +6,7 @@
     <block v-for="(item, index) in imgUrls" :key="'imgs'+index">
       <swiper-item class="swiper-item ">
         <!-- aspectFit -->
+        <view class="none"><view>预览加载中..</view></view>
         <image mode="scaleToFill" :src="item" class="slide-image {{currentIndex == index ? 'active' : 'common'}}" />
       </swiper-item>
     </block>
@@ -61,13 +62,24 @@ page{
   // height: 750rpx;
 }
 
-.slide-image{
+.slide-image, .none{
   width: 410rpx;
   height: 720rpx;
   border-radius: 10rpx;
   margin: 0rpx 50rpx ;
   z-index: 1;
+}
+.slide-image {
+  position: absolute;
   box-shadow: 10rpx 5px 40rpx rgba(0, 0, 0,0.5);
+}
+.none {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  font-size: 26rpx;
+  color: rgba(0,0,0,.5);
 }
 .active{
   transform: scale(1.2);

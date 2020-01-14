@@ -34,7 +34,6 @@ export default {
         qrcode01: 'cloud://daka.6461-daka-1301019118/qrcode01.png',
         prepare: true,
         done: false,
-
     },
     methods: {
         async generalLoadImg(name) {
@@ -47,14 +46,20 @@ export default {
         },
         async prepareImg() {
             if (this.prepare) {
-                const localAvatart = await this.downloadSome(this.avatarUrl)
-                this.avatarUrl = localAvatart.path
-                const qr0 = await this.downloadCloud(this.qrcode00)
-                this.qrcode00 = qr0.path
-                const qr1 = await this.downloadCloud(this.qrcode01)
-                this.qrcode01 = qr1.path
+                const res = await this.downloadAll()
+                this.avatarUrl = res[0].path
+                this.qrcode00 = res[1].path
+                this.qrcode01 = res[2].path
                 this.prepare = false
             }
+        },
+        downloadAll() {
+            const pArray = []
+            const localAvatart = () => { return this.downloadSome(this.avatarUrl) }
+            const qr0 = () => { return this.downloadCloud(this.qrcode00) }
+            const qr1 = () => { return this.downloadCloud(this.qrcode01) }
+            pArray.push(localAvatart(), qr0(), qr1())
+            return Promise.all(pArray)
         },
         /**
          * 下载图片
@@ -121,7 +126,7 @@ export default {
             const _this = this
             wx.chooseImage({
                 count: 1,
-                sizeType: ['original','compressed'],
+                sizeType: ['original', 'compressed'],
                 sourceType: ['album', 'camera'],
                 success(res) {
                     const tempFilePaths = res.tempFilePaths;
