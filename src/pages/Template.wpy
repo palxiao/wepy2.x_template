@@ -7,9 +7,9 @@
 
         <cover-view v-show="showEdit" style="{{'height:'+height*scale+'px;'}}" class="maskPanel">
           <!-- 编辑蒙版预设 Start -->
-          <cover-view @tap="edit('title')" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.61+'px;left: '+34*ratio+'px;'}}"
+          <cover-view v-if="title" @tap="edit('title')" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.61+'px;left: '+34*ratio+'px;'}}"
             class="edit-title"></cover-view>
-          <cover-view @tap="edit('desc')" style="{{'width:'+280+'px;height:'+50+'px;top: '+height*0.7+'px;left: '+34*ratio+'px;'}}"
+          <cover-view v-if="desc" @tap="edit('desc')" style="{{'width:'+110+'px;height:'+48+'px;top: '+height*0.683+'px;left: '+153*ratio+'px;'}}"
             class="edit-title"></cover-view>
           <!-- 蒙版 End -->
         </cover-view>
@@ -46,75 +46,68 @@ wepy.page({
   // },
   mixins: [editMixin],
   data: {
-    title: '',
-    desc: ''
+    title: null,
+    desc: null
   },
 
   created() {},
   async onLoad(options) {
     await this.init()
     console.log(options)
-    setTimeout(() => {
-      this.basisImg = 'bgImg' // 选择修改的图片
-      this.editImg = 'newOne' // 底图基准图片(图片比例大小参照图)
 
-      for (const key in imgsData) {
-        if (imgsData.hasOwnProperty(key)) {
-          this[key] = imgsData[key]
-          this[key + '_width'] = 0
-          this[key + '_height'] = 0
-        }
+    this.basisImg = 'bgImg' // 选择修改的图片
+    this.editImg = 'newOne' // 底图基准图片(图片比例大小参照图)
+    this.desc = '祝福你|佳节如意'
+
+    imgsData = {
+      bgImg: 'cloud://daka.6461-daka-1301019118/XC/XC-00.png',
+      dateImg: 'cloud://daka.6461-daka-1301019118/XC/XC-02.png',
+      main: 'cloud://daka.6461-daka-1301019118/XC/XC-01.png',
+      newOne: 'cloud://daka.6461-daka-1301019118/XC/XC-03.png'
+    }
+    for (const key in imgsData) {
+      if (imgsData.hasOwnProperty(key)) {
+        this[key] = imgsData[key]
+        this[key + '_width'] = 0
+        this[key + '_height'] = 0
       }
+    }
 
-      imgsData = {
-        bgImg: 'cloud://daka.6461-daka-1301019118/XC/XC-00.png',
-        dateImg: 'cloud://daka.6461-daka-1301019118/XC/XC-02.png',
-        main: 'cloud://daka.6461-daka-1301019118/XC/XC-01.png',
-        newOne: 'cloud://daka.6461-daka-1301019118/XC/XC-03.png'
-        // bless: 'cloud://daka.6461-daka-1301019118/XC/XC-04.png'
+    drawData = [
+      {
+        fn: 'drawImage',
+        name: 'newOne',
+        top: 185,
+        left: 68,
+        zoom: 1.01
+      },
+      {
+        fn: 'drawImage',
+        name: 'main',
+        top: 169,
+        left: 0
+      },
+      {
+        fn: 'drawImage',
+        name: 'dateImg',
+        top: 36,
+        left: 32
+      },
+      {
+        fn: 'drawWrapText',
+        name: 'bless',
+        fontSize: 18,
+        text: 'desc',
+        top: 510,
+        left: 178,
+        width: 110,
+        lineHeight: 8
       }
-      for (const key in imgsData) {
-        if (imgsData.hasOwnProperty(key)) {
-          this[key] = imgsData[key]
-          this[key + '_width'] = 0
-          this[key + '_height'] = 0
-        }
-      }
+    ]
 
-      drawData = [
-        {
-          fn: 'drawImage',
-          name: 'newOne',
-          top: 139 + 45,
-          left: 68,
-          zoom: 1.01
-        },
-        {
-          fn: 'drawImage',
-          name: 'main',
-          top: 121 + 47,
-          left: 0
-        },
-        {
-          fn: 'drawImage',
-          name: 'dateImg',
-          top: 18 + 18,
-          left: 50 - 18
-        },
-        {
-          fn: 'drawWrapText',
-          name: 'bless',
-          fontSize: 20,
-          text: '测试',
-          top: 0,
-          left: 0
-        }
-      ]
-
-      this.draw(() => {
-        this.done = true
-      })
-    }, 100)
+    this.draw(() => {
+      this.done = true
+    })
   },
 
   computed: {},
@@ -148,16 +141,32 @@ wepy.page({
       // 渲染绘制整图
       for (let i = 0; i < drawData.length; i++) {
         const item = drawData[i]
-        canvas[item.fn]({
+        const params = {
           id: '#' + item.name,
-          path: this[item.name],
-          width: this[item.name + '_width'] * (item.zoom || 1),
-          height: this[item.name + '_height'] * (item.zoom || 1),
           top: item.top * this.ratio,
-          left: item.left * this.ratio,
-          // fontSize: item.fontSize ? item.fontSize : null,
-          // text: item.text ? item.text : null
-        })
+          left: item.left * this.ratio
+        }
+        if (item.fontSize) {
+          params.fontSize = item.fontSize * this.ratio
+        }
+        if (item.text) {
+          params.text = this[item.text]
+        }
+        if (item.lineHeight) {
+          params.lineHeight = item.lineHeight * this.ratio
+        }
+        if (this[item.name]) {
+          params.path = this[item.name]
+          params.width = this[item.name + '_width'] * (item.zoom || 1)
+          params.height = this[item.name + '_height'] * (item.zoom || 1)
+        }
+        if (item.width) {
+          params.width = item.width * this.ratio
+        }
+        if (item.height) {
+          params.height = item.height * this.ratio
+        }
+        canvas[item.fn](params)
       }
       // 结束回调小程序生成图片
       if (cb) cb()
