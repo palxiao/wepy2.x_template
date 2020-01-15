@@ -30,8 +30,8 @@ export default {
         date: nowDay.length > 1 ? nowDay + '' : '0' + nowDay,
         monthStr: dateConversion(new Date()).month + '月',
         dayStr: dateConversion(new Date()).day,
-        qrcode00: 'cloud://daka.6461-daka-1301019118/qrcode00.jpg',
-        qrcode01: 'cloud://daka.6461-daka-1301019118/qrcode01.png',
+        qrcode: '',
+        qrcodeUrl: 'cloud://daka.6461-daka-1301019118/qrcode',
         prepare: true,
         done: false,
     },
@@ -61,13 +61,13 @@ export default {
             if (this[name + '_width'] === 0) {
                 const preImg = await this.downloadCloud(this[name])
                 this[name] = preImg.path
-                this[name + '_width'] = (preImg.width * this.wWidth) / this.bg_width_original
+                this[name + '_width'] = (preImg.width * this.wWidth) / this[this.basisImg+'_width']
                 this[name + '_height'] = parseInt(
                     (preImg.height * this[name + '_width']) / preImg.width
                 )
             }
         },
-        async prepareImg() {
+        async prepareImg(obj) {
             if (this.prepare) {
                 let res = null
                 // res = await this.downloadAll()
@@ -76,10 +76,10 @@ export default {
                 // this.qrcode01 = res[2].path
                 res = await this.downloadSome(this.avatarUrl)
                 this.avatarUrl = res.path
-                res = await this.downloadCloud(this.qrcode00)
-                this.qrcode00 = res.path
-                res = await this.downloadCloud(this.qrcode01)
-                this.qrcode01 = res.path
+                if (obj && obj.qrcode) {
+                    res = await this.downloadCloud(this.qrcodeUrl + obj.qrcode + '.png')
+                    this.qrcode = res.path
+                }
                 this.prepare = false
             }
         },
@@ -93,11 +93,11 @@ export default {
         },
         // 准备整图
         async prepareBg() {
-            if (this.bg_width_original === 0) {
-                const bgImg = await this.downloadCloud(this.bgImg)
+            if (this[this.basisImg + '_width'] === 0) {
+                const bgImg = await this.downloadCloud(this[this.basisImg])
                 this.bgImg = bgImg.path
-                this.bg_width_original = bgImg.width
-                this.bg_height_original = bgImg.height
+                this[this.basisImg + '_width'] = bgImg.width
+                this[this.basisImg + '_height'] = bgImg.height
                 this.height = parseInt((bgImg.height * this.wWidth) / bgImg.width)
             }
         },

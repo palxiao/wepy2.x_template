@@ -67,7 +67,9 @@ wepy.page({
       wx.showLoading({ title: '努力加载中..' })
       const _this = this
 
-      await this.prepareImg()
+      await this.prepareImg({
+        qrcode: '03'
+      })
 
       if (this.bgImg_width === 0) {
         const bgImg = await this.downloadCloud(this.bgImg)
@@ -236,7 +238,7 @@ wepy.page({
           width: 64 * this.ratio,
           height: 64 * this.ratio,
           left: 285 * this.ratio,
-          path: this.qrcode00,
+          path: this.qrcode,
           referLayer: {
             id: 'bg',
             top: -(100 * this.ratio)

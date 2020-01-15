@@ -6,7 +6,7 @@
       <canvas canvas-id="{{canvasId}}" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
 
         <cover-view v-show="showEdit" style="{{'height:'+height*scale+'px;'}}" class="maskPanel">
-          <!-- 蒙版 Start -->
+          <!-- 编辑蒙版预设 Start -->
           <cover-view @tap="edit('title')" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.61+'px;left: '+34*ratio+'px;'}}"
             class="edit-title"></cover-view>
           <cover-view @tap="edit('desc')" style="{{'width:'+280+'px;height:'+50+'px;top: '+height*0.7+'px;left: '+34*ratio+'px;'}}"
@@ -36,32 +36,18 @@ import editMixin from '@/mixins/edit'
 import api from '@/api'
 import SimpleCanvas from '@/utils/plugins/canvasTool'
 let drawData = []
+let imgsData = {}
+let textData = {}
 
 wepy.page({
   store,
-
   // hooks: {
   //   // Page 级别 hook, 只对当前 Page 的 setData 生效。
   // },
   mixins: [editMixin],
   data: {
-    editImg: 'newOne',
-    // bgImg: 'cloud://daka.6461-daka-1301019118/XC/XC-00.png',
-    // dateImg: 'cloud://daka.6461-daka-1301019118/XC/XC-02.png',
-    // main: 'cloud://daka.6461-daka-1301019118/XC/XC-01.png',
-    // newOne: 'cloud://daka.6461-daka-1301019118/XC/XC-03.png',
-
-    bg_width_original: 0,
-    bg_height_original: 0,
-    main_width: 0,
-    main_height: 0,
-    dateImg_width: 0,
-    dateImg_height: 0,
-    newOne_width: 0,
-    newOne_height: 0,
-
-    title: `你好！早安！`,
-    desc: '心若向阳无畏悲伤，永远相信今天比昨天更美好。'
+    title: '',
+    desc: ''
   },
 
   created() {},
@@ -69,41 +55,59 @@ wepy.page({
     await this.init()
     console.log(options)
     setTimeout(() => {
-      // bg
-      // newOne left: 68 top: 139 width:newOne_width/2 height:newOne_height/2
-      // main top:{{121}}px;position:absolute;left:0;width:{{main_width/2}}px;height:{{main_height/2}}px;
-      // dateImg left: {{50}}px;top: {{18}}px;width:{{dateImg_width/2.4}}px;height:{{dateImg_height/2.4}}px;
-const json = {
-  bgImg: 'cloud://daka.6461-daka-1301019118/XC/XC-00.png',
-    dateImg: 'cloud://daka.6461-daka-1301019118/XC/XC-02.png',
-    main: 'cloud://daka.6461-daka-1301019118/XC/XC-01.png',
-    newOne: 'cloud://daka.6461-daka-1301019118/XC/XC-03.png',
-}
-for (const key in json) {
-  if (json.hasOwnProperty(key)) {
-    this[key] = json[key]
-  }
-}
-      
+      this.basisImg = 'bgImg' // 选择修改的图片
+      this.editImg = 'newOne' // 底图基准图片(图片比例大小参照图)
+
+      for (const key in imgsData) {
+        if (imgsData.hasOwnProperty(key)) {
+          this[key] = imgsData[key]
+          this[key + '_width'] = 0
+          this[key + '_height'] = 0
+        }
+      }
+
+      imgsData = {
+        bgImg: 'cloud://daka.6461-daka-1301019118/XC/XC-00.png',
+        dateImg: 'cloud://daka.6461-daka-1301019118/XC/XC-02.png',
+        main: 'cloud://daka.6461-daka-1301019118/XC/XC-01.png',
+        newOne: 'cloud://daka.6461-daka-1301019118/XC/XC-03.png'
+        // bless: 'cloud://daka.6461-daka-1301019118/XC/XC-04.png'
+      }
+      for (const key in imgsData) {
+        if (imgsData.hasOwnProperty(key)) {
+          this[key] = imgsData[key]
+          this[key + '_width'] = 0
+          this[key + '_height'] = 0
+        }
+      }
+
       drawData = [
         {
           fn: 'drawImage',
           name: 'newOne',
-          top: 139+45,
+          top: 139 + 45,
           left: 68,
           zoom: 1.01
         },
         {
           fn: 'drawImage',
           name: 'main',
-          top: 121+47,
+          top: 121 + 47,
           left: 0
         },
         {
           fn: 'drawImage',
           name: 'dateImg',
-          top: 18+18,
-          left: 50-18
+          top: 18 + 18,
+          left: 50 - 18
+        },
+        {
+          fn: 'drawWrapText',
+          name: 'bless',
+          fontSize: 20,
+          text: '测试',
+          top: 0,
+          left: 0
         }
       ]
 
@@ -119,57 +123,29 @@ for (const key in json) {
     async draw(cb) {
       wx.showLoading({ title: '努力加载中..' })
       const _this = this
-
+      // 准备头像二维码等资源
       await this.prepareImg()
+      // 渲染底层基准图片/整体背景
       await this.prepareBg()
-      await this.referLoadImg('main')
-      await this.referLoadImg('dateImg')
-      await this.referLoadImg('newOne')
-
+      // 循环加载图片资源
+      for (const key in imgsData) {
+        if (imgsData.hasOwnProperty(key)) {
+          await this.referLoadImg(key)
+        }
+      }
+      // 创建canvas准备
       const canvas = new SimpleCanvas({
         scale: this.scale,
         canvasId: this.canvasId
       })
-      canvas
-        .createArtboard({
-          id: 'share',
-          backgroundColor: '#ffffff',
-          width: this.width * this.ratio,
-          height: this.height
-        })
-        .drawWrapText({
-          id: 'start',
-          text: ' ',
-          fontSize: 0,
-          top: 0
-        })
-        .drawImage({
-          id: 'bg',
-          width: 375 * this.ratio + 2,
-          height: this.height,
-          path: this.bgImg,
-          referLayer: {
-            id: 'start',
-            top: 0
-          }
-        })
-
-      // canvas.drawImage({
-      //   id: 'test',
-      //   path: this[drawData[0].name],
-      //   width: this[drawData[0].name + '_width'] / drawData[0].zoom * this.ratio,
-      //   height: this[drawData[0].name + '_height'] / drawData[0].zoom * this.ratio,
-      //   top: drawData[0].top * this.ratio,
-      //   left: drawData[0].left * this.ratio
-      // })
-
-      //  next[drawData[0].fn]({
-      //     id: '#' + drawData[0].name,
-      //     width: this[drawData[0].name + '_width'] / drawData[0].zoom * this.ratio,
-      //     height: this[drawData[0].name + '_height'] / drawData[0].zoom * this.ratio,
-      //     top: drawData[0].top * this.ratio
-      //   })
-
+      // 创建背景/底部基准
+      canvas.drawImage({
+        id: 'basis_' + this.basisImg,
+        width: 375 * this.ratio + 2,
+        height: this.height,
+        path: this[this.basisImg]
+      })
+      // 渲染绘制整图
       for (let i = 0; i < drawData.length; i++) {
         const item = drawData[i]
         canvas[item.fn]({
@@ -178,149 +154,12 @@ for (const key in json) {
           width: this[item.name + '_width'] * (item.zoom || 1),
           height: this[item.name + '_height'] * (item.zoom || 1),
           top: item.top * this.ratio,
-          left: item.left * this.ratio
+          left: item.left * this.ratio,
+          // fontSize: item.fontSize ? item.fontSize : null,
+          // text: item.text ? item.text : null
         })
       }
-
-      // .drawImage({
-      //   id: 'preBox',
-      //   width: this.main_width,
-      //   height: this.main_height,
-      //   path: this.main,
-      //   referLayer: {
-      //     id: 'bg',
-      //     top: -this.height + 50 * this.ratio
-      //   }
-      // })
-      // .drawImage({
-      //   id: 'dateBox',
-      //   width: (this.dateImg_width / 2) * this.ratio,
-      //   height: (this.dateImg_height / 2) * this.ratio,
-      //   path: this.dateImg,
-      //   left: 234 * this.ratio,
-      //   referLayer: {
-      //     id: 'preBox',
-      //     top: -this.main_height - 35
-      //   }
-      // })
-      // .drawWrapText({
-      //   id: '#year',
-      //   text: this.year,
-      //   fontSize: 20,
-      //   left: 243 * this.ratio,
-      //   referLayer: {
-      //     id: 'dateBox',
-      //     top: -(62 * this.ratio)
-      //   }
-      // })
-      // .drawWrapText({
-      //   id: '#month',
-      //   text: '.' + this.month,
-      //   fontSize: 20,
-      //   left: 291 * this.ratio,
-      //   referLayer: {
-      //     id: 'dateBox',
-      //     top: -(62 * this.ratio)
-      //   }
-      // })
-      // .drawWrapText({
-      //   id: '#date',
-      //   text: '.' + this.date,
-      //   fontSize: 20,
-      //   left: 319 * this.ratio,
-      //   referLayer: {
-      //     id: 'dateBox',
-      //     top: -(62 * this.ratio)
-      //   }
-      // })
-      // .drawWrapText({
-      //   id: '#day',
-      //   text: '星期' + this.dayStr,
-      //   fontSize: 24,
-      //   left: 258 * this.ratio,
-      //   referLayer: {
-      //     id: 'dateBox',
-      //     top: -(35 * this.ratio)
-      //   }
-      // })
-
-      // .drawCircleImage({
-      //   id: 'avatar',
-      //   path: this.avatarUrl,
-      //   left: 40 * this.ratio,
-      //   d: 50,
-      //   top: 380 * this.ratio
-      //   // referLayer: {
-      //   //   id: 'bg',
-      //   //   top: 280
-      //   // }
-      // })
-      // .drawWrapText({
-      //   id: '#nickname',
-      //   fontSize: 14,
-      //   top: 385 * this.ratio,
-      //   text: this.nickName,
-      //   referLayer: {
-      //     id: 'avatar',
-      //     left: 16 * this.ratio
-      //   }
-      // })
-      // .drawWrapText({
-      //   id: '#guanjianci',
-      //   fontSize: 14,
-      //   color: '#999',
-      //   top: 406 * this.ratio,
-      //   text: '我今天的关键词是',
-      //   referLayer: {
-      //     id: 'avatar',
-      //     left: 16 * this.ratio
-      //   }
-      // })
-
-      // .drawImage({
-      //   id: 'qrcode',
-      //   width: 64 * this.ratio,
-      //   height: 64 * this.ratio,
-      //   left: 290 * this.ratio,
-      //   path: this.qrcode00,
-      //   referLayer: {
-      //     id: 'bg',
-      //     top: -80 * this.ratio
-      //   }
-      // })
-      // .drawWrapText({
-      //   id: '#title',
-      //   fontSize: 24,
-      //   left: 40 * this.ratio,
-      //   text: this.title,
-      //   referLayer: {
-      //     id: 'bg',
-      //     top: -(210 * this.ratio)
-      //   }
-      // })
-      // .drawWrapText({
-      //   id: '#contect',
-      //   fontSize: 16,
-      //   lineHeight: 6,
-      //   left: 40 * this.ratio,
-      //   width: 260 * this.ratio,
-      //   text: this.desc,
-      //   referLayer: {
-      //     id: 'bg',
-      //     top: -(150 * this.ratio)
-      //   }
-      // })
-      // .drawWrapText({
-      //   id: '#bt',
-      //   fontSize: 18,
-      //   left: 40 * this.ratio,
-      //   text: '每/日/一/签',
-      //   referLayer: {
-      //     id: 'bg',
-      //     top: -(42 * this.ratio)
-      //   }
-      // })
-
+      // 结束回调小程序生成图片
       if (cb) cb()
       canvas.draw(() => {
         setTimeout(() => {
@@ -342,18 +181,6 @@ for (const key in json) {
  
 <style lang='less' scoped>
 @import url('~@/assets/styles/edit.less');
-.maskPanel {
-  background: rgba(0, 0, 0, 0.24);
-  position: absolute;
-  width: 100%;
-  top: 0;
-  z-index: 99;
-  .edit-title {
-    background: rgba(255, 255, 255, 0.3);
-    position: absolute;
-    border: 2rpx dashed rgba(255, 255, 255, 1);
-  }
-}
 .temp-mask {
   position: absolute;
   background: #ffffff;
