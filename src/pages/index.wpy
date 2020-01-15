@@ -19,13 +19,13 @@
 </template>
 
 <script>
-import wepy from '@wepy/core';
-import eventHub from '../utils/common/eventHub';
+import wepy from '@wepy/core'
+import eventHub from '../utils/common/eventHub'
 // import { mapState, mapActions } from '@wepy/x';
-import store from '@/store';
+import store from '@/store'
 // import testMixin from '../mixins/test';
-import api from '@/api';
-import { vibrate } from '@/utils';
+import api from '@/api'
+import { vibrate } from '@/utils'
 
 wepy.page({
   store,
@@ -41,62 +41,62 @@ wepy.page({
     userInfo: {
       nickName: '选择一个图片..'
     },
-    imgUrls: [
-      
-    ],
+    imgUrls: [],
     localUrls: [
       'cloud://daka.6461-daka-1301019118/T/T00.png',
       'cloud://daka.6461-daka-1301019118/T/T01.png',
       'cloud://daka.6461-daka-1301019118/T/T02.png'
     ],
-    httpUrls: [
-      'cloud://daka.6461-daka-1301019118/T/T01.png',
-    ]
+    httpUrls: ['cloud://daka.6461-daka-1301019118/T/T01.png']
   },
 
   created() {
-    this.imgUrls = this.imgUrls.cooncat(this.localUrls)
+    this.imgUrls = this.imgUrls.concat(this.localUrls).concat(this.httpUrls)
     // api.test().then((res) => {
     //   console.log(res);
     // })
 
-    this.getUser();
+    this.getUser()
   },
 
-  computed: {
-    
-  },
+  computed: {},
 
   methods: {
     // ...mapActions(['playMusic']) ,
     getUser() {
-      const _this = this;
+      const _this = this
       wx.getUserInfo({
         success(res) {
-          _this.userInfo = res.userInfo;
-          _this.$app.$options.globalData.userInfo = res.userInfo;
+          _this.userInfo = res.userInfo
+          _this.$app.$options.globalData.userInfo = res.userInfo
         }
-      });
+      })
     },
     onGotUserInfo: e => {},
     swiperChange(index) {
-      this.swiperIndex = index;
+      this.swiperIndex = index
     },
     openEditor() {
       if (this.$app.$options.globalData.userInfo) {
         vibrate()
-        wx.navigateTo({
-          url: 'T' + this.swiperIndex // 跳转编辑
-        });
+        if (this.swiperIndex + 1 > this.localUrls.length) {
+          wx.navigateTo({
+            url: 'Template?id=1' // 跳转编辑
+          })
+        } else {
+          wx.navigateTo({
+            url: 'T' + this.swiperIndex // 跳转本地编辑
+          })
+        }
       } else {
         wx.navigateTo({
           url: 'authorization' // 授权
-        });
+        })
       }
     }
   },
   events: {}
-});
+})
 </script>
 <style lang="less">
 @import url('../assets/styles/index.less');

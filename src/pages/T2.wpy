@@ -53,7 +53,12 @@ wepy.page({
     desc: '心若向阳无畏悲伤，永远相信今天比昨天更美好。'
   },
 
-  created() {},
+  async created() {
+    await this.init()
+    this.draw(() => {
+      this.done = true
+    })
+  },
 
   computed: {},
 

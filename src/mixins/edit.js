@@ -36,6 +36,18 @@ export default {
         done: false,
     },
     methods: {
+        // 一些初始化
+        async init() {
+            wx.showLoading({ title: '初始化..' })
+            wx.cloud.init({
+                env: 'daka'
+            })
+            this.avatarUrl = this.$app.$options.globalData.userInfo.avatarUrl
+            this.nickName = this.$app.$options.globalData.userInfo.nickName
+            const res = await api.audit({ id: 1 })
+            this.audit = res.result.status
+        },
+        // 通常的下载图片并设置宽高
         async generalLoadImg(name) {
             if (this[name + '_width'] === 0) {
                 const Img = await this.downloadCloud(this[name])
@@ -44,12 +56,30 @@ export default {
                 this[name + '_height'] = Img.height
             }
         },
+        // 下载图片并以背景作为参考系设置宽高
+        async referLoadImg(name) {
+            if (this[name + '_width'] === 0) {
+                const preImg = await this.downloadCloud(this[name])
+                this[name] = preImg.path
+                this[name + '_width'] = (preImg.width * this.wWidth) / this.bg_width_original
+                this[name + '_height'] = parseInt(
+                    (preImg.height * this[name + '_width']) / preImg.width
+                )
+            }
+        },
         async prepareImg() {
             if (this.prepare) {
-                const res = await this.downloadAll()
-                this.avatarUrl = res[0].path
-                this.qrcode00 = res[1].path
-                this.qrcode01 = res[2].path
+                let res = null
+                // res = await this.downloadAll()
+                // this.avatarUrl = res[0].path
+                // this.qrcode00 = res[1].path
+                // this.qrcode01 = res[2].path
+                res = await this.downloadSome(this.avatarUrl)
+                this.avatarUrl = res.path
+                res = await this.downloadCloud(this.qrcode00)
+                this.qrcode00 = res.path
+                res = await this.downloadCloud(this.qrcode01)
+                this.qrcode01 = res.path
                 this.prepare = false
             }
         },
@@ -60,6 +90,16 @@ export default {
             const qr1 = () => { return this.downloadCloud(this.qrcode01) }
             pArray.push(localAvatart(), qr0(), qr1())
             return Promise.all(pArray)
+        },
+        // 准备整图
+        async prepareBg() {
+            if (this.bg_width_original === 0) {
+                const bgImg = await this.downloadCloud(this.bgImg)
+                this.bgImg = bgImg.path
+                this.bg_width_original = bgImg.width
+                this.bg_height_original = bgImg.height
+                this.height = parseInt((bgImg.height * this.wWidth) / bgImg.width)
+            }
         },
         /**
          * 下载图片
@@ -169,17 +209,9 @@ export default {
         },
     },
     async created() {
-        const res = await api.audit({ id: 1 })
-        this.audit = res.result.status
-        wx.cloud.init({
-            env: 'daka'
-        })
-        this.avatarUrl = this.$app.$options.globalData.userInfo.avatarUrl
-        this.nickName = this.$app.$options.globalData.userInfo.nickName
         // this.draw().then(() => { this.done = true })
-        this.draw(() => {
-            this.done = true
-        })
+    },
+    onLoad() {
         const _this = this
         eventHub.$on('changePhoto', (...args) => {
             _this[_this.editImg] = args[0].url;
@@ -190,5 +222,5 @@ export default {
                 }, 1000);
             }, 300);
         });
-    },
+    }
 }

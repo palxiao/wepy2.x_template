@@ -5,7 +5,7 @@
     <div v-show="!showEditModal" class="content">
       <canvas canvas-id="{{canvasId}}" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
 
-        <cover-view v-show="showEdit" style="{{'width:100%;height:'+height+'px;'}}" class="maskPanel">
+        <cover-view v-show="showEdit" style="{{'height:'+height*scale+'px;'}}" class="maskPanel">
           <!-- 蒙版 Start -->
           <cover-view @tap="edit('title')" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.61+'px;left: '+34*ratio+'px;'}}"
             class="edit-title"></cover-view>
@@ -15,6 +15,13 @@
         </cover-view>
 
       </canvas>
+
+      <!-- <div style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;" class="temp-mask">
+        <image class="bg" :src="bgImg" />
+        <image style="left: {{68}}px;top: {{139}}px;width:{{newOne_width/2}}px;height:{{newOne_height/2}}px;position:absolute;" :src="newOne" />
+        <image style="top:{{121}}px;position:absolute;left:0;width:{{main_width/2}}px;height:{{main_height/2}}px;" class="main" :src="main" />
+        <image style="left: {{50}}px;top: {{18}}px;width:{{dateImg_width/2.4}}px;height:{{dateImg_height/2.4}}px;position:absolute;" :src="dateImg" />
+      </div> -->
     </div>
 
     <my-menu v-if="audit" is="foot" :showModal="showEditModal" :text="editText" @modalReturn="editModalChange" @action="menuAction"></my-menu>
@@ -28,6 +35,7 @@ import store from '@/store'
 import editMixin from '@/mixins/edit'
 import api from '@/api'
 import SimpleCanvas from '@/utils/plugins/canvasTool'
+let drawData = []
 
 wepy.page({
   store,
@@ -37,10 +45,11 @@ wepy.page({
   // },
   mixins: [editMixin],
   data: {
-    editImg: 'main',
-    bgImg: 'cloud://daka.6461-daka-1301019118/T02/T02-00.png',
-    dateImg: 'cloud://daka.6461-daka-1301019118/T02/T02-01.png',
-    main: 'cloud://daka.6461-daka-1301019118/T02/T02-02.png',
+    editImg: 'newOne',
+    // bgImg: 'cloud://daka.6461-daka-1301019118/XC/XC-00.png',
+    // dateImg: 'cloud://daka.6461-daka-1301019118/XC/XC-02.png',
+    // main: 'cloud://daka.6461-daka-1301019118/XC/XC-01.png',
+    // newOne: 'cloud://daka.6461-daka-1301019118/XC/XC-03.png',
 
     bg_width_original: 0,
     bg_height_original: 0,
@@ -48,12 +57,61 @@ wepy.page({
     main_height: 0,
     dateImg_width: 0,
     dateImg_height: 0,
+    newOne_width: 0,
+    newOne_height: 0,
 
     title: `你好！早安！`,
     desc: '心若向阳无畏悲伤，永远相信今天比昨天更美好。'
   },
 
   created() {},
+  async onLoad(options) {
+    await this.init()
+    console.log(options)
+    setTimeout(() => {
+      // bg
+      // newOne left: 68 top: 139 width:newOne_width/2 height:newOne_height/2
+      // main top:{{121}}px;position:absolute;left:0;width:{{main_width/2}}px;height:{{main_height/2}}px;
+      // dateImg left: {{50}}px;top: {{18}}px;width:{{dateImg_width/2.4}}px;height:{{dateImg_height/2.4}}px;
+const json = {
+  bgImg: 'cloud://daka.6461-daka-1301019118/XC/XC-00.png',
+    dateImg: 'cloud://daka.6461-daka-1301019118/XC/XC-02.png',
+    main: 'cloud://daka.6461-daka-1301019118/XC/XC-01.png',
+    newOne: 'cloud://daka.6461-daka-1301019118/XC/XC-03.png',
+}
+for (const key in json) {
+  if (json.hasOwnProperty(key)) {
+    this[key] = json[key]
+  }
+}
+      
+      drawData = [
+        {
+          fn: 'drawImage',
+          name: 'newOne',
+          top: 139+45,
+          left: 68,
+          zoom: 1.01
+        },
+        {
+          fn: 'drawImage',
+          name: 'main',
+          top: 121+47,
+          left: 0
+        },
+        {
+          fn: 'drawImage',
+          name: 'dateImg',
+          top: 18+18,
+          left: 50-18
+        }
+      ]
+
+      this.draw(() => {
+        this.done = true
+      })
+    }, 100)
+  },
 
   computed: {},
 
@@ -63,25 +121,10 @@ wepy.page({
       const _this = this
 
       await this.prepareImg()
-
-      if (this.bg_width_original === 0) {
-        const bgImg = await this.downloadCloud(this.bgImg)
-        this.bgImg = bgImg.path
-        this.bg_width_original = bgImg.width
-        this.bg_height_original = bgImg.height
-        this.height = parseInt((bgImg.height * this.wWidth) / bgImg.width)
-      }
-
-      if (this.main_width === 0) {
-        const preImg = await this.downloadCloud(this.main)
-        this.main = preImg.path
-        this.main_width = (preImg.width * this.wWidth) / this.bg_width_original
-        this.main_height = parseInt(
-          (preImg.height * this.main_width) / preImg.width
-        )
-      }
-
-      await this.generalLoadImg('dateImg')
+      await this.prepareBg()
+      await this.referLoadImg('main')
+      await this.referLoadImg('dateImg')
+      await this.referLoadImg('newOne')
 
       const canvas = new SimpleCanvas({
         scale: this.scale,
@@ -94,7 +137,6 @@ wepy.page({
           width: this.width * this.ratio,
           height: this.height
         })
-
         .drawWrapText({
           id: 'start',
           text: ' ',
@@ -111,144 +153,173 @@ wepy.page({
             top: 0
           }
         })
-        .drawImage({
-          id: 'preBox',
-          width: this.main_width,
-          height: this.main_height,
-          path: this.main,
-          referLayer: {
-            id: 'bg',
-            top: -this.height + 50 * this.ratio
-          }
-        })
-        .drawImage({
-          id: 'dateBox',
-          width: (this.dateImg_width / 2) * this.ratio,
-          height: (this.dateImg_height / 2) * this.ratio,
-          path: this.dateImg,
-          left: 234 * this.ratio,
-          referLayer: {
-            id: 'preBox',
-            top: -this.main_height - 35
-          }
-        })
-        .drawWrapText({
-          id: '#year',
-          text: this.year,
-          fontSize: 20,
-          left: 243 * this.ratio,
-          referLayer: {
-            id: 'dateBox',
-            top: -(62 * this.ratio)
-          }
-        })
-        .drawWrapText({
-          id: '#month',
-          text: '.' + this.month,
-          fontSize: 20,
-          left: 291 * this.ratio,
-          referLayer: {
-            id: 'dateBox',
-            top: -(62 * this.ratio)
-          }
-        })
-        .drawWrapText({
-          id: '#date',
-          text: '.' + this.date,
-          fontSize: 20,
-          left: 319 * this.ratio,
-          referLayer: {
-            id: 'dateBox',
-            top: -(62 * this.ratio)
-          }
-        })
-        .drawWrapText({
-          id: '#day',
-          text: '星期' + this.dayStr,
-          fontSize: 24,
-          left: 258 * this.ratio,
-          referLayer: {
-            id: 'dateBox',
-            top: -(35 * this.ratio)
-          }
-        })
 
-        // .drawCircleImage({
-        //   id: 'avatar',
-        //   path: this.avatarUrl,
-        //   left: 40 * this.ratio,
-        //   d: 50,
-        //   top: 380 * this.ratio
-        //   // referLayer: {
-        //   //   id: 'bg',
-        //   //   top: 280
-        //   // }
-        // })
-        // .drawWrapText({
-        //   id: '#nickname',
-        //   fontSize: 14,
-        //   top: 385 * this.ratio,
-        //   text: this.nickName,
-        //   referLayer: {
-        //     id: 'avatar',
-        //     left: 16 * this.ratio
-        //   }
-        // })
-        // .drawWrapText({
-        //   id: '#guanjianci',
-        //   fontSize: 14,
-        //   color: '#999',
-        //   top: 406 * this.ratio,
-        //   text: '我今天的关键词是',
-        //   referLayer: {
-        //     id: 'avatar',
-        //     left: 16 * this.ratio
-        //   }
-        // })
+      // canvas.drawImage({
+      //   id: 'test',
+      //   path: this[drawData[0].name],
+      //   width: this[drawData[0].name + '_width'] / drawData[0].zoom * this.ratio,
+      //   height: this[drawData[0].name + '_height'] / drawData[0].zoom * this.ratio,
+      //   top: drawData[0].top * this.ratio,
+      //   left: drawData[0].left * this.ratio
+      // })
 
-        .drawImage({
-          id: 'qrcode',
-          width: 64 * this.ratio,
-          height: 64 * this.ratio,
-          left: 290 * this.ratio,
-          path: this.qrcode00,
-          referLayer: {
-            id: 'bg',
-            top: -80 * this.ratio
-          }
+      //  next[drawData[0].fn]({
+      //     id: '#' + drawData[0].name,
+      //     width: this[drawData[0].name + '_width'] / drawData[0].zoom * this.ratio,
+      //     height: this[drawData[0].name + '_height'] / drawData[0].zoom * this.ratio,
+      //     top: drawData[0].top * this.ratio
+      //   })
+
+      for (let i = 0; i < drawData.length; i++) {
+        const item = drawData[i]
+        canvas[item.fn]({
+          id: '#' + item.name,
+          path: this[item.name],
+          width: this[item.name + '_width'] * (item.zoom || 1),
+          height: this[item.name + '_height'] * (item.zoom || 1),
+          top: item.top * this.ratio,
+          left: item.left * this.ratio
         })
-        .drawWrapText({
-          id: '#title',
-          fontSize: 24,
-          left: 40 * this.ratio,
-          text: this.title,
-          referLayer: {
-            id: 'bg',
-            top: -(210 * this.ratio)
-          }
-        })
-        .drawWrapText({
-          id: '#contect',
-          fontSize: 16,
-          lineHeight: 6,
-          left: 40 * this.ratio,
-          width: 260 * this.ratio,
-          text: this.desc,
-          referLayer: {
-            id: 'bg',
-            top: -(150 * this.ratio)
-          }
-        })
-        .drawWrapText({
-          id: '#bt',
-          fontSize: 18,
-          left: 40 * this.ratio,
-          text: '每/日/一/签',
-          referLayer: {
-            id: 'bg',
-            top: -(42 * this.ratio)
-          }
-        })
+      }
+
+      // .drawImage({
+      //   id: 'preBox',
+      //   width: this.main_width,
+      //   height: this.main_height,
+      //   path: this.main,
+      //   referLayer: {
+      //     id: 'bg',
+      //     top: -this.height + 50 * this.ratio
+      //   }
+      // })
+      // .drawImage({
+      //   id: 'dateBox',
+      //   width: (this.dateImg_width / 2) * this.ratio,
+      //   height: (this.dateImg_height / 2) * this.ratio,
+      //   path: this.dateImg,
+      //   left: 234 * this.ratio,
+      //   referLayer: {
+      //     id: 'preBox',
+      //     top: -this.main_height - 35
+      //   }
+      // })
+      // .drawWrapText({
+      //   id: '#year',
+      //   text: this.year,
+      //   fontSize: 20,
+      //   left: 243 * this.ratio,
+      //   referLayer: {
+      //     id: 'dateBox',
+      //     top: -(62 * this.ratio)
+      //   }
+      // })
+      // .drawWrapText({
+      //   id: '#month',
+      //   text: '.' + this.month,
+      //   fontSize: 20,
+      //   left: 291 * this.ratio,
+      //   referLayer: {
+      //     id: 'dateBox',
+      //     top: -(62 * this.ratio)
+      //   }
+      // })
+      // .drawWrapText({
+      //   id: '#date',
+      //   text: '.' + this.date,
+      //   fontSize: 20,
+      //   left: 319 * this.ratio,
+      //   referLayer: {
+      //     id: 'dateBox',
+      //     top: -(62 * this.ratio)
+      //   }
+      // })
+      // .drawWrapText({
+      //   id: '#day',
+      //   text: '星期' + this.dayStr,
+      //   fontSize: 24,
+      //   left: 258 * this.ratio,
+      //   referLayer: {
+      //     id: 'dateBox',
+      //     top: -(35 * this.ratio)
+      //   }
+      // })
+
+      // .drawCircleImage({
+      //   id: 'avatar',
+      //   path: this.avatarUrl,
+      //   left: 40 * this.ratio,
+      //   d: 50,
+      //   top: 380 * this.ratio
+      //   // referLayer: {
+      //   //   id: 'bg',
+      //   //   top: 280
+      //   // }
+      // })
+      // .drawWrapText({
+      //   id: '#nickname',
+      //   fontSize: 14,
+      //   top: 385 * this.ratio,
+      //   text: this.nickName,
+      //   referLayer: {
+      //     id: 'avatar',
+      //     left: 16 * this.ratio
+      //   }
+      // })
+      // .drawWrapText({
+      //   id: '#guanjianci',
+      //   fontSize: 14,
+      //   color: '#999',
+      //   top: 406 * this.ratio,
+      //   text: '我今天的关键词是',
+      //   referLayer: {
+      //     id: 'avatar',
+      //     left: 16 * this.ratio
+      //   }
+      // })
+
+      // .drawImage({
+      //   id: 'qrcode',
+      //   width: 64 * this.ratio,
+      //   height: 64 * this.ratio,
+      //   left: 290 * this.ratio,
+      //   path: this.qrcode00,
+      //   referLayer: {
+      //     id: 'bg',
+      //     top: -80 * this.ratio
+      //   }
+      // })
+      // .drawWrapText({
+      //   id: '#title',
+      //   fontSize: 24,
+      //   left: 40 * this.ratio,
+      //   text: this.title,
+      //   referLayer: {
+      //     id: 'bg',
+      //     top: -(210 * this.ratio)
+      //   }
+      // })
+      // .drawWrapText({
+      //   id: '#contect',
+      //   fontSize: 16,
+      //   lineHeight: 6,
+      //   left: 40 * this.ratio,
+      //   width: 260 * this.ratio,
+      //   text: this.desc,
+      //   referLayer: {
+      //     id: 'bg',
+      //     top: -(150 * this.ratio)
+      //   }
+      // })
+      // .drawWrapText({
+      //   id: '#bt',
+      //   fontSize: 18,
+      //   left: 40 * this.ratio,
+      //   text: '每/日/一/签',
+      //   referLayer: {
+      //     id: 'bg',
+      //     top: -(42 * this.ratio)
+      //   }
+      // })
 
       if (cb) cb()
       canvas.draw(() => {
@@ -281,6 +352,14 @@ wepy.page({
     background: rgba(255, 255, 255, 0.3);
     position: absolute;
     border: 2rpx dashed rgba(255, 255, 255, 1);
+  }
+}
+.temp-mask {
+  position: absolute;
+  background: #ffffff;
+  .bg {
+    width: 100%;
+    height: 100%;
   }
 }
 </style>

@@ -59,7 +59,7 @@
 <script>
 import wepy from '@wepy/core'
 import editMixin from '@/mixins/edit'
-import { vibrate } from '@/utils';
+import { vibrate } from '@/utils'
 // const app = getApp()
 const bgAudioManager = wx.getBackgroundAudioManager()
 const { MusicManager } = require('./NetEaseCloudMusicApi/src/MusicManager')
@@ -165,6 +165,10 @@ wepy.component({
       let url = await musicUrlHelper.getUrlResult()
       console.log(`歌曲的url链接是：${url}`)
       this.$app.$options.globalData.bgm = url
+      const userInfo = this.$app.$options.globalData.userInfo
+      if (userInfo && userInfo.nickName === '测试') {
+        return
+      }
       this.playMusic()
     },
     // openMusic: function() {},

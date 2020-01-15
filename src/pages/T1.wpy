@@ -62,7 +62,12 @@ wepy.page({
     note: '宜：珍惜 / 忌：浪费'
   },
 
-  created() {},
+  async created() {
+    await this.init()
+    this.draw(() => {
+      this.done = true
+    })
+  },
 
   computed: {},
 

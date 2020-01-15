@@ -53,7 +53,12 @@ wepy.page({
     desc: '走上人生的旅途吧|前途很远，也很暗|然而不要怕，不怕的人面前才有路'
   },
 
-  created() {},
+  async created() {
+    await this.init()
+    this.draw(() => {
+      this.done = true
+    })
+  },
 
   computed: {},
 
