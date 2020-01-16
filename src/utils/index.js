@@ -255,6 +255,16 @@ function vibrate() {
   /**手机振动 */
   wx.vibrateShort()
 }
+/**
+ * 转换储存数组
+ */
+function stringifyArray(arr) {
+  let _arr = ''
+  arr.forEach((element, index) => {
+    _arr += index ? '_*_' + JSON.stringify(element) : JSON.stringify(element)
+  });
+  return _arr
+}
 
 /**
  * 判断是否是数组
@@ -280,5 +290,6 @@ module.exports = {
   savePhoto,
   dateConversion,
   getImageInfo,
-  vibrate
+  vibrate,
+  stringifyArray
 }

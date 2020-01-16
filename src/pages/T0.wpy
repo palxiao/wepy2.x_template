@@ -213,7 +213,7 @@ wepy.page({
         })
         .drawWrapText({
           id: '#title',
-          fontSize: 32,
+          fontSize: 32 * this.ratio,
           left: 40 * this.ratio,
           text: this.title,
           referLayer: {
@@ -223,7 +223,7 @@ wepy.page({
         })
         .drawWrapText({
           id: '#contect',
-          fontSize: 16,
+          fontSize: 16 * this.ratio,
           lineHeight: 6,
           left: 40 * this.ratio,
           width: 230 * this.ratio,

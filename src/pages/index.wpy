@@ -46,15 +46,22 @@ wepy.page({
       'cloud://daka.6461-daka-1301019118/T/T00.png',
       'cloud://daka.6461-daka-1301019118/T/T01.png',
       'cloud://daka.6461-daka-1301019118/T/T02.png'
-    ],
-    httpUrls: ['cloud://daka.6461-daka-1301019118/T/T01.png']
+    ]
   },
 
-  created() {
-    this.imgUrls = this.imgUrls.concat(this.localUrls).concat(this.httpUrls)
-    // api.test().then((res) => {
-    //   console.log(res);
-    // })
+  async created() {
+    const audit = await api.audit({ id: 1 })
+    if (audit.result.status) {
+      api.makingData().then(res => {
+        const httpUrls = []
+        for (let i = 0; i < res.result.length; i++) {
+          httpUrls.push(res.result[i].url)
+        }
+        this.imgUrls = this.imgUrls.concat(this.localUrls).concat(httpUrls)
+      })
+    } else {
+      this.imgUrls = this.imgUrls.concat(this.localUrls)
+    }
 
     this.getUser()
   },
@@ -80,8 +87,9 @@ wepy.page({
       if (this.$app.$options.globalData.userInfo) {
         vibrate()
         if (this.swiperIndex + 1 > this.localUrls.length) {
+          const extra = this.swiperIndex + 1 - this.localUrls.length
           wx.navigateTo({
-            url: 'Template?id=1' // 跳转编辑
+            url: 'Template?id=' + extra // 跳转编辑
           })
         } else {
           wx.navigateTo({

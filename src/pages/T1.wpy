@@ -247,10 +247,30 @@ wepy.page({
           }
         })
         .drawWrapText({
-          id: '#month',
-          text: '.' + this.month,
+          id: '#dot1',
+          text: '.',
           fontSize: 24,
-          left: 24 * this.ratio * 3 + 31 * this.ratio,
+          left: 24 * this.ratio * 3 + 28 * this.ratio,
+          referLayer: {
+            id: 'bg',
+            top: -(78 * this.ratio)
+          }
+        })
+        .drawWrapText({
+          id: '#month',
+          text: this.month,
+          fontSize: 24,
+          left: 24 * this.ratio * 3 + 38 * this.ratio,
+          referLayer: {
+            id: 'bg',
+            top: -(78 * this.ratio)
+          }
+        })
+        .drawWrapText({
+          id: '#dot2',
+          text: '.',
+          fontSize: 24,
+          left: 24 * this.ratio * 4 + 42 * this.ratio,
           referLayer: {
             id: 'bg',
             top: -(78 * this.ratio)
@@ -258,9 +278,9 @@ wepy.page({
         })
         .drawWrapText({
           id: '#day',
-          text: '.' + this.date,
+          text: this.date,
           fontSize: 24,
-          left: 24 * this.ratio * 4 + 44 * this.ratio,
+          left: 24 * this.ratio * 4 + 50 * this.ratio,
           referLayer: {
             id: 'bg',
             top: -(78 * this.ratio)

@@ -35,8 +35,9 @@ import store from '@/store'
 import editMixin from '@/mixins/edit'
 import api from '@/api'
 import SimpleCanvas from '@/utils/plugins/canvasTool'
-let drawData = []
+import { stringifyArray } from '@/utils'
 let imgsData = {}
+let drawData = []
 
 wepy.page({
   store,
@@ -52,31 +53,18 @@ wepy.page({
   created() {},
   async onLoad(options) {
     await this.init()
-    console.log(options)
-
-    const config= {
-      basisImg: 'bgImg', // 选择修改的图片
-      editImg: 'newOne', // 底图基准图片(图片比例大小参照图)
-      desc: '祝福你|佳节如意'
-    }
-    console.log(JSON.stringify(config));
-      // {"basisImg":"bgImg","editImg":"newOne","desc":"祝福你|佳节如意"}
-    
-    for (const key in config) {
-      if (config.hasOwnProperty(key)) {
-        this[key] = config[key]
+    // 请求数据
+    let res = await api.makingData({ id: options.id })
+    res = res.result[0]
+    // 解析配置信息
+    res.config = JSON.parse(res.config)
+    for (const key in res.config) {
+      if (res.config.hasOwnProperty(key)) {
+        this[key] = res.config[key]
       }
     }
-
-    imgsData = {
-      bgImg: 'cloud://daka.6461-daka-1301019118/XC/XC-00.png',
-      dateImg: 'cloud://daka.6461-daka-1301019118/XC/XC-02.png',
-      main: 'cloud://daka.6461-daka-1301019118/XC/XC-01.png',
-      newOne: 'cloud://daka.6461-daka-1301019118/XC/XC-03.png'
-    }
-    console.log(JSON.stringify(imgsData));
-    // {"bgImg":"cloud://daka.6461-daka-1301019118/XC/XC-00.png","dateImg":"cloud://daka.6461-daka-1301019118/XC/XC-02.png","main":"cloud://daka.6461-daka-1301019118/XC/XC-01.png","newOne":"cloud://daka.6461-daka-1301019118/XC/XC-03.png"}
-    
+    // 解析图片数据
+    imgsData = JSON.parse(res.imgs_data)
     for (const key in imgsData) {
       if (imgsData.hasOwnProperty(key)) {
         this[key] = imgsData[key]
@@ -84,41 +72,11 @@ wepy.page({
         this[key + '_height'] = 0
       }
     }
-
-    drawData = [
-      {
-        fn: 'drawImage',
-        name: 'newOne',
-        top: 185,
-        left: 68,
-        zoom: 1.01
-      },
-      {
-        fn: 'drawImage',
-        name: 'main',
-        top: 169,
-        left: 0
-      },
-      {
-        fn: 'drawImage',
-        name: 'dateImg',
-        top: 36,
-        left: 32
-      },
-      {
-        fn: 'drawWrapText',
-        name: 'bless',
-        fontSize: 18,
-        text: 'desc',
-        top: 510,
-        left: 178,
-        width: 110,
-        lineHeight: 8
-      }
-    ]
-    console.log(JSON.stringify(drawData));
-    // [{"fn":"drawImage","name":"newOne","top":185,"left":68,"zoom":1.01},{"fn":"drawImage","name":"main","top":169,"left":0},{"fn":"drawImage","name":"dateImg","top":36,"left":32},{"fn":"drawWrapText","name":"bless","fontSize":18,"text":"desc","top":510,"left":178,"width":110,"lineHeight":8}]
-
+    // 解析绘图数据
+    drawData = res.draw_data.split('_*_').map(x => {
+      return JSON.parse(x)
+    })
+    // 开始绘图
     this.draw(() => {
       this.done = true
     })
