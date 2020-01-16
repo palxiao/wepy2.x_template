@@ -37,7 +37,6 @@ import api from '@/api'
 import SimpleCanvas from '@/utils/plugins/canvasTool'
 let drawData = []
 let imgsData = {}
-let textData = {}
 
 wepy.page({
   store,
@@ -55,9 +54,19 @@ wepy.page({
     await this.init()
     console.log(options)
 
-    this.basisImg = 'bgImg' // 选择修改的图片
-    this.editImg = 'newOne' // 底图基准图片(图片比例大小参照图)
-    this.desc = '祝福你|佳节如意'
+    const config= {
+      basisImg: 'bgImg', // 选择修改的图片
+      editImg: 'newOne', // 底图基准图片(图片比例大小参照图)
+      desc: '祝福你|佳节如意'
+    }
+    console.log(JSON.stringify(config));
+      // {"basisImg":"bgImg","editImg":"newOne","desc":"祝福你|佳节如意"}
+    
+    for (const key in config) {
+      if (config.hasOwnProperty(key)) {
+        this[key] = config[key]
+      }
+    }
 
     imgsData = {
       bgImg: 'cloud://daka.6461-daka-1301019118/XC/XC-00.png',
@@ -65,6 +74,9 @@ wepy.page({
       main: 'cloud://daka.6461-daka-1301019118/XC/XC-01.png',
       newOne: 'cloud://daka.6461-daka-1301019118/XC/XC-03.png'
     }
+    console.log(JSON.stringify(imgsData));
+    // {"bgImg":"cloud://daka.6461-daka-1301019118/XC/XC-00.png","dateImg":"cloud://daka.6461-daka-1301019118/XC/XC-02.png","main":"cloud://daka.6461-daka-1301019118/XC/XC-01.png","newOne":"cloud://daka.6461-daka-1301019118/XC/XC-03.png"}
+    
     for (const key in imgsData) {
       if (imgsData.hasOwnProperty(key)) {
         this[key] = imgsData[key]
@@ -104,6 +116,8 @@ wepy.page({
         lineHeight: 8
       }
     ]
+    console.log(JSON.stringify(drawData));
+    // [{"fn":"drawImage","name":"newOne","top":185,"left":68,"zoom":1.01},{"fn":"drawImage","name":"main","top":169,"left":0},{"fn":"drawImage","name":"dateImg","top":36,"left":32},{"fn":"drawWrapText","name":"bless","fontSize":18,"text":"desc","top":510,"left":178,"width":110,"lineHeight":8}]
 
     this.draw(() => {
       this.done = true
