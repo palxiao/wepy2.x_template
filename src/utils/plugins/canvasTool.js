@@ -157,7 +157,7 @@ var SimpleCanvas = (function () {
         var chr = text.split('');
         var temp = '';
         var row = [];
-        ctx.font = fontSize;
+        ctx.setFontSize(fontSize);
         for (var a = 0; a < chr.length; a += 1) {
             if (ctx.measureText(temp).width < width) {
                 
@@ -177,7 +177,7 @@ var SimpleCanvas = (function () {
         for (var b = 0; b < row.length; b += 1) {
             textTop = top + (fontSize + (b * fontSize + b * lineHeight));
             ctx.fillStyle = color;
-            ctx.font = fontSize;
+            ctx.setFontSize(fontSize);
             ctx.fillText(row[b], left, textTop);
         }
         layer.type = 'wrapText';
