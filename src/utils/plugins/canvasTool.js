@@ -102,7 +102,7 @@ var SimpleCanvas = (function () {
     SimpleCanvas.prototype.createRectangle = function (layer) {
         var _a = relativePosition.call(this, layer), left = _a.left, top = _a.top, _b = _a.backgroundColor, backgroundColor = _b === void 0 ? '#cccccc' : _b, width = _a.width, height = _a.height;
         var ctx = this.ctx;
-        ctx.setFillStyle(backgroundColor);
+        ctx.fillStyle = backgroundColor;
         ctx.fillRect(left, top, width, height);
         layer.type = 'rectangle';
         addLayer.call(this, layer);
@@ -157,7 +157,7 @@ var SimpleCanvas = (function () {
         var chr = text.split('');
         var temp = '';
         var row = [];
-        ctx.setFontSize(fontSize);
+        ctx.font = fontSize;
         for (var a = 0; a < chr.length; a += 1) {
             if (ctx.measureText(temp).width < width) {
                 
@@ -176,8 +176,8 @@ var SimpleCanvas = (function () {
         var textTop;
         for (var b = 0; b < row.length; b += 1) {
             textTop = top + (fontSize + (b * fontSize + b * lineHeight));
-            ctx.setFillStyle(color);
-            ctx.setFontSize(fontSize);
+            ctx.fillStyle = color;
+            ctx.font = fontSize;
             ctx.fillText(row[b], left, textTop);
         }
         layer.type = 'wrapText';
