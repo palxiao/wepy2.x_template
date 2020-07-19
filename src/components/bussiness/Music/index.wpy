@@ -1,65 +1,21 @@
-<style lang='less' scoped>
-@import url('~@/assets/styles/iconfont/iconfont.less');
-.animationFrozen,
-.animationSlow {
-  position: fixed;
-  right: 10rpx;
-  top: 6rpx;
-  z-index: 99;
-  width: 100rpx;
-  height: 100rpx;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.animationSlow {
-  animation-name: myfirst; /*动画的名称 */
-  animation-duration: 2000ms; /*动画从开始到结束的时间*/
-  animation-timing-function: linear; /*动画执行快慢的参数*/
-  animation-iteration-count: infinite; /*动画执行多少次的参数*/ /*以下是兼容ios所需，参数意义与上相同*/
-  -webkit-animation-name: myfirst;
-  -webkit-animation-duration: 2000ms;
-  -webkit-animation-timing-function: linear;
-  -webkit-animation-iteration-count: infinite;
-}
-@keyframes myfirst {
-  /*开始转的角度*/
-  from {
-    transform: rotate(0deg);
-  } /*结束的角度*/
-  to {
-    transform: rotate(360deg);
-  }
-}
-/*兼容ios*/
-@-webkit-keyframes myfirst {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-.yy-mplay {
-  color: rgba(0, 0, 0, 0.65);
-  font-size: 58rpx;
-}
-</style>
 <template>
-  <div class="">
+  <div class="music-box clear-fix">
+    <view v-show="run" class="marquee_container" style="--marqueeWidth--:-12em">
+      <text class="marquee_text">正在播放：abandon - Unknown</text>
+    </view>
     <!-- <div class="animationSlow" style="animation-duration:{{duration}}ms;-webkit-animation-duration:{{duration}}ms;animation-play-state:{{status}};-webkit-animation-play-state:{{status}};" @tap="playMusic"> -->
-    <div v-if="run" class="animationSlow" @tap="playMusic">
-      <i class="icon yy-mplay"></i>
+    <div v-show="run" class="animationSlow" @tap="playMusic">
+      <text class="icon yy-changpian" />
     </div>
-    <div v-else class="animationFrozen" @tap="playMusic">
-      <i class="icon yy-mplay"></i>
+    <div v-show="!run" class="animationFrozen" @tap="playMusic">
+      <text class="icon yy-changpian" />
     </div>
   </div>
 </template>
 <script>
 import wepy from '@wepy/core'
 import editMixin from '@/mixins/edit'
-import { vibrate } from '@/utils'
+import { vibrate } from '@/common/utils'
 // const app = getApp()
 const bgAudioManager = wx.getBackgroundAudioManager()
 const { MusicManager } = require('./NetEaseCloudMusicApi/src/MusicManager')
@@ -208,3 +164,89 @@ wepy.component({
   mixins: []
 })
 </script>
+
+<style lang='less' scoped>
+@import url('~@iconfont');
+@import '~@/assets/styles/base';
+/*首页跑马灯效果*/
+@keyframes around {
+  from {
+    margin-left: 80%;
+  }
+  to {
+    /* var接受传入的变量 */
+    margin-left: var(--marqueeWidth--);
+  }
+}
+
+.marquee_container {
+  overflow: hidden;
+  float: left;
+  // background-color: #fe4655;
+  height: 100rpx;
+  line-height: 44rpx;
+  position: relative;
+  width: 620rpx;
+}
+.marquee_text {
+  color: #999;
+  font-size: 28rpx;
+  margin-top: 28rpx;
+  display: inline-block;
+  white-space: nowrap;
+  animation-name: around;
+  animation-duration: 10s; /*过渡时间*/
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+/*首页跑马灯效果*/
+.music-box {
+  position: relative;
+}
+.animationFrozen,
+.animationSlow {
+  // position: fixed;
+  // right: 10rpx;
+  // top: 6rpx;
+  // z-index: 99;
+  margin: 7rpx 12rpx 0 0;
+  float: right;
+  width: 100rpx;
+  height: 100rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.animationSlow {
+  animation-name: myfirst; /*动画的名称 */
+  animation-duration: 2000ms; /*动画从开始到结束的时间*/
+  animation-timing-function: linear; /*动画执行快慢的参数*/
+  animation-iteration-count: infinite; /*动画执行多少次的参数*/ /*以下是兼容ios所需，参数意义与上相同*/
+  -webkit-animation-name: myfirst;
+  -webkit-animation-duration: 2000ms;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-iteration-count: infinite;
+}
+@keyframes myfirst {
+  /*开始转的角度*/
+  from {
+    transform: rotate(0deg);
+  } /*结束的角度*/
+  to {
+    transform: rotate(360deg);
+  }
+}
+/*兼容ios*/
+@-webkit-keyframes myfirst {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.yy-changpian {
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 58rpx;
+}
+</style>

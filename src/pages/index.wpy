@@ -1,120 +1,77 @@
-
-<wxs module="m1" lang="babel" src="../utils/widget/test.wxs"></wxs>
 <template>
-  <div class="container">
-    <play-music />
+    <view>
+        <play-music />
 
-    <button class="head" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">
-      <div class="userinfo">
-        <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover" />
-        <div class="userinfo-nickname">{{ userInfo.nickName }}</div>
-      </div>
-    </button>
+        <select-model @tap="openEditor" @change="swiperChange" :imgUrls="imgUrls" />
 
-    <my-swiper @tap="openEditor" @change="swiperChange" :imgUrls="imgUrls" />
-
-    <official-account style="margin-top:40rpx;"></official-account>
-
-  </div>
+        <official-account style="margin-top:40rpx;"></official-account>
+    </view>
 </template>
-
+ 
 <script>
-import wepy from '@wepy/core'
-import eventHub from '../utils/common/eventHub'
-// import { mapState, mapActions } from '@wepy/x';
-import store from '@/store'
-// import testMixin from '../mixins/test';
+import wepy from '@wepy/core';
+// import eventHub from '@/utils/common/eventHub';
+import store from '@/store';
 import api from '@/api'
-import { vibrate } from '@/utils'
+import { vibrate } from '@/common/utils'
 
 wepy.page({
-  store,
+    store,
 
-  hooks: {
-    // Page 级别 hook, 只对当前 Page 的 setData 生效。
-  },
-
-  // mixins: [testMixin],
-
-  data: {
-    swiperIndex: 0,
-    userInfo: {
-      nickName: '选择一个图片..'
+    hooks: {
+        // Page 级别 hook, 只对当前 Page 的 setData 生效。
     },
-    imgUrls: [],
-    localUrls: [
-      'cloud://daka.6461-daka-1301019118/T/T00.png',
-      'cloud://daka.6461-daka-1301019118/T/T01.png',
-      'cloud://daka.6461-daka-1301019118/T/T02.png'
-    ]
-  },
+    //   mixins: [],
+    data: {
+        swiperIndex: 0,
+        imgUrls: [],
+        localUrls: [
+            'cloud://daka.6461-daka-1301019118/T/T00.png',
+            'cloud://daka.6461-daka-1301019118/T/T01.png',
+            'cloud://daka.6461-daka-1301019118/T/T02.png'
+        ]
+    },
 
-  async created() {
-    const audit = await api.audit({ id: 1 })
-    if (audit.result.status) {
-      api.makingData().then(res => {
-        const httpUrls = []
-        for (let i = 0; i < res.result.length; i++) {
-          httpUrls.push(res.result[i].url)
-        }
+    async created() {
+        const { result } = await api.makingData()
+        const httpUrls = result.map(item => { return item.url })
         this.imgUrls = this.imgUrls.concat(this.localUrls).concat(httpUrls)
-      })
-    } else {
-      this.imgUrls = this.imgUrls.concat(this.localUrls)
-    }
-
-    this.getUser()
-  },
-
-  computed: {},
-
-  methods: {
-    // ...mapActions(['playMusic']) ,
-    getUser() {
-      const _this = this
-      wx.getUserInfo({
-        success(res) {
-          _this.userInfo = res.userInfo
-          _this.$app.$options.globalData.userInfo = res.userInfo
-        }
-      })
     },
-    onGotUserInfo: e => {},
-    swiperChange(index) {
-      this.swiperIndex = index
+
+    computed: {
+
     },
-    openEditor() {
-      if (this.$app.$options.globalData.userInfo) {
-        vibrate()
-        if (this.swiperIndex + 1 > this.localUrls.length) {
-          const extra = this.swiperIndex + 1 - this.localUrls.length
-          wx.navigateTo({
-            url: 'Template?id=' + extra // 跳转编辑
-          })
-        } else {
-          wx.navigateTo({
-            url: 'T' + this.swiperIndex // 跳转本地编辑
-          })
+
+    methods: {
+        swiperChange(index) {
+            this.swiperIndex = index
+        },
+        openEditor() {
+            if (this.$app.$options.globalData.userInfo) {
+                vibrate()
+                wx.navigateTo({
+                    url: 'editor/template?id=' + 1 // 跳转编辑
+                })
+            } else {
+                wx.navigateTo({
+                    url: 'authorization' // 授权
+                })
+            }
         }
-      } else {
-        wx.navigateTo({
-          url: 'authorization' // 授权
-        })
-      }
-    }
-  },
-  events: {}
-})
+    },
+    events: {},
+});
 </script>
-<style lang="less">
-@import url('../assets/styles/index.less');
+ 
+<style lang='less' scoped>
+@import url('~@/assets/styles/index');
 </style>
 <config>
 {
-    navigationBarTitleText: '言叶图签',
-    usingComponents: {
-      "my-swiper": "~@/components/common/Swiper",
-      'play-music': '~@/components/music',
-    }
+navigationBarTitleText: '言叶图签',
+usingComponents: {
+ "select-model": "~@/components/bussiness/SelectModel",
+ 'play-music': '~@/components/bussiness/Music'
+}
 }
 </config>

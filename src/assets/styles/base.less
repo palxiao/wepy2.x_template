@@ -1,7 +1,33 @@
 .flex-layout {
   display: flex;
+}
+
+.flex-center {
   align-items: center;
   justify-content: center;
+}
+
+.clear-fix:after {
+  content: ".";
+  clear: both;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  display: block;
+}
+
+.clear-fix {
+  zoom: 1;
+}
+
+button::after {
+  border: none;
+}
+
+button {
+  background-color: #fff;
+  border-radius: 0;
+  padding: 0;
 }
 
 .line-clamp-1,

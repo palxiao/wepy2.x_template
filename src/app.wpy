@@ -1,14 +1,13 @@
 <style lang="less">
 @import './assets/styles/base';
-
 </style>
 
 <script>
-import wepy from '@wepy/core'
-import eventHub from './utils/common/eventHub'
-import vuex from '@wepy/x'
+import wepy from '@wepy/core';
+import eventHub from './common/eventHub';
+import vuex from '@wepy/x';
 
-wepy.use(vuex)
+wepy.use(vuex);
 
 wepy.app({
   hooks: {
@@ -20,11 +19,12 @@ wepy.app({
     // }
   },
   globalData: {
-    userInfo: null,
-    // userInfo: {
-    //   avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/z5dplLf56JL4Pibib6zn6OicsTPZO64wUeibibs9dPZRgbfQCkxm5yBDx0noVYL1d6djjVpQyNrNaGLNAw4ecLmOiahQ/132',
-    //   nickName: '测试'
-    // },
+    // userInfo: null,
+    userInfo: {
+      avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/z5dplLf56JL4Pibib6zn6OicsTPZO64wUeibibs9dPZRgbfQCkxm5yBDx0noVYL1d6djjVpQyNrNaGLNAw4ecLmOiahQ/132',
+      nickName: '测试'
+    },
+
     isMusicPlay: false,
     bgm: null,
     player: wx.createInnerAudioContext()
@@ -53,21 +53,18 @@ wepy.app({
       }
     }
   },
+
   methods: {
-    
+
   }
-})
+});
 </script>
 <config>
 {
     pages: [
       'pages/index',
-      'pages/T0',
-      'pages/T1',
-      'pages/T2',
-      'pages/authorization',
-      'pages/Cropper',
-      'pages/Template'
+      'pages/editor/template',
+      'pages/editor/cropper'
     ],
     window: {
       backgroundTextStyle: 'light',

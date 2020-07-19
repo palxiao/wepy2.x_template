@@ -1,14 +1,14 @@
 {
-  "description": "wepy2.x template",
+  "description": "A WePY project",
   "setting": {
     "urlCheck": true,
     "es6": false,
     "postcss": false,
     "minified": false,
-    "checkSiteMap": false
+    "useCompilerModule": true
   },
   "compileType": "miniprogram",
-  "appid": "touristappid",
-  "projectname": "wepy2.x_miniprogram",
+  "appid": "wx73245ddf5809300c",
+  "projectname": "myproj",
   "miniprogramRoot": "./weapp"
 }

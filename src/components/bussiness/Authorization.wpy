@@ -1,0 +1,39 @@
+<template>
+    <view class=''>
+        <view class="flex_column">
+            <view class="au_t0">需要使用你的微信昵称和头像</view>
+            <button open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo" class="au_btn hit_active">点击进入</button>
+            <view class="quxiao" bindtap="cancel">取消</view>
+        </view>
+    </view>
+</template>
+<script>
+import wepy from '@wepy/core';
+wepy.component({
+    options: {
+        multipleSlots: true // 在组件定义时的选项中启用多slot支持
+    },
+    props: {
+    },
+    data: {
+    },
+    computed: {},
+    created() { },
+    methods: {
+        onGotUserInfo: e => {
+            console.log(e.$wx.detail.userInfo);
+            wx.navigateTo({
+                url: 'index' // 跳转编辑
+            });
+        },
+        cancel() {
+
+        }
+    },
+    mixins: [],
+});
+</script>
+
+<style lang='less' scoped>
+@import '~@/assets/styles/base';
+</style>

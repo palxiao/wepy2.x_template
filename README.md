@@ -1,23 +1,52 @@
-## 基于wepy2.x小程序架构
-
+## 基于 wepy2.x 小程序架构
 
 ### 环境
 
     npm install @wepy/cli -g
 
+    yarn install 推荐使用yarn进行包管理
+
 ### 运行程序
 
-    > npm run dev --watch
+    > yarn dev
 
----------
+---
 
 ### 打包
-    > npm run build
 
----------
-### wepy2新特性
+    > yarn build
 
-#### wsx修饰符 模板函数响应事件
+---
+
+### wepy2 特性
+
+#### wepy.config.js 自定义别名及使用方式
+
+    配置：
+
+```JavaScript
+...
+resolve: {
+    alias: {
+        myNameIs: path.join(__dirname, 'src/.../...')
+    },
+},
+```
+
+    页面中使用：
+
+```
+<config>
+{
+    navigationBarTitleText: '',
+    usingComponents: {
+      componName: '~myNameIs',
+    }
+}
+</config>
+```
+
+#### wsx 修饰符 模板函数响应事件
 
     页面引入：
     <wxs module="module" lang="babel" src="../utils/widget/test.wxs"></wxs>
@@ -37,7 +66,7 @@ wepy.page({
 })
 // 用法与Vuex一致
   import { mapState, mapActions } from '@wepy/x';
-  
+
     // computed: mapState([ 'xxx' ]), // 对应 mutations
     // methods: {
     //    ...mapActions(['xxx','xxx']) // 对应 actions
@@ -47,7 +76,7 @@ wepy.page({
 #### 自带事件广播
 
 ```javaScript
-import eventHub from '/utils/common/eventHub';
+import eventHub from '/common/eventHub';
 // 注册事件
 eventHub.$on('eventName', (...args) => {
     console.log(args);
@@ -83,10 +112,10 @@ eventHub.$emit('eventName', { a: 1 }, { b: 2 });
 
 ### 其他
 
-vscode创建页面/组件的模板快捷指令
+vscode 创建页面/组件的模板快捷指令
 
-封装httpRequest
+封装 httpRequest
 
-补充小程序缺少的自定义modal模态对话框组件(完善中)
+补充小程序缺少的自定义 modal 模态对话框组件(完善中)
 
 封装小程序保存图片授权逻辑

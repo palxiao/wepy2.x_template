@@ -1,0 +1,157 @@
+<template>
+    <div class="">
+        <canvas class="cropper" disable-scroll="true" bindtouchstart="touchStart" bindtouchmove="touchMove" bindtouchend="touchEnd" style="width:{{options.width}}px;height:{{options.height}}px;background-color: rgba(0, 0, 0, 0.8)" canvas-id="{{options.id}}">
+        </canvas>
+        <canvas class="cropper" disable-scroll="true" style="position: fixed; top: -{{options.width * options.pixelRatio}}px; left: -{{options.height * options.pixelRatio}}px; width:{{options.width * options.pixelRatio}}px;height:{{options.height * options.pixelRatio}}px;" canvas-id="{{options.targetId}}">
+        </canvas>
+        <view @tap="complete" class="ok-btn">完成</view>
+    </div>
+</template>
+ 
+<script>
+import wepy from '@wepy/core';
+import eventHub from '@/common/eventHub';
+import store from '@/store';
+import { vibrate } from '@/common/utils';
+import api from '@/api';
+import WeCropper from 'we-cropper';
+const device = wx.getSystemInfoSync();
+const width = device.windowWidth;
+const height = device.windowHeight - 40;
+
+let cropper = null;
+let ratio = 0;
+let constant = 1;
+
+wepy.page({
+    store,
+
+    hooks: {
+        // Page 级别 hook, 只对当前 Page 的 setData 生效。
+    },
+    //   mixins: [testMixin],
+    data: {
+        // crop: null,
+        options: {
+            id: 'cropper',
+            targetId: 'targetCropper',
+            pixelRatio: device.pixelRatio,
+            width,
+            height,
+        }
+    },
+
+    created() {
+        let cropWidth = wx.getStorageSync('cropWidth');
+        let cropHeight = wx.getStorageSync('cropHeight');
+
+        ratio =
+            cropWidth > cropHeight ? cropHeight / cropWidth : cropWidth / cropHeight;
+
+        this.calculate(cropWidth, cropHeight);
+    },
+
+    computed: {},
+
+    methods: {
+        calculate(cropWidth, cropHeight) {
+            if (cropWidth > width) {
+                const temp = ratio * cropWidth;
+                cropHeight = ratio * cropHeight;
+                cropWidth = temp;
+                this.calculate(cropWidth, cropHeight);
+            } else {
+                console.log('zuizhong', cropWidth, cropHeight);
+                this.creatCrop(cropWidth, cropHeight);
+            }
+        },
+        creatCrop(cropWidth, cropHeight) {
+            const newCut = {};
+
+            newCut.width = cropWidth;
+            newCut.height = cropHeight;
+            newCut.x = (width - cropWidth) / 2;
+            newCut.y = (height - cropHeight) / 2;
+
+            this.options.cut = newCut;
+
+            cropper = new WeCropper(this.options);
+
+            setTimeout(() => {
+                cropper.pushOrign(this.$store.state.cropImg);
+            }, 10);
+        },
+        complete() {
+            vibrate()
+            cropper.getCropperImage().then(src => {
+                eventHub.$emit('changePhoto', { url: src });
+                wx.navigateBack({
+                    delta: 1
+                });
+            });
+        },
+        // 裁切方法集：
+        touchStart(e) {
+            cropper.touchStart({
+                touches: e.$wx.touches.map(i => {
+                    return {
+                        x: i.x || i.clientX || i.pageX,
+                        y: i.y || i.clientY || i.pageY
+                    };
+                })
+            });
+        },
+
+        touchMove(e) {
+            cropper.touchMove({
+                touches: e.$wx.touches.map(i => {
+                    return {
+                        x: i.x || i.clientX || i.pageX,
+                        y: i.y || i.clientY || i.pageY
+                    };
+                })
+            });
+        },
+
+        touchEnd(e) {
+            cropper.touchEnd(e);
+        },
+
+        pushOrign(src) {
+            cropper.pushOrign(src);
+        },
+
+        updateCanvas() {
+            cropper.updateCanvas();
+        },
+
+        getCropperBase64(fn) {
+            return cropper.getCropperBase64(fn);
+        }
+
+        // getCropperImage(opt, fn) {
+        //   const option = Object.assign({
+        //     // 传入自定义组件上下文
+        //     componentContext: this,
+        //   }, opt)
+        //   return this.crop.getCropperImage(option, fn)
+        // }
+    },
+    events: {}
+});
+</script>
+ 
+<style lang='less' scoped>
+.ok-btn {
+  text-align: center;
+  height: 40px;
+  line-height: 40px;
+}
+</style>
+<config>
+{
+navigationBarTitleText: '选择图片',
+usingComponents: {
+}
+}
+</config>

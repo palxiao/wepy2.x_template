@@ -1,19 +1,12 @@
-import {
-  IMG_URL, API_URL
-} from '../config';
-import * as Constant from '../config'
+import * as Constant from '../app_config';
 
 function fullImg(value, custom) {
   let prefix;
-  custom ? prefix = custom : prefix = IMG_URL
-  if (
-    value &&
-    value.indexOf("http://") != 0 &&
-    value.indexOf("https://") != 0
-  ) {
-    if (value.indexOf("base64,") == -1) {
-      return prefix + value
-    } else return value
+  custom ? (prefix = custom) : (prefix = Constant.IMG_URL);
+  if (value && value.indexOf('http://') != 0 && value.indexOf('https://') != 0) {
+    if (value.indexOf('base64,') == -1) {
+      return prefix + value;
+    } else return value;
   } else return value;
 }
 
@@ -47,26 +40,28 @@ function vailPhone(number) {
 }
 //浮点型除法
 function div(a, b) {
-  var c, d, e = 0,
+  var c,
+    d,
+    e = 0,
     f = 0;
   try {
-    e = a.toString().split(".")[1].length;
-  } catch (g) { }
+    e = a.toString().split('.')[1].length;
+  } catch (g) {}
   try {
-    f = b.toString().split(".")[1].length;
-  } catch (g) { }
-  return c = Number(a.toString().replace(".", "")), d = Number(b.toString().replace(".", "")), mul(c / d, Math.pow(10, f - e));
+    f = b.toString().split('.')[1].length;
+  } catch (g) {}
+  return (c = Number(a.toString().replace('.', ''))), (d = Number(b.toString().replace('.', ''))), mul(c / d, Math.pow(10, f - e));
 }
 //浮点型加法函数
 function accAdd(arg1, arg2) {
   var r1, r2, m;
   try {
-    r1 = arg1.toString().split(".")[1].length;
+    r1 = arg1.toString().split('.')[1].length;
   } catch (e) {
     r1 = 0;
   }
   try {
-    r2 = arg2.toString().split(".")[1].length;
+    r2 = arg2.toString().split('.')[1].length;
   } catch (e) {
     r2 = 0;
   }
@@ -79,17 +74,17 @@ function mul(a, b) {
     d = a.toString(),
     e = b.toString();
   try {
-    c += d.split(".")[1].length;
-  } catch (f) { }
+    c += d.split('.')[1].length;
+  } catch (f) {}
   try {
-    c += e.split(".")[1].length;
-  } catch (f) { }
-  return Number(d.replace(".", "")) * Number(e.replace(".", "")) / Math.pow(10, c);
+    c += e.split('.')[1].length;
+  } catch (f) {}
+  return (Number(d.replace('.', '')) * Number(e.replace('.', ''))) / Math.pow(10, c);
 }
 
 // 遍历对象属性和值
 function displayProp(obj) {
-  var names = "";
+  var names = '';
   for (var name in obj) {
     names += name + obj[name];
   }
@@ -97,11 +92,11 @@ function displayProp(obj) {
 }
 // 去除字符串所有空格
 function sTrim(text) {
-  return text.replace(/\s/ig, '')
+  return text.replace(/\s/gi, '');
 }
 //去除所有:
 function replaceMaohao(txt) {
-  return txt.replace(/\:/ig, '')
+  return txt.replace(/\:/gi, '');
 }
 /**
  * 倒计时
@@ -111,25 +106,24 @@ function timer(intDiff) {
   var day = 0,
     hour = 0,
     minute = 0,
-    second = 0;//时间默认值
+    second = 0; //时间默认值
   if (intDiff > 0) {
     day = Math.floor(intDiff / (60 * 60 * 24));
-    hour = Math.floor(intDiff / (60 * 60)) - (day * 24);
-    minute = Math.floor(intDiff / 60) - (day * 24 * 60) - (hour * 60);
-    second = Math.floor(intDiff) - (day * 24 * 60 * 60) - (hour * 60 * 60) - (minute * 60);
+    hour = Math.floor(intDiff / (60 * 60)) - day * 24;
+    minute = Math.floor(intDiff / 60) - day * 24 * 60 - hour * 60;
+    second = Math.floor(intDiff) - day * 24 * 60 * 60 - hour * 60 * 60 - minute * 60;
     var res_day = day > 0 ? day + '天' : '',
       res_hour = hour > 0 ? hour + '时' : '',
-      res_minute = minute >= 0 ? minute + '分' : "",
+      res_minute = minute >= 0 ? minute + '分' : '',
       res_second = second + '秒';
   }
   if (minute <= 9) res_minute = '0' + res_minute;
   if (second <= 9) res_second = '0' + res_second;
   var left_time = '剩余' + res_day + res_hour + res_minute + res_second;
-  return left_time
+  return left_time;
 }
 //格式化时间戳
 function formatTime(number, format) {
-
   var formateArr = ['Y', 'M', 'D', 'h', 'm', 's'];
   var returnArr = [];
 
@@ -155,36 +149,36 @@ function clipBoard(data, method, callback) {
       data: data,
       success: function (res) {
         callback(res);
-      }
-    })
+      },
+    });
   } else if (method && method.toUpperCase() == 'GET') {
     obj = wx.getClipboardData({
       success: function (res) {
         callback(res);
-      }
+      },
     });
   }
 }
 
 function getAsUriParameters(data) {
-  var uri = ''
+  var uri = '';
   for (var i in data) {
     if (data[i] instanceof Array) {
       var keyE = encodeURIComponent(i + '[]');
       for (var j in data[i]) {
-        uri += keyE + '=' + encodeURIComponent(data[i][j]) + '&'
+        uri += keyE + '=' + encodeURIComponent(data[i][j]) + '&';
       }
     } else if (data[i] instanceof Object) {
       for (var j in data[i]) {
         var keyE = encodeURIComponent(i + '[' + j + ']');
-        uri += keyE + '=' + encodeURIComponent(data[i][j]) + '&'
+        uri += keyE + '=' + encodeURIComponent(data[i][j]) + '&';
       }
     } else {
-      uri += i + '=' + encodeURIComponent(data[i]) + '&'
+      uri += i + '=' + encodeURIComponent(data[i]) + '&';
     }
   }
-  return uri
-};
+  return uri;
+}
 function savePhoto(url) {
   wx.saveImageToPhotosAlbum({
     filePath: url,
@@ -192,28 +186,30 @@ function savePhoto(url) {
       wx.showToast({
         title: '保存成功',
         icon: 'success',
-      })
+      });
     },
-    fail: res => {
+    fail: (res) => {
       if (res.errMsg == 'saveImageToPhotosAlbum:fail cancel') {
         return;
       }
       authorize(() => {
-        openSetting() // 失败打开设置
-      })
-    }
-  })
+        openSetting(); // 失败打开设置
+      });
+    },
+  });
 }
 function authorize(cb) {
   wx.authorize({
-    scope: "scope.writePhotosAlbum",
+    scope: 'scope.writePhotosAlbum',
     success() {
-      savePhoto()
+      savePhoto();
     },
     fail() {
-      if (cb) { cb() } // 失败回调
-    }
-  })
+      if (cb) {
+        cb();
+      } // 失败回调
+    },
+  });
 }
 function openSetting() {
   wx.showModal({
@@ -221,49 +217,52 @@ function openSetting() {
     content: '需要打开小程序授权保存到相册',
     success(res) {
       if (res.confirm) {
-        wx.openSetting({})
+        wx.openSetting({});
       }
-    }
-  })
+    },
+  });
 }
 function dateConversion(date) {
-  const o_month = (date.getMonth() + 1).toString().length <= 1 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
-  const o_date = date.getDate().toString().length <= 1 ? '0' + date.getDate() : date.getDate()
-  let numStr = date.getFullYear() + '' + o_month + '' + o_date + ''
+  const o_month = (date.getMonth() + 1).toString().length <= 1 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
+  const o_date = date.getDate().toString().length <= 1 ? '0' + date.getDate() : date.getDate();
+  let numStr = date.getFullYear() + '' + o_month + '' + o_date + '';
   // let numStr = str.replace(/[^0-9]+/g, '');
   const chinese = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
-  var cc = ["日", "一", "二", "三", "四", "五", "六"];
+  var cc = ['日', '一', '二', '三', '四', '五', '六'];
   let year = chinese[numStr[0]] + chinese[numStr[1]] + chinese[numStr[2]] + chinese[numStr[3]];
   let month = numStr[4] === '0' ? chinese[numStr[5]] : chinese[10] + chinese[numStr[5]];
   let dateStr = numStr[6] === '0' ? chinese[numStr[7]] : chinese[10] + chinese[numStr[7]];
-  const day = cc[date.getDay()]
+  const day = cc[date.getDay()];
   return {
-    year, month, day, date: dateStr
-  }
+    year,
+    month,
+    day,
+    date: dateStr,
+  };
 }
 function getImageInfo(path) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     wx.getImageInfo({
       src: path,
       success(res) {
-        resolve(res)
-      }
-    })
-  })
+        resolve(res);
+      },
+    });
+  });
 }
 function vibrate() {
   /**手机振动 */
-  wx.vibrateShort()
+  wx.vibrateShort();
 }
 /**
  * 转换储存数组
  */
 function stringifyArray(arr) {
-  let _arr = ''
+  let _arr = '';
   arr.forEach((element, index) => {
-    _arr += index ? '_*_' + JSON.stringify(element) : JSON.stringify(element)
+    _arr += index ? '_*_' + JSON.stringify(element) : JSON.stringify(element);
   });
-  return _arr
+  return _arr;
 }
 
 /**
@@ -291,5 +290,5 @@ module.exports = {
   dateConversion,
   getImageInfo,
   vibrate,
-  stringifyArray
-}
+  stringifyArray,
+};

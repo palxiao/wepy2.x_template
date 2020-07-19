@@ -92,14 +92,14 @@
 .vertical {
   height: 24rpx;
   width: 4rpx;
-  background: rgba(0,0,0,.4);
+  background: rgba(0, 0, 0, 0.4);
   position: absolute;
   top: 38rpx;
   z-index: 9;
 }
 </style>
 <template>
-  <div>
+  <view>
     <cover-view v-if="is==='head'" class="noflex-layout header">
       <cover-view class="btn noflex-layout" @tap="action('preview')">预览</cover-view>
       <cover-view class="btn noflex-layout" @tap="action('save')">保存</cover-view>
@@ -107,7 +107,7 @@
     <cover-view v-else-if="is==='foot'&&!modelShow" class="noflex-layout footer">
       <cover-view class="btn noflex-layout" @tap="action('randomText')">随机一言</cover-view>
       <cover-view class="vertical" style="margin-left: 250rpx;"></cover-view>
-      <cover-view class="btn noflex-layout" @tap="action('editBtn')">编辑开关</cover-view>
+      <cover-view class="btn noflex-layout" @tap="action('editBtn')">编辑</cover-view>
       <cover-view class="vertical" style="margin-left: 500rpx;"></cover-view>
       <cover-view class="btn noflex-layout" @tap="action('changePhoto')">更换背景</cover-view>
     </cover-view>
@@ -117,8 +117,7 @@
       <view class="drawer_box">
         <textarea class="cover-input" placeholder="写点什么.." v-model="editing" auto-height :focus="focus"></textarea>
         <view class="button-div">
-          <view v-for="(item, index) in modalData.button" :key="index" class="{{index == 0 ? 'btn_no' : 'btn_yes'}}"
-            @tap="changeModal(index)">{{item}}</view>
+          <view v-for="(item, index) in modalData.button" :key="index" class="{{index == 0 ? 'btn_no' : 'btn_yes'}}" @tap="changeModal(index)">{{item}}</view>
         </view>
       </view>
     </view>
@@ -133,13 +132,12 @@
       </cover-view>
     </cover-view> -->
     <!-- </my-modal> -->
-  </div>
+  </view>
 
 </template>
 <script>
 import wepy from '@wepy/core'
-import eventHub from '@/utils/common/eventHub'
-import { vibrate } from '@/utils';
+import { vibrate } from '@/common/utils';
 wepy.component({
   options: {
     multipleSlots: true // 在组件定义时的选项中启用多slot支持
@@ -158,7 +156,7 @@ wepy.component({
     }
   },
   computed: {},
-  created() {},
+  created() { },
   methods: {
     action(fn) {
       vibrate()

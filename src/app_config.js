@@ -15,15 +15,9 @@ export const API_URL = "https://app.palxp.com:8888/";
 export const IMG_URL = "";
 
 /**
- * SOCKET地址
- * @type {String} 未完成
+ * 用户信息
+ * @type {String}
  */
-export const SOCKET_URL = "";
-
-/**
-* 用户信息
-* @type {String}
-*/
 export const USER_INFO = "userInfo";
 
 /**
@@ -37,5 +31,3 @@ export const ACCESS_TOKEN = "";
  * @type {string}
  */
 export const VERSION = "";
-
-

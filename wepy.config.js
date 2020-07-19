@@ -5,34 +5,28 @@ module.exports = {
   wpyExt: '.wpy',
   eslint: true,
   cliLogs: !prod,
-  build: {
-  },
-  static: 'src/assets/images',
+  static: ['static'],
+  build: {},
   resolve: {
     alias: {
-      counter: path.join(__dirname, 'src/components/counter'),
-      '@': path.join(__dirname, 'src')
+      '@': path.join(__dirname, 'src'),
+      '@iconfont': path.join(__dirname, 'src/assets/iconfont/iconfont.less'),
     },
     aliasFields: ['wepy', 'weapp'],
-    modules: ['node_modules']
+    modules: ['node_modules'],
   },
   compilers: {
     less: {
-      compress: prod
+      compress: prod,
     },
     babel: {
       sourceMap: true,
-      presets: [
-        '@babel/preset-env'
-      ],
-      plugins: [
-        '@wepy/babel-plugin-import-regenerator'
-      ]
-    }
+      presets: ['@babel/preset-env'],
+      plugins: ['@wepy/babel-plugin-import-regenerator'],
+    },
   },
   plugins: [],
   appConfig: {
-    noPromiseAPI: ['createSelectorQuery']
-  }
-}
-
+    noPromiseAPI: ['createSelectorQuery'],
+  },
+};

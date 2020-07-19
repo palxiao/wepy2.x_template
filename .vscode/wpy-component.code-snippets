@@ -1,38 +1,39 @@
 {
-	// ${1:label}, ${2:another}
-	"Print to console": {
-		"prefix": "wepy-component",
-		"body": [
-			"<style lang='less' scoped>",
+  // ${1:label}, ${2:another}
+  "Print to console": {
+    "prefix": "wepy-component",
+    "body": [
 
-			"</style>",
-			"<template>",
-			"<div class=''>",
-				
-			"</div>",
-			"</template>",
-			"<script>",
-			"import wepy from '@wepy/core';",
+      "<template>",
+      "<view class=''>",
 
-			"wepy.component({",
-				"options: {",
-					"multipleSlots: true // 在组件定义时的选项中启用多slot支持",
-				  "},",
-				"props: {",
-					
-				"},",
-				"data: {",
+      "</view>",
+      "</template>",
+      "<script>",
+      "import wepy from '@wepy/core';",
 
-				"},",
-				"computed: {},",
-				"created () {},",
-				"methods: {",
-					
-				"},",
-				"mixins: [],",
-			"});",
-			"</script>",
-		],
-		"description": "this is wepy component template"
-	}
+      "wepy.component({",
+      "options: {",
+      "multipleSlots: true // 在组件定义时的选项中启用多slot支持",
+      "},",
+      "props: {",
+
+      "},",
+      "data: {",
+
+      "},",
+      "computed: {},",
+      "created () {},",
+      "methods: {",
+
+      "},",
+      "mixins: [],",
+      "});",
+      "</script>",
+      "<style lang='less' scoped>",
+
+      "</style>",
+    ],
+    "description": "this is wepy component template"
+  }
 }
