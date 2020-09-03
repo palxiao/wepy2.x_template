@@ -53,7 +53,7 @@ wepy.page({
         res.config = JSON.parse(res.config)
         for (const key in res.config) {
             if (res.config.hasOwnProperty(key)) {
-                this[key] = res.config[key]
+                this[key] = res.config[key] || key
             }
         }
         console.log(res.config);
