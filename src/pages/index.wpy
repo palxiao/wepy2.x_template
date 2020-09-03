@@ -34,8 +34,9 @@ wepy.page({
 
     async created() {
         const { result } = await api.makingData()
-        const httpUrls = result.map(item => { return item.url })
-        this.imgUrls = this.imgUrls.concat(this.localUrls).concat(httpUrls)
+        const httpUrls = result.map(item => { return {url: item.url, id: item.id} })
+        // this.imgUrls = this.imgUrls.concat(this.localUrls).concat(httpUrls)
+        this.imgUrls = httpUrls
     },
 
     computed: {
@@ -49,8 +50,9 @@ wepy.page({
         openEditor() {
             if (this.$app.$options.globalData.userInfo) {
                 vibrate()
+                // console.log(this.swiperIndex - 3);
                 wx.navigateTo({
-                    url: 'editor/template?id=' + 1 // 跳转编辑
+                    url: 'editor/template?id=' + this.imgUrls[this.swiperIndex].id // 跳转编辑
                 })
             } else {
                 wx.navigateTo({

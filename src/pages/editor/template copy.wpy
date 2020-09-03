@@ -31,7 +31,7 @@ import store from '@/store'
 import editMixin from '@/mixins/edit'
 import api from '@/api'
 import SimpleCanvas from '@/common/plugins/canvasTool'
-// import { stringifyArray } from '@/common/utils'
+import { stringifyArray } from '@/common/utils'
 let imgsData = {}
 let drawData = []
 
@@ -56,7 +56,7 @@ wepy.page({
                 this[key] = res.config[key]
             }
         }
-        console.log(res.config)
+        console.log(res.config);
         // 解析图片数据
         imgsData = JSON.parse(res.imgs_data)
         for (const key in imgsData) {
@@ -66,13 +66,12 @@ wepy.page({
                 this[key + '_height'] = 0
             }
         }
-        console.log(imgsData)
+        console.log(imgsData);
         // 解析绘图数据
-        // drawData = res.draw_data.split('_*_').map(x => {
-        //     return JSON.parse(x)
-        // })
-        drawData = JSON.parse(res.draw_data)
-        console.log(drawData)
+        drawData = res.draw_data.split('_*_').map(x => {
+            return JSON.parse(x)
+        })
+        console.log(drawData);
         // 开始绘图
         this.draw(() => {
             this.done = true
@@ -84,6 +83,7 @@ wepy.page({
     methods: {
         async draw(cb) {
             wx.showLoading({ title: '努力加载中..' })
+            const _this = this
             // 准备头像二维码等资源
             await this.prepareImg()
             // 渲染底层基准图片/整体背景
