@@ -66,39 +66,35 @@ export default {
     },
     async prepareImg(obj) {
       if (this.prepare) {
-        let res = null;
-        // res = await this.downloadAll()
-        // this.avatarUrl = res[0].path
-        // this.qrcode00 = res[1].path
-        // this.qrcode01 = res[2].path
-        res = await this.downloadSome(this.avatarUrl);
-        this.avatarUrl = res.path;
-        if (obj && obj.qrcode) {
-          res = await this.downloadCloud(this.qrcodeUrl + obj.qrcode + '.png');
-          this.qrcode = res.path;
-        }
+        // let res = null;
+        // res = await this.downloadSome(this.avatarUrl);
+        // this.avatarUrl = res.path;
+        // if (obj && obj.qrcode) {
+        //   res = await this.downloadCloud(this.qrcodeUrl + obj.qrcode + '.png');
+        //   this.qrcode = res.path;
+        // }
         this.prepare = false;
       }
     },
-    downloadAll() {
-      const pArray = [];
-      const localAvatart = () => {
-        return this.downloadSome(this.avatarUrl);
-      };
-      const qr0 = () => {
-        return this.downloadCloud(this.qrcode00);
-      };
-      const qr1 = () => {
-        return this.downloadCloud(this.qrcode01);
-      };
-      pArray.push(localAvatart(), qr0(), qr1());
-      return Promise.all(pArray);
-    },
+    // downloadAll() {
+    //   const pArray = [];
+    //   const localAvatart = () => {
+    //     return this.downloadSome(this.avatarUrl);
+    //   };
+    //   const qr0 = () => {
+    //     return this.downloadCloud(this.qrcode00);
+    //   };
+    //   const qr1 = () => {
+    //     return this.downloadCloud(this.qrcode01);
+    //   };
+    //   pArray.push(localAvatart(), qr0(), qr1());
+    //   return Promise.all(pArray);
+    // },
     // 准备整图
     async prepareBg() {
       if (this[this.basisImg + '_width'] === 0) {
         const bgImg = await this.downloadCloud(this[this.basisImg]);
-        this[this.basisImg] = bgImg.path
+        this[this.basisImg] = bgImg.path;
         this[this.basisImg + '_width'] = bgImg.width;
         this[this.basisImg + '_height'] = bgImg.height;
         this.height = parseInt((bgImg.height * this.wWidth) / bgImg.width);

@@ -113,6 +113,9 @@ wepy.page({
                 if (item.fontSize) {
                     params.fontSize = item.fontSize * this.ratio
                 }
+                if (item.color) {
+                    params.color = item.color
+                }
                 if (item.text) {
                     params.text = this[item.text]
                     if (item.text === 'desc') { // 编辑框提示位置
