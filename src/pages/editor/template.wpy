@@ -7,17 +7,10 @@
 
                 <cover-view v-show="showEdit" style="{{'height:'+height*scale+'px;'}}" class="maskPanel">
                     <cover-view v-if="title" @tap="edit('title')" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.61+'px;left: '+34*ratio+'px;'}}" class="edit-title"></cover-view>
-                    <cover-view v-if="desc" @tap="edit('desc')" style="{{'width:'+110+'px;height:'+48+'px;top: '+height*0.683+'px;left: '+153*ratio+'px;'}}" class="edit-title"></cover-view>
+                    <cover-view v-if="desc" @tap="edit('desc')" style="{{'width:'+descPositionWidth+'px;top: '+descPositionTop+'px;left: '+descPositionLeft+'px;'}}" class="edit-title">点击编辑</cover-view>
                 </cover-view>
 
             </canvas>
-
-            <!-- <div style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;" class="temp-mask">
-                <image class="bg" :src="bgImg" />
-                <image style="left: {{68}}px;top: {{139}}px;width:{{newOne_width/2}}px;height:{{newOne_height/2}}px;position:absolute;" :src="newOne" />
-                <image style="top:{{121}}px;position:absolute;left:0;width:{{main_width/2}}px;height:{{main_height/2}}px;" class="main" :src="main" />
-                <image style="left: {{50}}px;top: {{18}}px;width:{{dateImg_width/2.4}}px;height:{{dateImg_height/2.4}}px;position:absolute;" :src="dateImg" />
-            </div> -->
         </div>
 
         <my-menu v-if="audit" is="foot" :showModal="showEditModal" :text="editText" @modalReturn="editModalChange" @action="menuAction"></my-menu>
@@ -40,7 +33,10 @@ wepy.page({
     mixins: [editMixin],
     data: {
         title: null,
-        desc: null
+        desc: null,
+        descPositionTop: 0,
+        descPositionLeft: 0,
+        descPositionWidth: 0
     },
 
     created() { },
@@ -53,7 +49,7 @@ wepy.page({
         res.config = JSON.parse(res.config)
         for (const key in res.config) {
             if (res.config.hasOwnProperty(key)) {
-                this[key] = res.config[key] || key
+                this[key] = res.config[key] || '_' + key
             }
         }
         console.log(res.config)
@@ -119,6 +115,11 @@ wepy.page({
                 }
                 if (item.text) {
                     params.text = this[item.text]
+                    if (item.text === 'desc') { // 编辑框提示位置
+                        this.descPositionTop = item.top * this.ratio,
+                        this.descPositionLeft = item.left * this.ratio,
+                        this.descPositionWidth = item.width * this.ratio - 40
+                    }
                 }
                 if (item.lineHeight) {
                     params.lineHeight = item.lineHeight * this.ratio

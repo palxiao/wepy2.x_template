@@ -98,7 +98,7 @@ export default {
     async prepareBg() {
       if (this[this.basisImg + '_width'] === 0) {
         const bgImg = await this.downloadCloud(this[this.basisImg]);
-        this.bgImg = bgImg.path;
+        this[this.basisImg] = bgImg.path
         this[this.basisImg + '_width'] = bgImg.width;
         this[this.basisImg + '_height'] = bgImg.height;
         this.height = parseInt((bgImg.height * this.wWidth) / bgImg.width);

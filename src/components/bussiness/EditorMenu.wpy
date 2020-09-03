@@ -10,6 +10,7 @@
   z-index: 999;
   justify-content: space-around;
   .btn {
+    color: #74b6ef;
     height: 100%;
   }
 }
@@ -107,9 +108,9 @@
     <cover-view v-else-if="is==='foot'&&!modelShow" class="noflex-layout footer">
       <cover-view class="btn noflex-layout" @tap="action('randomText')">随机一言</cover-view>
       <cover-view class="vertical" style="margin-left: 250rpx;"></cover-view>
-      <cover-view class="btn noflex-layout" @tap="action('editBtn')">编辑</cover-view>
+      <cover-view class="btn noflex-layout" @tap="action('editBtn')">编 辑</cover-view>
       <cover-view class="vertical" style="margin-left: 500rpx;"></cover-view>
-      <cover-view class="btn noflex-layout" @tap="action('changePhoto')">更换背景</cover-view>
+      <cover-view class="btn noflex-layout" @tap="action('changePhoto')">更换图片</cover-view>
     </cover-view>
 
     <!-- <my-modal :show="modelShow" @changeModal="changeModal" title="编辑模式"> -->
