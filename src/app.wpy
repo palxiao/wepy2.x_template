@@ -62,6 +62,7 @@ wepy.app({
 <config>
 {
     pages: [
+      'pages/tester',
       'pages/index',
       'pages/editor/template',
       'pages/editor/cropper'

@@ -7,7 +7,7 @@
 
                 <cover-view v-show="showEdit" style="{{'height:'+height*scale+'px;'}}" class="maskPanel">
                     <cover-view v-if="title" @tap="edit('title')" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.61+'px;left: '+34*ratio+'px;'}}" class="edit-title"></cover-view>
-                    <cover-view v-if="desc" @tap="edit('desc')" style="{{'width:'+descPositionWidth+'px;top: '+descPositionTop+'px;left: '+descPositionLeft+'px;'}}" class="edit-title">点击编辑</cover-view>
+                    <cover-view v-if="desc" @tap="edit('desc')" style="{{'width:'+descPositionWidth+'px;top: '+descPositionTop*ratio+'px;left: '+descPositionLeft+'px;'}}" class="edit-title">点击编辑</cover-view>
                 </cover-view>
 
             </canvas>
