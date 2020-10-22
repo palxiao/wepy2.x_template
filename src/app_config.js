@@ -6,7 +6,8 @@
  * 服务器地址
  * @type {String}
  */
-export const API_URL = "https://app.palxp.com:8888/";
+// export const API_URL = "https://app.palxp.com:8888/";
+export const API_URL = "http://localhost:9999/";
 
 /**
  * 图片地址

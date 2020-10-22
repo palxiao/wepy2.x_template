@@ -5,7 +5,7 @@
     "body": [
 
       "<template>",
-      "<view class=''>",
+      "<view>",
 
       "</view>",
       "</template>",
@@ -14,6 +14,7 @@
 
       "wepy.component({",
       "options: {",
+      "addGlobalClass: true,",
       "multipleSlots: true // 在组件定义时的选项中启用多slot支持",
       "},",
       "props: {",

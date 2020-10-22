@@ -1,0 +1,44 @@
+<template>
+    <view>
+        <view class="cu-timeline">
+            <view class="cu-time">06-17</view>
+            <view class="cu-item">
+                <view class="content">
+                    <text>01:30</text> 【打卡】 疯狂打代码 30分钟，根本停不下来
+                </view>
+                <view class="content">
+                    <text>01:30</text> 【打卡】 疯狂打代码 30分钟，根本停不下来
+                </view>
+                <view class="content">
+                    <text>01:30</text> 【打卡】 疯狂打代码 30分钟，根本停不下来
+                </view>
+                <view class="content">
+                    <text>01:30</text> 【打卡】 疯狂打代码 30分钟，根本停不下来
+                </view>
+                <view class="content">
+                    <text>01:30</text> 【打卡】 疯狂打代码 30分钟，根本停不下来
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+<script>
+import wepy from '@wepy/core';
+wepy.component({
+    options: {
+        addGlobalClass: true,
+        multipleSlots: true // 在组件定义时的选项中启用多slot支持
+    },
+    props: {
+    },
+    data: {
+    },
+    computed: {},
+    created () { },
+    methods: {
+    },
+    mixins: [],
+});
+</script>
+<style lang='less' scoped>
+</style>

@@ -1,0 +1,87 @@
+<template>
+    <view class="cu-modal {{showModel?'show':''}}">
+        <view class="cu-dialog">
+            <view class="cu-bar bg-white justify-end">
+                <view class="content">完成: {{data.event_name}}</view>
+                <view class="action" bindtap="hideModal">
+                    <text class="cuIcon-close text-red"></text>
+                </view>
+            </view>
+            <view class="padding-xl">
+                <checkbox-group bindchange="checkboxChange">
+                    <view class="cu-form-group">
+                        <view class="title {{noConfirm?'':'height-light'}}">本次打卡作废</view>
+                        <checkbox value="true" checked="{{noConfirm}}" class="blue radio" />
+                    </view>
+                    <!-- <view class="cu-form-group">
+                        <view class="title">自定义持续时间</view>
+                        <radio class="blue radio"></radio>
+                    </view> -->
+                </checkbox-group>
+            </view>
+            <view class="cu-bar bg-white justify-end">
+                <view class="action">
+                    <button class="cu-btn line-blue text-blue" bindtap="close">返回</button>
+                    <button class="cu-btn bg-blue margin-left" bindtap="done">确定</button>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+<script>
+import wepy from '@wepy/core';
+import api from '@/api'
+wepy.component({
+    options: {
+        addGlobalClass: true,
+        multipleSlots: true // 在组件定义时的选项中启用多slot支持
+    },
+    props: {
+        show: Boolean,
+        title: String,
+        data: {}
+    },
+    data: {
+        showModel: false,
+        noConfirm: false
+    },
+    computed: {},
+    created () { },
+    methods: {
+        close () {
+            this.$emit('close')
+        },
+        checkboxChange (e) {
+            this.noConfirm = e.$wx.detail.value + ''
+        },
+        async done () {
+            const _dayjs = this.$app.$options.globalData.dayjs
+            const nowTime = _dayjs(new Date())
+            const beginTime = _dayjs(this.data.create_time)
+            const diffTime = nowTime.diff(beginTime)
+            if (this.noConfirm) {
+                await api.deleteRecord({ id: this.data.id })
+            } else {
+                const { result } = await api.addRecord({
+                    id: this.data.id,
+                    after_time: diffTime
+                })
+            }
+            // this.$ajax.home.recordAdd({ id, after_time: this.customTime * 60000 }) // custom changjing
+            this.$emit('done')
+            this.noConfirm = false
+        }
+    },
+    mixins: [],
+    watch: {
+        show (val) {
+            this.showModel = val
+        }
+    }
+});
+</script>
+<style lang='less' scoped>
+.height-light {
+    color: var(--gray)
+}
+</style>

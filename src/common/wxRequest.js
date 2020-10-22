@@ -17,7 +17,7 @@ const wxRequest = (params = {}, url, type = 'GET') => {
       method: type,
       data: data,
       header: {
-        // 'Authorization': 'Bearer ' + token
+        'Authorization': '' + token
       },
       success(res) {
         if (res) {

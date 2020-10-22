@@ -1,0 +1,66 @@
+<template>
+    <view @tap="close" class="cu-modal bottom-modal {{showModel?'show':''}}">
+        <view class="cu-dialog">
+            <view class="cu-bar bg-white">
+                <view class="action text-blue" @tap="close">取消</view>
+            </view>
+            <view class="padding-xl">
+                <view class="flex flex-wrap">
+                    <view catchtap="selectLabel(e.id)" class="padding-xs" v-for="(e, i) in eventList" :key="'color'+i">
+                        <view class="cu-tag line-{{randomColor[i]}}">{{e.name}}</view>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+<script>
+import wepy from '@wepy/core';
+import { colorList } from '@/assets/colorui/colorList.js'
+import api from '@/api'
+wepy.component({
+    options: {
+        multipleSlots: true, // 在组件定义时的选项中启用多slot支持
+        addGlobalClass: true
+    },
+    props: {
+        show: Boolean
+    },
+    data: {
+        showModel: false,
+        colorList,
+        eventList: []
+    },
+    computed: {
+        randomColor () {
+            const arr = []
+            this.eventList.forEach(item => {
+                arr.push(colorList[(Math.random() * (colorList.length - 2) + 1).toFixed(0)].name)
+            });
+            return arr
+        }
+    },
+    async created () {
+        const { result } = await api.getEventList()
+        this.eventList = result
+    },
+    methods: {
+        close () {
+            this.$emit('close')
+        },
+        async selectLabel (event_id) {
+            const { result } = await api.addRecord({ event_id })
+            this.$emit('choose')
+            this.close()
+        }
+    },
+    mixins: [],
+    watch: {
+        show (val) {
+            this.showModel = val
+        }
+    }
+});
+</script>
+<style lang='less' scoped>
+</style>
