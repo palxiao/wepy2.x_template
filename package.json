@@ -19,8 +19,7 @@
     "@wepy/core": "^2.0.0-alpha.16",
     "@wepy/x": "^2.0.2",
     "dayjs": "^1.9.3",
-    "we-cropper": "^1.3.9",
-    "wx-server-sdk": "^2.3.2"
+    "we-cropper": "^1.3.9"
   },
   "devDependencies": {
     "@babel/core": "^7.1.0",
