@@ -40,7 +40,7 @@ export default {
       wx.showLoading({
         title: '初始化..',
       });
-      wx.cloud.init({ env: 'daka' });
+      // wx.cloud.init({ env: 'daka' });
       this.avatarUrl = this.$app.$options.globalData.userInfo.avatarUrl;
       this.nickName = this.$app.$options.globalData.userInfo.nickName;
       // const res = await api.audit({ id: 1 });

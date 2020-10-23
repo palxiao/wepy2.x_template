@@ -1,11 +1,11 @@
 <template>
-    <view>
+    <daka>
         <play-music />
 
         <select-model @tap="openEditor" @change="swiperChange" :imgUrls="imgUrls" />
 
         <official-account style="margin-top:40rpx;"></official-account>
-    </view>
+    </daka>
 </template>
  
 <script>
@@ -32,11 +32,12 @@ wepy.page({
         ]
     },
 
-    async created() {
+    async created () {
         const { result } = await api.makingData()
-        const httpUrls = result.map(item => { return {url: item.url, id: item.id} })
+        const httpUrls = result.map(item => { return { url: item.url, id: item.id } })
         // this.imgUrls = this.imgUrls.concat(this.localUrls).concat(httpUrls)
         this.imgUrls = httpUrls
+        this.getOpenId()
     },
 
     computed: {
@@ -44,10 +45,10 @@ wepy.page({
     },
 
     methods: {
-        swiperChange(index) {
+        swiperChange (index) {
             this.swiperIndex = index
         },
-        openEditor() {
+        openEditor () {
             if (this.$app.$options.globalData.userInfo) {
                 vibrate()
                 // console.log(this.swiperIndex - 3);
@@ -59,6 +60,18 @@ wepy.page({
                     url: 'authorization' // 授权
                 })
             }
+        },
+        getOpenId () {
+            wx.cloud.init({
+                env: 'daka',
+                traceUser: true
+            })
+            wx.cloud.callFunction({
+                name: 'getOpenId',
+                complete: res => {
+                    wx.setStorageSync('openId', res.result.openid)
+                }
+            })
         }
     },
     events: {},
@@ -72,8 +85,9 @@ wepy.page({
 {
 navigationBarTitleText: '言叶图签',
 usingComponents: {
- "select-model": "~@/components/bussiness/SelectModel",
- 'play-music': '~@/components/bussiness/Music'
+    "daka": "./daka/daka",
+    "select-model": "~@/components/bussiness/SelectModel",
+    'play-music': '~@/components/bussiness/Music'
 }
 }
 </config>

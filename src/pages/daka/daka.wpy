@@ -1,5 +1,6 @@
 <template>
     <scroll-view scroll-y class="DrawerPage {{modalName=='viewModal'?'show':''}}">
+        <slot></slot>
         <view @tap="showModal('viewModal')" class="bg-gradual-blue padding radius text-center shadow-blur daka-f-btn">
             <view class="text">打卡</view>
         </view>
@@ -47,9 +48,12 @@ import api from '@/api'
 import { vibrate } from '@/common/utils'
 
 
-wepy.page({
+wepy.component({
     store,
-
+    options: {
+        addGlobalClass: true,
+        multipleSlots: true // 在组件定义时的选项中启用多slot支持
+    },
     hooks: {
         // Page 级别 hook, 只对当前 Page 的 setData 生效。
     },
@@ -92,7 +96,7 @@ wepy.page({
             this.modalName = this.statusText ? 'EndModal' : 'bottomModal'
             if (this.modalName === 'bottomModal') {
                 wx.requestSubscribeMessage({
-                    tmplIds: ['PlBadng7ysQ69eeB28QnTYQCxHWdDtE_IKYkwMoWw68', 'D2pHbPhfLo74vomL8240r16yXVbKsZXjJsFYq2FBorM'],
+                    tmplIds: ['D2pHbPhfLo74vomL8240r16yXVbKsZXjJsFYq2FBorM', 'PlBadng7ysQ69eeB28QnTYQCxHWdDtE_IKYkwMoWw68'],
                 })
             }
             setTimeout(() => {

@@ -7,6 +7,7 @@ import { API_URL } from '../app_config';
 const audit = (params) => wxRequest(params, API_URL + 'mp/audit'); // 审核开关接口
 const makingData = (params) => wxRequest(params, API_URL + 'mp/yanye/makingData'); // 图签数据接口
 const hitokoto = () => wxRequest({}, 'https://v1.hitokoto.cn/'); // 一言
+const sendSubscribe = (p) => wxRequest(p, API_URL + 'mp/sendSubscribe', 'POST'); // 订阅消息
 
 /**
  * 青蛙打卡🐸
@@ -25,5 +26,6 @@ module.exports = {
   getEventList,
   addRecord,
   getRecord,
-  deleteRecord
+  deleteRecord,
+  sendSubscribe
 };

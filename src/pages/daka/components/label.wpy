@@ -6,7 +6,7 @@
             </view>
             <view class="padding-xl">
                 <view class="flex flex-wrap">
-                    <view catchtap="selectLabel(e.id)" class="padding-xs" v-for="(e, i) in eventList" :key="'color'+i">
+                    <view catchtap="selectLabel(e)" class="padding-xs" v-for="(e, i) in eventList" :key="'color'+i">
                         <view class="cu-tag line-{{randomColor[i]}}">{{e.name}}</view>
                     </view>
                 </view>
@@ -48,10 +48,12 @@ wepy.component({
         close () {
             this.$emit('close')
         },
-        async selectLabel (event_id) {
-            const { result } = await api.addRecord({ event_id })
+        async selectLabel (e) {
+            const { result } = await api.addRecord({ event_id: e.id })
             this.$emit('choose')
             this.close()
+            const openId = wx.getStorageSync('openId')
+            api.sendSubscribe({openId, title: e.name})
         }
     },
     mixins: [],
