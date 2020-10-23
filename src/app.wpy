@@ -35,6 +35,19 @@ wepy.app({
 
   onLaunch() {
     this.player = this.$options.globalData.player
+
+    // test
+    wx.cloud.init({
+      env: 'daka',
+      traceUser: true
+    })
+
+    wx.cloud.callFunction({
+      name: 'getOpenid',
+      complete: res => {
+        console.log('云函数获取到的openid: ', res)
+      }
+    })
   },
   onHide() {
     console.log('bye-bye')

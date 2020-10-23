@@ -10,5 +10,6 @@
   "compileType": "miniprogram",
   "appid": "wx73245ddf5809300c",
   "projectname": "myproj",
-  "miniprogramRoot": "./weapp"
+  "miniprogramRoot": "./weapp",
+  "cloudfunctionRoot": "static/cloud_function/"
 }
