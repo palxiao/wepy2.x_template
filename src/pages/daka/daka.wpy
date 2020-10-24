@@ -1,42 +1,43 @@
 <template>
-    <scroll-view scroll-y class="DrawerPage {{modalName=='viewModal'?'show':''}}">
-        <slot></slot>
-        <view @tap="showModal('viewModal')" class="bg-gradual-blue padding radius text-center shadow-blur daka-f-btn">
-            <view class="text">打卡</view>
+    <view>
+        <scroll-view scroll-y class="DrawerPage {{modalName=='viewModal'?'show':''}}">
+            <slot></slot>
+            <view v-if="show" @tap="showModal('viewModal')" class="bg-gradual-blue padding radius text-center shadow-blur daka-f-btn">
+                <view class="text">打卡</view>
+            </view>
+        </scroll-view>
+        <view class="DrawerClose {{modalName=='viewModal'?'show':''}}" bindtap="hideModal">
+            <text class="cuIcon-pullright"></text>
         </view>
-    </scroll-view>
-    <view class="DrawerClose {{modalName=='viewModal'?'show':''}}" bindtap="hideModal">
-        <text class="cuIcon-pullright"></text>
-    </view>
 
-    <scroll-view scroll-y class="DrawerWindow {{modalName=='viewModal'||modalName=='bottomModal'?'show':''}}">
-        <view class="cu-list menu card-menu margin-top-xl margin-bottom-xl shadow-lg">
-            <!-- 打卡界面 -->
-            <view class="padding text-center">
-                <view class="padding-lr bg-white">
-                    <view class="solid-bottom padding">Hello frog clock punch 🐸</view>
-                    <view v-show="!isLogin" class="padding">登录青蛙打卡继续操作</view>
-                    <view v-show="isLogin" @tap="start()" class="margin radius bg-gradual-blue shadow-blur daka_start animation-{{animation}}">
-                        <text class="daka_text line-clamp-1">{{statusText||'Click Start'}}</text>
-                        <image v-show="statusText" src="/static/images/wave.gif" mode="aspectFill" class="gif-black response" style="height:100%;"></image>
+        <scroll-view scroll-y class="DrawerWindow {{modalName=='viewModal'||modalName=='bottomModal'?'show':''}}">
+            <view class="cu-list menu card-menu margin-top-xl margin-bottom-xl shadow-lg">
+                <!-- 打卡界面 -->
+                <view class="padding text-center">
+                    <view class="padding-lr bg-white">
+                        <view class="solid-bottom padding">Hello frog clock punch 🐸</view>
+                        <view v-show="!isLogin" class="padding">登录青蛙打卡继续操作</view>
+                        <view v-show="isLogin" @tap="start()" class="margin radius bg-gradual-blue shadow-blur daka_start animation-{{animation}}">
+                            <text class="daka_text line-clamp-1">{{statusText||'Click Start'}}</text>
+                            <image v-show="statusText" src="cloud://daka.6461-daka-1301019118/wave.gif" mode="aspectFill" class="gif-black response" style="height:100%;"></image>
+                        </view>
                     </view>
                 </view>
+                <!-- 标签选择 -->
+                <m-label v-if="isLogin" :show="modalName=='bottomModal'" @choose="load()" @close="showModal('viewModal')" />
+
+                <!-- 登录界面 -->
+                <m-login v-if="!isLogin" @done="isLogin=true;load();" />
+
             </view>
-            <!-- 标签选择 -->
-            <m-label v-if="isLogin" :show="modalName=='bottomModal'" @choose="load()" @close="showModal('viewModal')" />
+            <!-- 打卡记录列表 -->
+            <!-- <m-record /> -->
 
-            <!-- 登录界面 -->
-            <m-login v-if="!isLogin" @done="isLogin=true;load();" />
+        </scroll-view>
 
-        </view>
-        <!-- 打卡记录列表 -->
-        <m-record />
-
-    </scroll-view>
-
-    <!-- 结束任务 -->
-    <m-confirm :data="current" :show="modalName=='EndModal'" @done="done" @close="showModal('viewModal')" />
-
+        <!-- 结束任务 -->
+        <m-confirm :data="current" :show="modalName=='EndModal'" @done="done" @close="showModal('viewModal')" />
+    </view>
 </template>
  
 <script>
@@ -57,6 +58,9 @@ wepy.component({
     hooks: {
         // Page 级别 hook, 只对当前 Page 的 setData 生效。
     },
+    props: {
+        show: Boolean
+    },
     //   mixins: [testMixin],
     data: {
         modalName: null,
@@ -66,7 +70,7 @@ wepy.component({
         current: {}
     },
 
-    onShow () {
+    onShow() {
         this.load()
     },
 
@@ -75,22 +79,27 @@ wepy.component({
     },
 
     methods: {
-        async load () {
+        async load() {
             if (!this.isLogin) { return }
             const { result } = await api.getRecord()
             if (!result.after_time) {
                 this.statusText = result.event_name
                 this.current = result
             } else { this.statusText = '' }
+            // this.getList()
         },
-        showModal (e) {
+        // async getList() {
+        //     const { result } = await api.getRecordList()
+        //     console.log(result);
+        // },
+        showModal(e) {
             vibrate()
             this.modalName = e
         },
-        hideModal (e) {
+        hideModal(e) {
             this.modalName = null
         },
-        start () {
+        start() {
             vibrate()
             this.animation = 'shake'
             this.modalName = this.statusText ? 'EndModal' : 'bottomModal'
@@ -103,7 +112,7 @@ wepy.component({
                 this.animation = ''
             }, 800);
         },
-        done () {
+        done() {
             this.hideModal()
             this.statusText = ''
         }

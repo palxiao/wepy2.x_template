@@ -31,7 +31,8 @@ wepy.app({
     },
     isMusicPlay: false,
     bgm: null,
-    player: wx.createInnerAudioContext()
+    player: wx.createInnerAudioContext(),
+    audit: 1
   },
 
   onLaunch() {

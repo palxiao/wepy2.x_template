@@ -29,37 +29,39 @@ wepy.component({
     data: {
         showModel: false,
         colorList,
-        eventList: []
+        eventList: [],
+        randomColor: []
     },
     computed: {
-        randomColor () {
-            const arr = []
-            this.eventList.forEach(item => {
-                arr.push(colorList[(Math.random() * (colorList.length - 2) + 1).toFixed(0)].name)
-            });
-            return arr
-        }
     },
-    async created () {
+    async created() {
         const { result } = await api.getEventList()
         this.eventList = result
     },
     methods: {
-        close () {
+        close() {
             this.$emit('close')
         },
-        async selectLabel (e) {
+        async selectLabel(e) {
             const { result } = await api.addRecord({ event_id: e.id })
             this.$emit('choose')
             this.close()
             const openId = wx.getStorageSync('openId')
-            api.sendSubscribe({openId, title: e.name})
+            api.sendSubscribe({ openId, title: e.name })
+        },
+        colorEffect() {
+            const arr = []
+            this.eventList.forEach(item => {
+                arr.push(colorList[(Math.random() * (colorList.length - 2) + 1).toFixed(0)].name)
+            });
+            this.randomColor = arr
         }
     },
     mixins: [],
     watch: {
-        show (val) {
+        show(val) {
             this.showModel = val
+            if (val) { this.colorEffect() }
         }
     }
 });

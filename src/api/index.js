@@ -17,6 +17,7 @@ const getEventList = (params) => wxRequest(params, API_URL + 'api/event/list'); 
 const addRecord = (params) => wxRequest(params, API_URL + 'api/record/add', 'POST'); // 新增打卡记录
 const getRecord = (p) => wxRequest(p, API_URL + 'api/record/one'); // 获取最新一条打卡记录
 const deleteRecord = (p) => wxRequest(p, API_URL + 'api/record/delete', 'POST'); // 删除记录
+// const getRecordList = (p) => wxRequest(p, API_URL + 'api/record/list'); // 获取记录列表(暂无接口)
 
 module.exports = {
   audit,
@@ -27,5 +28,6 @@ module.exports = {
   addRecord,
   getRecord,
   deleteRecord,
-  sendSubscribe
+  sendSubscribe,
+  // getRecordList
 };

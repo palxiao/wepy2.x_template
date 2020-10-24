@@ -1,5 +1,5 @@
 <template>
-    <daka>
+    <daka :show="audit">
         <play-music />
 
         <select-model @tap="openEditor" @change="swiperChange" :imgUrls="imgUrls" />
@@ -25,18 +25,17 @@ wepy.page({
     data: {
         swiperIndex: 0,
         imgUrls: [],
-        localUrls: [
-            'cloud://daka.6461-daka-1301019118/T/T00.png',
-            'cloud://daka.6461-daka-1301019118/T/T01.png',
-            'cloud://daka.6461-daka-1301019118/T/T02.png'
-        ]
+        audit: true
     },
 
-    async created () {
+    async created() {
+        const res = await api.audit({ id: 1 })
+        this.audit = res.result.status
+        this.$app.$options.globalData.audit = res.result.status
+
         const { result } = await api.makingData()
         const httpUrls = result.map(item => { return { url: item.url, id: item.id } })
-        // this.imgUrls = this.imgUrls.concat(this.localUrls).concat(httpUrls)
-        this.imgUrls = httpUrls
+        this.imgUrls = this.audit ? httpUrls : this.auditEdit(httpUrls, [48, 24, 49])
         this.getOpenId()
     },
 
@@ -45,10 +44,15 @@ wepy.page({
     },
 
     methods: {
-        swiperChange (index) {
+        auditEdit(data, select) {
+            return data.filter(x => {
+                return select.includes(x.id)
+            })
+        },
+        swiperChange(index) {
             this.swiperIndex = index
         },
-        openEditor () {
+        openEditor() {
             if (this.$app.$options.globalData.userInfo) {
                 vibrate()
                 // console.log(this.swiperIndex - 3);
@@ -61,7 +65,7 @@ wepy.page({
                 })
             }
         },
-        getOpenId () {
+        getOpenId() {
             wx.cloud.init({
                 env: 'daka',
                 traceUser: true

@@ -43,8 +43,7 @@ export default {
       // wx.cloud.init({ env: 'daka' });
       this.avatarUrl = this.$app.$options.globalData.userInfo.avatarUrl;
       this.nickName = this.$app.$options.globalData.userInfo.nickName;
-      // const res = await api.audit({ id: 1 });
-      // this.audit = res.result.status;
+      this.audit = this.$app.$options.globalData.audit;
     },
     // 通常的下载图片并设置宽高
     async generalLoadImg(name) {
