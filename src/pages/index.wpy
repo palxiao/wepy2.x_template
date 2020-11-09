@@ -35,7 +35,7 @@ wepy.page({
 
         const { result } = await api.makingData()
         const httpUrls = result.map(item => { return { url: item.url, id: item.id } })
-        this.imgUrls = this.audit ? httpUrls : this.auditEdit(httpUrls, [48, 24, 49])
+        this.imgUrls = this.audit ? httpUrls : this.auditEdit(httpUrls, [48, 49])
         this.getOpenId()
     },
 
