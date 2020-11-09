@@ -15,7 +15,7 @@
                 <!-- 打卡界面 -->
                 <view class="padding text-center">
                     <view class="padding-lr bg-white">
-                        <view class="solid-bottom padding">Hello frog clock punch 🐸</view>
+                        <view class="solid-bottom padding">Let's start frog clock in 🐸</view>
                         <view v-show="!isLogin" class="padding">登录青蛙打卡继续操作</view>
                         <view v-show="isLogin" @tap="start()" class="margin radius bg-gradual-blue shadow-blur daka_start animation-{{animation}}">
                             <text class="daka_text line-clamp-1">{{statusText||'Click Start'}}</text>
@@ -70,16 +70,12 @@ wepy.component({
         current: {}
     },
 
-    onShow() {
-        this.load()
-    },
-
     computed: {
 
     },
 
     methods: {
-        async load() {
+        async load () {
             if (!this.isLogin) { return }
             const { result } = await api.getRecord()
             if (!result.after_time) {
@@ -92,14 +88,15 @@ wepy.component({
         //     const { result } = await api.getRecordList()
         //     console.log(result);
         // },
-        showModal(e) {
+        showModal (e) {
+            if (e === 'viewModal') { this.load() }
             vibrate()
             this.modalName = e
         },
-        hideModal(e) {
+        hideModal (e) {
             this.modalName = null
         },
-        start() {
+        start () {
             vibrate()
             this.animation = 'shake'
             this.modalName = this.statusText ? 'EndModal' : 'bottomModal'
@@ -112,7 +109,7 @@ wepy.component({
                 this.animation = ''
             }, 800);
         },
-        done() {
+        done () {
             this.hideModal()
             this.statusText = ''
         }
