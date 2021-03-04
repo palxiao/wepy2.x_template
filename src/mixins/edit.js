@@ -188,10 +188,10 @@ export default {
     /**
      * 打开编辑框
      */
-    edit(e) {
+    edit(flag) {
       vibrate();
-      this.editFlag = e;
-      this.editText = this[e];
+      this.editFlag = flag;
+      this.editText = this[flag];
       this.showEditModal = true;
     },
     /**

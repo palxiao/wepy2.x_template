@@ -29,6 +29,7 @@ wepy.page({
     },
 
     async created() {
+        wx.showLoading({ title: '拼命加载中..' })
         const res = await api.audit({ id: 1 })
         this.audit = res.result.status
         this.$app.$options.globalData.audit = res.result.status
@@ -37,6 +38,9 @@ wepy.page({
         const httpUrls = result.map(item => { return { url: item.url, id: item.id } })
         this.imgUrls = this.audit ? httpUrls : this.auditEdit(httpUrls, [48, 24, 49])
         this.getOpenId()
+        setTimeout(() => {
+            wx.hideLoading()
+        }, 600);
     },
 
     computed: {

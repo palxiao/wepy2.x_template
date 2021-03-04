@@ -1,13 +1,14 @@
 <template>
-    <div v-if="done">
+    <!-- <div v-if="done"> -->
+    <div>
         <my-menu is="head" @action="menuAction"></my-menu>
 
         <div v-show="!showEditModal" class="content">
             <canvas canvas-id="{{canvasId}}" style="width: {{width*ratio*scale}}px; height: {{height*scale}}px;">
 
-                <cover-view v-show="showEdit" style="{{'height:'+height*scale+'px;'}}" class="maskPanel">
+                <cover-view v-show="showEdit" style="{{'height:'+height*scale+'px'}}" class="maskPanel">
                     <cover-view v-if="title" @tap="edit('title')" style="{{'width:'+74+'px;height:'+40+'px;top: '+height*0.61+'px;left: '+34*ratio+'px;'}}" class="edit-title"></cover-view>
-                    <cover-view v-if="desc" @tap="edit('desc')" style="{{'width:'+descPositionWidth+'px;top: '+descPositionTop*ratio+'px;left: '+descPositionLeft+'px;'}}" class="edit-title">点击编辑</cover-view>
+                    <cover-view v-if="desc" @tap="edit('desc')" style="{{'width:'+descPositionWidth+'px;top: '+descPositionTop*ratio+'px;left: '+descPositionLeft+'px;'}}" class="edit-title">点 击 编 辑</cover-view>
                 </cover-view>
 
             </canvas>
@@ -24,6 +25,7 @@ import store from '@/store'
 import editMixin from '@/mixins/edit'
 import api from '@/api'
 import SimpleCanvas from '@/common/plugins/canvasTool'
+import { CONTRAST } from './tempData.js'
 // import { stringifyArray } from '@/common/utils'
 let imgsData = {}
 let drawData = []
@@ -39,7 +41,13 @@ wepy.page({
         descPositionWidth: 0
     },
 
-    created() { },
+    created() {
+        // 调试模式打开注释
+        wx.cloud.init({
+            env: 'daka',
+            traceUser: true
+        })
+    },
     async onLoad({ id }) {
         await this.init()
         // 请求数据
@@ -49,7 +57,7 @@ wepy.page({
         res.config = JSON.parse(res.config)
         for (const key in res.config) {
             if (res.config.hasOwnProperty(key)) {
-                this[key] = res.config[key] || '_' + key
+                this[key] = res.config[key] ? res.config[key] : CONTRAST[key] ? CONTRAST[key] : '_' + key
             }
         }
         console.log(res.config)
@@ -79,7 +87,7 @@ wepy.page({
 
     methods: {
         async draw(cb) {
-            wx.showLoading({ title: '努力加载中..' })
+            wx.showLoading({ title: '准备资源中..' })
             // 准备头像二维码等资源
             await this.prepareImg()
             // 渲染底层基准图片/整体背景
@@ -119,9 +127,9 @@ wepy.page({
                 if (item.text) {
                     params.text = this[item.text]
                     if (item.text === 'desc') { // 编辑框提示位置
-                        this.descPositionTop = item.top * this.ratio,
-                        this.descPositionLeft = item.left * this.ratio,
-                        this.descPositionWidth = item.width * this.ratio - 40
+                        this.descPositionTop = item.top * this.ratio * this.scale
+                        this.descPositionLeft = item.left * this.ratio * this.scale
+                        this.descPositionWidth = item.width * this.ratio * this.scale
                     }
                 }
                 if (item.lineHeight) {

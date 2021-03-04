@@ -44,8 +44,8 @@
 }
 .cover-input {
   padding: 40rpx;
-  opacity: 0;
-  width: 562rpx;
+  // opacity: 0;
+  // width: 562rpx;
 }
 /*mask*/
 .drawer_screen {
@@ -108,7 +108,7 @@
     <cover-view v-else-if="is==='foot'&&!modelShow" class="noflex-layout footer">
       <cover-view class="btn noflex-layout" @tap="action('randomText')">随机一言</cover-view>
       <cover-view class="vertical" style="margin-left: 250rpx;"></cover-view>
-      <cover-view class="btn noflex-layout" @tap="action('editBtn')">编 辑</cover-view>
+      <cover-view class="btn noflex-layout" @tap="action('editBtn')">编辑模式</cover-view>
       <cover-view class="vertical" style="margin-left: 500rpx;"></cover-view>
       <cover-view class="btn noflex-layout" @tap="action('changePhoto')">更换图片</cover-view>
     </cover-view>
@@ -116,7 +116,8 @@
     <!-- <my-modal :show="modelShow" @changeModal="changeModal" title="编辑模式"> -->
     <view v-show="modelShow" class="drawer_screen">
       <view class="drawer_box">
-        <textarea class="cover-input" placeholder="写点什么.." v-model="editing" auto-height :focus="focus"></textarea>
+        <textarea class="cover-input" v-model="editing" placeholder="写点什么.." :focus="focus"/>
+        <!-- <textarea class="cover-input" placeholder="写点什么.." v-model="editing" auto-height :focus="focus"></textarea> -->
         <view class="button-div">
           <view v-for="(item, index) in modalData.button" :key="index" class="{{index == 0 ? 'btn_no' : 'btn_yes'}}" @tap="changeModal(index)">{{item}}</view>
         </view>
