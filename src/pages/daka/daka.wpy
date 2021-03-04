@@ -19,7 +19,7 @@
                         <view v-show="!isLogin" class="padding">登录青蛙打卡继续操作</view>
                         <view v-show="isLogin" @tap="start()" class="margin radius bg-gradual-blue shadow-blur daka_start animation-{{animation}}">
                             <text class="daka_text line-clamp-1">{{statusText||'Click Start'}}</text>
-                            <image v-show="statusText" src="cloud://daka.6461-daka-1301019118/wave.gif" mode="aspectFill" class="gif-black response" style="height:100%;"></image>
+                            <image v-show="statusText" src="cloud://daka.6461-daka-1301019118/wave.gif" mode="aspectFill" class="gif-black response" style="height:100%;" />
                         </view>
                     </view>
                 </view>
